@@ -246,6 +246,19 @@ test("both pages inject SEO tags from config, not from HTML", async () => {
   assert.equal(desc.getAttribute("content"), cfg.seo.description);
 });
 
+test("the hero headline keeps the & from the role", async () => {
+  const cfg = readConfig();
+  if (!String(cfg.personal.role).includes("&") || cfg.hero.titleLine2) {
+    return; // nothing to split, or the headline was set explicitly
+  }
+  const { doc } = await loadPage("index.html");
+  const line2 = doc.querySelector('[data-bind="hero.titleLine2"]');
+  assert.ok(
+    line2 && line2.textContent.trim().startsWith("&"),
+    `the second headline line dropped the "&": ${line2 && JSON.stringify(line2.textContent)}`
+  );
+});
+
 /* 4. Graceful degradation */
 
 test("every data-list in the HTML is registered in the engine", () => {

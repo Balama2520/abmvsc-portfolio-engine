@@ -110,7 +110,7 @@ window.PORTFOLIO_CONFIG = {
     badge: "",
 
     // The two lines of your big hero heading. Falls back to splitting
-    // personal.role on the "&" character.
+    // personal.role on the "&" character, which stays on the second line.
     titleLine1: "",
     titleLine2: "",
 

@@ -73,11 +73,19 @@
   // Values that are derived (with sensible fallbacks) rather than literal.
   // Anything in here can still be overridden from config.js.
   const taglineBits = String(co.tagline || "").split(".").map((s) => s.trim()).filter(Boolean);
+
+  // The hero headline is the role split across two lines. The "&" that joins
+  // the two halves is part of how the role reads, so it stays on line two
+  // rather than being dropped. Set hero.titleLine1/2 to override the split.
+  const roleBits = String(p.role || "").split("&").map((s) => s.trim());
+  const roleLine1 = roleBits[0] || "";
+  const roleLine2 = roleBits.length > 1 ? `& ${roleBits.slice(1).join(" & ")}` : "";
+
   const VIRTUAL = {
     "hero.eyebrow": hero.eyebrow || p.availability || "",
     "hero.badge": hero.badge || (co.name ? `Founder @ ${co.name}` : ""),
-    "hero.titleLine1": hero.titleLine1 || String(p.role || "").split("&")[0].trim(),
-    "hero.titleLine2": hero.titleLine2 || (String(p.role || "").split("&")[1] || "").trim(),
+    "hero.titleLine1": hero.titleLine1 || roleLine1,
+    "hero.titleLine2": hero.titleLine2 || roleLine2,
     "company.eyebrow": [co.descriptor, co.founded ? `Founded ${co.founded}` : ""].filter(Boolean).join(" · "),
     "company.titleLine1": taglineBits[0] ? `${taglineBits[0]}.` : "",
     "company.titleLine2": taglineBits.length > 1 ? `${taglineBits.slice(1).join(". ")}.` : "",
