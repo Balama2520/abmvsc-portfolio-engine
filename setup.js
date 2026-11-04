@@ -361,7 +361,7 @@
     el.innerHTML = msg;
     el.classList.add("is-visible");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove("is-visible"), 4200);
+    toastTimer = setTimeout(() => el.classList.remove("is-visible"), 4000);
   };
 
   /* 3b. Uploads — files the visitor picks, kept in this tab only */
