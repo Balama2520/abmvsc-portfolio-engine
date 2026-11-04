@@ -403,17 +403,17 @@ window.PORTFOLIO_CONFIG = {
   /* ═══════════════════════════════════════════════════════════════
      SECTION 14 — CHATBOT
      ───────────────────────────────────────────────────────────────
-     Tune your AI assistant's name, greetings and custom answers.
+     Tune your assistant's name, greetings and custom answers.
      Everything else it knows comes from the sections above.
      Basic markdown is supported: **bold** · *italic* · `code`.
      ═══════════════════════════════════════════════════════════════ */
   chatbot: {
 
     // Shown in the chatbot window header.
-    assistantName: "Alex's AI Assistant",
+    assistantName: "Alex's assistant",
 
     // Opening message on index.html.
-    greeting: "Hi! I'm Alex's AI assistant. Ask me anything about his projects, skills, experience or how to get in touch.",
+    greeting: "Hi. I answer questions about Alex's projects, skills, experience and how to get in touch, using the details on this site.",
 
     // Opening message on studio.html.
     studioGreeting: "Welcome to our studio! Ask me about our products, capabilities or how we can collaborate.",

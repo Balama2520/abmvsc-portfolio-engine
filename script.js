@@ -8,7 +8,7 @@
  *   • Hydration engine  — text, links, images, lists, sections, SEO
  *   • Site chrome       — sticky nav, scroll-spy, smooth scroll, reveal
  *   • Resume modal      — zero-dependency PDF preview
- *   • AI assistant      — streaming rule-based chatbot built from config
+ *   • Assistant         — rule-based chat, answered from config.js
  *
  * You should never need to edit this file. Edit config.js instead.
  */
@@ -680,8 +680,6 @@
 
     if (!chatbot || !toggle || !win || !messages || !form || !input) return;
 
-    const engineLabel = chat.assistantName || "AI Engine";
-    let isGenerating = false;
     let lastTopic = null;
 
     const formatMarkdown = (text) =>
@@ -944,7 +942,7 @@
         .join("");
     };
 
-    /* ---------- 6e. Streaming renderer ---------- */
+    /* ---------- 6e. Answer renderer ---------- */
     const scrollToBottom = () => { messages.scrollTop = messages.scrollHeight; };
 
     const addBubble = (sender) => {
@@ -955,74 +953,34 @@
       return bubble;
     };
 
-    const streamBotResponse = (fullText, intentKey, callback) => {
-      const latencyMs = Math.floor(Math.random() * 65) + 110;
-      const startTime = performance.now();
-
-      const typing = document.createElement("div");
-      typing.className = "chat-msg bot typing-dots";
-      typing.innerHTML = `<span class="typing-label">${esc(engineLabel)}</span>` +
-        `<span class="latency-badge">${latencyMs}ms</span>` +
-        `<span class="dot"></span><span class="dot"></span><span class="dot"></span>`;
-      messages.appendChild(typing);
+    // Answers are matched from config.js by keyword and rendered at once. There
+    // is no model and no network call, so there is nothing to wait for.
+    const renderBotResponse = (fullText, intentKey, callback) => {
+      const botBubble = addBubble("bot");
+      botBubble.innerHTML = formatMarkdown(fullText) + getActions(intentKey);
       scrollToBottom();
-
-      const thinkTime = latencyMs + Math.floor(Math.random() * 120);
-
-      setTimeout(() => {
-        typing.remove();
-        const botBubble = addBubble("bot");
-        const words = String(fullText).split(" ");
-        let accumulated = "";
-        let i = 0;
-
-        const typeNext = () => {
-          if (i < words.length) {
-            accumulated += (i === 0 ? "" : " ") + words[i];
-            botBubble.innerHTML = formatMarkdown(accumulated) + '<span class="chat-cursor"></span>';
-            scrollToBottom();
-            i++;
-            setTimeout(typeNext, 12 + Math.random() * 14);
-          } else {
-            const totalSec = ((performance.now() - startTime) / 1000).toFixed(2);
-            const tokenCount = Math.round(words.length * 1.35);
-
-            let html = formatMarkdown(fullText);
-            html += getActions(intentKey);
-            html += `<div class="chat-telemetry"><span>⚡ ${totalSec}s response · ~${tokenCount} tokens</span><span>${latencyMs}ms latency</span></div>`;
-            botBubble.innerHTML = html;
-            scrollToBottom();
-            isGenerating = false;
-            updateQuickChips(intentKey);
-            if (callback) callback();
-          }
-        };
-        typeNext();
-      }, thinkTime);
+      updateQuickChips(intentKey);
+      if (callback) callback();
     };
 
     const ask = (key, label) => {
-      if (isGenerating) return;
       const userBubble = addBubble("user");
       userBubble.textContent = label;
-      isGenerating = true;
       lastTopic = key;
-      streamBotResponse(getAnswer(key), key, () => {
-        if (key === "resume") setTimeout(openResumeModal, 400);
+      renderBotResponse(getAnswer(key), key, () => {
+        if (key === "resume") openResumeModal();
       });
     };
 
     const handleUserMessage = (text) => {
-      if (isGenerating) return;
       const clean = String(text).trim();
       if (!clean) return;
       const userBubble = addBubble("user");
       userBubble.textContent = clean;
-      isGenerating = true;
       const intent = matchQuery(clean);
       lastTopic = intent;
-      streamBotResponse(getAnswer(intent), intent, () => {
-        if (intent === "resume") setTimeout(openResumeModal, 400);
+      renderBotResponse(getAnswer(intent), intent, () => {
+        if (intent === "resume") openResumeModal();
       });
     };
 
@@ -1034,7 +992,7 @@
       if (!messages.dataset.greeted) {
         messages.dataset.greeted = "true";
         updateQuickChips(null);
-        streamBotResponse(isStudio ? brain.studioGreeting : brain.greeting, "greeting");
+        renderBotResponse(isStudio ? brain.studioGreeting : brain.greeting, "greeting");
       }
       input.focus();
     };

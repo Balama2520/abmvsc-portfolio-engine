@@ -1241,17 +1241,6 @@ nav a.active {
   gap: 6px;
 }
 
-.chat-ai-pill {
-  font-size: 9px;
-  font-weight: 700;
-  background: var(--orange);
-  color: #ffffff;
-  padding: 2px 7px;
-  border-radius: 999px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 .chatbot-header-sub {
   color: rgba(255, 255, 255, 0.7);
   font-size: 11px;
@@ -1336,86 +1325,6 @@ nav a.active {
 
 .chat-msg.user strong {
   color: #fff;
-}
-
-/* Typing & Real-time Latency indicator */
-.typing-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  border-bottom-left-radius: 2px;
-}
-
-.typing-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.latency-badge {
-  font-family: var(--font-mono, monospace);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--orange);
-  background: var(--orange-soft);
-  border: 1px solid rgba(255, 121, 0, 0.2);
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-}
-
-.chat-telemetry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-soft);
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px dashed var(--border);
-  font-family: var(--font-mono, monospace);
-}
-
-.typing-dots span.dot {
-  width: 5px;
-  height: 5px;
-  background: var(--text-soft);
-  border-radius: 50%;
-  animation: typing-jump 1.4s infinite ease-in-out both;
-}
-
-.typing-dots span.dot:nth-child(2) { animation-delay: -0.32s; }
-.typing-dots span.dot:nth-child(3) { animation-delay: -0.16s; }
-.typing-dots span.dot:nth-child(4) { animation-delay: 0s; }
-
-@keyframes typing-jump {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-  40% { transform: scale(1.1); opacity: 1; }
-}
-
-/* Streaming blinking cursor */
-.chat-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 13px;
-  background-color: var(--accent);
-  vertical-align: middle;
-  margin-left: 2px;
-  animation: chat-cursor-blink 0.8s infinite;
-}
-
-@keyframes chat-cursor-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
 }
 
 /* Action buttons inside bot messages */
