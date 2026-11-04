@@ -193,19 +193,21 @@ body.gen-body {
   margin-right: auto;
 }
 
+/* Six steps across one row on a wide screen, a list on a narrow one. */
 .gen-rail {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
 }
 
 .gen-rail-step {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
   text-align: left;
   font: inherit;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--bg-alt);
@@ -216,17 +218,6 @@ body.gen-body {
 
 .gen-rail-step:hover {
   border-color: var(--border-strong);
-}
-
-.gen-rail-step.is-active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.gen-rail-step.is-done .gen-rail-num {
-  background: #16a34a;
-  border-color: #16a34a;
-  color: #fff;
 }
 
 .gen-rail-num {
@@ -243,6 +234,23 @@ body.gen-body {
   color: var(--text-soft);
 }
 
+/* Finished steps green, the step you are on orange, the rest grey. The list
+   order matters: the orange rule must win when a step is both. */
+.gen-rail-step.is-done .gen-rail-num {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #fff;
+}
+
+.gen-rail-step.is-done {
+  border-color: #16a34a;
+}
+
+.gen-rail-step.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
 .gen-rail-step.is-active .gen-rail-num {
   background: var(--accent);
   border-color: var(--accent);
@@ -250,21 +258,59 @@ body.gen-body {
 }
 
 .gen-rail-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
   min-width: 0;
+  line-height: 1.25;
 }
 
 .gen-rail-text b {
-  font-size: 13px;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--text);
 }
 
+/* The hint would crowd a six-across row, so it only shows in the mobile list. */
 .gen-rail-text small {
-  font-size: 11.5px;
-  color: var(--text-muted);
-  line-height: 1.4;
+  display: none;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+/* A quiet text link for secondary choices in the wizard header. */
+.gen-linkbtn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 0;
+  border: none;
+  background: none;
+  color: var(--accent-text);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.gen-linkbtn:hover {
+  color: var(--text);
+}
+
+.gen-linkbtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .gen-rail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gen-rail-step {
+    border-radius: var(--radius-sm);
+  }
+
+  .gen-rail-text small {
+    display: block;
+  }
 }
 
 .gen-steps-nav {

@@ -62,13 +62,9 @@
       <nav class="gen-wizard" aria-label="Guided setup">
         <div class="gen-wizard-top">
           <p class="gen-step-label" id="genStepLabel">Step 1 of 6 · You</p>
-          <button type="button" class="gen-btn gen-btn-sm gen-btn-ghost" id="genShowAll">Show everything</button>
+          <button type="button" class="gen-linkbtn" id="genShowAll">Show everything</button>
         </div>
         <div class="gen-rail" id="genRail"></div>
-        <div class="gen-steps-nav">
-          <button type="button" class="gen-btn" id="genBack">← Back</button>
-          <button type="button" class="gen-btn gen-btn-primary" id="genNext">Next →</button>
-        </div>
       </nav>
 
       <div id="genSections"></div>
@@ -107,6 +103,11 @@
           <a class="gen-btn" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Open Netlify Drop</a>
         </div>
       </section>
+
+      <div class="gen-steps-nav">
+        <button type="button" class="gen-btn" id="genBack">← Back</button>
+        <button type="button" class="gen-btn gen-btn-primary" id="genNext">Next →</button>
+      </div>
     </main>
 
     <!-- RIGHT: PREVIEW + EXPORT -->
