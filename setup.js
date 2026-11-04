@@ -58,8 +58,16 @@
         { key: "role", label: "Professional role", placeholder: "Full-Stack Developer & AI Engineer" },
         { key: "tagline", label: "Tagline", placeholder: "Engineering Ideas Into Real-World Impact.", wide: true },
         { key: "bio", label: "Short bio", type: "textarea", wide: true, placeholder: "2–3 sentences about you." },
-        { key: "photo", label: "Profile photo path", placeholder: "assets/engineer-avatar.svg" },
-        { key: "resume", label: "Resume PDF path", placeholder: "resume.pdf" },
+        {
+          key: "photo", label: "Profile photo", type: "file", upload: "photo",
+          accept: "image/jpeg,image/png,image/webp", placeholder: "assets/engineer-avatar.svg",
+          help: "JPG, PNG or WebP, up to 2 MB. Stays in this browser — it is written into the ZIP you download.",
+        },
+        {
+          key: "resume", label: "Resume", type: "file", upload: "resume",
+          accept: "application/pdf,.pdf", placeholder: "resume.pdf",
+          help: "PDF, up to 5 MB. Stays in this browser — it is written into the ZIP you download.",
+        },
         { key: "location", label: "Location", placeholder: "San Francisco, CA · Open to Remote" },
         { key: "availability", label: "Availability", placeholder: "Open to full-time roles — immediate start", wide: true },
         { key: "email", label: "Email", placeholder: "hello@you.dev" },
@@ -361,6 +369,45 @@
   };
 
   /* ══════════════════════════════════════════════════════════════
+     3b. UPLOADS — files the visitor picks, kept in this tab only
+     ══════════════════════════════════════════════════════════════ */
+  // A picked file is read into memory and sent nowhere. The bytes feed the ZIP
+  // download; a path string goes into the config so the preview and the
+  // generated config.js agree on where the file will end up.
+  const uploads = { photo: null, resume: null };
+
+  // Finds the config field an upload feeds, so the two never drift apart.
+  const uploadField = (kind) => {
+    for (const sec of SCHEMA) {
+      const field = (sec.fields || []).find((f) => f.type === "file" && f.upload === kind);
+      if (field) return { section: sec.id, key: field.key, path: `${sec.id}.${field.key}` };
+    }
+    return null;
+  };
+
+  const readUpload = (kind, file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("The file could not be read."));
+      reader.onload = () => {
+        const entry = {
+          name: file.name,
+          type: file.type,
+          bytes: new Uint8Array(reader.result),
+          path: Pack.uploadPath(kind, file),
+        };
+        // Base64 once, here, rather than on every preview refresh.
+        let binary = "";
+        for (let i = 0; i < entry.bytes.length; i += 0x8000) {
+          binary += String.fromCharCode.apply(null, entry.bytes.subarray(i, i + 0x8000));
+        }
+        entry.dataUrl = `data:${entry.type};base64,${btoa(binary)}`;
+        resolve(entry);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+  /* ══════════════════════════════════════════════════════════════
      4. STATE — normalize (config → form) and buildConfig (form → config)
      ══════════════════════════════════════════════════════════════ */
   const emptyItem = (list) => {
@@ -471,9 +518,37 @@
   /* ══════════════════════════════════════════════════════════════
      5. RENDERING
      ══════════════════════════════════════════════════════════════ */
+  const renderUpload = (path, f, value) => {
+    const id = uid();
+    const picked = uploads[f.upload];
+
+    return `<div class="gen-field is-wide">
+        <span class="gen-label">${esc(f.label)}</span>
+        <div class="gen-upload">
+          <label class="gen-upload-pick">
+            <input class="gen-file-input" type="file" id="${id}" data-upload="${esc(f.upload)}"
+              accept="${esc(f.accept || "")}" aria-label="${esc(f.label)}" />
+            <span class="gen-btn gen-btn-sm">Choose a file</span>
+          </label>
+          <span class="gen-upload-name" data-upload-name="${esc(f.upload)}">${picked ? esc(picked.name) : "No file chosen"}</span>
+          <button type="button" class="gen-btn gen-btn-sm gen-btn-ghost" data-upload-clear="${esc(f.upload)}"
+            ${picked ? "" : "hidden"}>Remove</button>
+        </div>
+        <p class="gen-upload-error" data-upload-error="${esc(f.upload)}" hidden></p>
+        <details class="gen-advanced">
+          <summary>Use a file path instead</summary>
+          <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}"
+            placeholder="${esc(f.placeholder || "")}" aria-label="${esc(f.label)} path" />
+        </details>
+        ${f.help ? `<span class="gen-help">${esc(f.help)}</span>` : ""}
+      </div>`;
+  };
+
   const renderField = (path, f, value) => {
     const id = uid();
     let control;
+
+    if (f.type === "file") return renderUpload(path, f, value);
 
     if (f.type === "bool") {
       control = `<label class="gen-check">
@@ -784,6 +859,19 @@
       : "Preview unavailable right now. Your settings are still saved and the download works normally.";
   };
 
+  // In the preview the uploaded bytes are not on disk yet, so the config points
+  // at the file itself instead of the path the ZIP will use. Without this the
+  // preview shows a broken image for a photo the visitor just picked.
+  const previewConfig = () => {
+    const config = buildConfig();
+    Object.keys(uploads).forEach((kind) => {
+      const upload = uploads[kind];
+      const field = uploadField(kind);
+      if (upload && field) config[field.section][field.key] = upload.dataUrl;
+    });
+    return config;
+  };
+
   const buildPreviewHtml = async () => {
     const file = PREVIEW_FILES[previewPage];
     const res = await fetch(file, { cache: "no-store" });
@@ -792,7 +880,7 @@
 
     const base = new URL(".", location.href).href;
     const configSrc = "window.PORTFOLIO_CONFIG = " +
-      JSON.stringify(buildConfig(), null, 2).replace(/</g, "\\u003c") + ";";
+      JSON.stringify(previewConfig(), null, 2).replace(/</g, "\\u003c") + ";";
 
     return html
       .replace(/<head>/i, `<head>\n    <base href="${base}">`)
@@ -867,8 +955,75 @@
     });
   };
 
+  const showUploadState = (kind) => {
+    const picked = uploads[kind];
+    const name = document.querySelector(`[data-upload-name="${kind}"]`);
+    if (name) name.textContent = picked ? picked.name : "No file chosen";
+    const clear = document.querySelector(`[data-upload-clear="${kind}"]`);
+    if (clear) clear.hidden = !picked;
+  };
+
+  const setUploadError = (kind, message) => {
+    const el = document.querySelector(`[data-upload-error="${kind}"]`);
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = !message;
+  };
+
+  const acceptUpload = (kind, file) => {
+    const problem = Pack.checkUpload(kind, file);
+    setUploadError(kind, problem);
+    if (problem) return;
+
+    readUpload(kind, file).then((upload) => {
+      const field = uploadField(kind);
+      uploads[kind] = upload;
+      if (field) {
+        state[field.section][field.key] = upload.path;
+        writeToInput(field.path, upload.path);
+      }
+      showUploadState(kind);
+      saveDraft();
+      updateCounts();
+      refreshPreview();
+    });
+  };
+
+  const clearUpload = (kind) => {
+    const field = uploadField(kind);
+    const picked = uploads[kind];
+    // A path written by this upload would point at a file the ZIP no longer
+    // carries, so clear it. A path typed by hand is left alone.
+    if (field && picked && str(state[field.section][field.key]) === picked.path) {
+      state[field.section][field.key] = "";
+      writeToInput(field.path, "");
+    }
+    uploads[kind] = null;
+    setUploadError(kind, "");
+    showUploadState(kind);
+    saveDraft();
+    updateCounts();
+    refreshPreview();
+  };
+
   const onFormEvent = (e) => {
     const t = e.target;
+
+    // ── file uploads
+    const uploadKind = t.dataset && t.dataset.upload;
+    if (uploadKind) {
+      const file = t.files && t.files[0];
+      // Reset so picking the same file twice fires change again.
+      t.value = "";
+      if (file) acceptUpload(uploadKind, file);
+      return;
+    }
+
+    const clearBtn = t.closest && t.closest("[data-upload-clear]");
+    if (clearBtn) {
+      clearUpload(clearBtn.dataset.uploadClear);
+      return;
+    }
 
     // ── text / colour / checkbox edits
     if (t.dataset && t.dataset.path) {
@@ -996,6 +1151,9 @@
 
   const applyImported = (raw, message) => {
     state = normalize(raw);
+    // A config brought in from outside replaces everything, uploads included —
+    // keeping a file whose path the new config no longer names would be a lie.
+    Object.keys(uploads).forEach((kind) => (uploads[kind] = null));
     renderAll();
     saveDraft();
     refreshPreview(true);

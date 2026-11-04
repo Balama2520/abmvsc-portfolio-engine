@@ -98,6 +98,10 @@ async function loadPage(file, { settle = 900 } = {}) {
     // jsdom ships no fetch; node's global fetch resolves relative URLs for us.
     beforeParse(window) {
       window.fetch = (i, init) => fetch(new URL(String(i), window.location.href).href, init);
+      // jsdom also omits the encoding classes every browser has. The ZIP writer
+      // needs them to turn file names and text files into bytes.
+      window.TextEncoder = TextEncoder;
+      window.TextDecoder = TextDecoder;
     },
   });
 

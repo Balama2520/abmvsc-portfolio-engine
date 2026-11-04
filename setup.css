@@ -555,6 +555,62 @@ body.gen-body {
   cursor: pointer;
 }
 
+/* file uploads */
+.gen-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gen-upload-pick {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+/* The real input stays focusable for the keyboard, but the styled span in the
+   same label is what the pointer sees. */
+.gen-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gen-upload-pick:focus-within .gen-btn {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.gen-upload-name {
+  font-size: 12.5px;
+  color: var(--text-soft);
+  overflow-wrap: anywhere;
+}
+
+.gen-upload-error {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #b91c1c;
+}
+
+.gen-advanced summary {
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.gen-advanced summary:hover {
+  color: var(--text);
+}
+
+.gen-advanced input {
+  margin-top: 6px;
+}
+
 /* ── Repeating lists ─────────────────────────────────────────────────── */
 .gen-list-head {
   display: flex;
