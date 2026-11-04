@@ -219,7 +219,7 @@
       fields: [
         { key: "name", label: "Company name", placeholder: "Your Studio" },
         { key: "descriptor", label: "Descriptor", placeholder: "Technology & Innovation Studio" },
-        { key: "tagline", label: "Tagline", placeholder: "Engineering Ideas. Empowering Tomorrow.", wide: true, help: "Split into the studio hero headline on each full stop" },
+        { key: "tagline", label: "Tagline", placeholder: "Engineering ideas, shipped.", wide: true, help: "Split into the studio hero headline on each full stop" },
         { key: "philosophy", label: "Philosophy strip", placeholder: "Build • Research • Innovate • Scale • Impact", wide: true },
         { key: "description", label: "Description", type: "textarea", wide: true },
         { key: "heroParagraph", label: "Hero paragraph", type: "textarea", wide: true, help: "Falls back to the description above" },
@@ -248,7 +248,6 @@
         {
           key: "pillars", title: "Capability pillars", kind: "object", addLabel: "pillar", itemTitle: (o) => o.title,
           fields: [
-            { key: "icon", label: "Icon", placeholder: "🥞", help: "An emoji or short symbol" },
             { key: "title", label: "Title", placeholder: "AI & Automation" },
             { key: "text", label: "Text", type: "textarea", wide: true },
           ],
@@ -264,7 +263,7 @@
       lists: [{
         key: "links", title: "Link cards", kind: "object", addLabel: "link", itemTitle: (o) => o.label,
         fields: [
-          { key: "icon", label: "Icon", placeholder: "cv" },
+          { key: "icon", label: "Mark", placeholder: "cv", help: "One or two letters shown in the card" },
           { key: "label", label: "Label", placeholder: "Resume" },
           { key: "sub", label: "Sub-label", placeholder: "Download the PDF" },
           { key: "url", label: "URL", placeholder: "resume.pdf" },

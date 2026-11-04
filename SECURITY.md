@@ -4,8 +4,8 @@
 
 | Version | Supported |
 | ------- | --------- |
-| 3.x     | ✅        |
-| < 3.0   | ❌        |
+| 3.x     | Yes       |
+| < 3.0   | No        |
 
 ## What this project is
 
@@ -35,9 +35,9 @@ The following are **not** security issues:
 
 ## Reporting a vulnerability
 
-**Please do not open a public issue.**
+Report privately, not in a public issue.
 
-Use GitHub's private reporting instead:
+Use GitHub's private reporting:
 
 1. Go to the **Security** tab of this repository.
 2. Click **Report a vulnerability**.

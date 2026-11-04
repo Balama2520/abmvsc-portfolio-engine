@@ -24,7 +24,7 @@
   </g>
 
   <!-- Wordmark -->
-  <text x="76" y="38" font-family="'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="700" letter-spacing="-0.03em" fill="#0B1220">ABMVSC<tspan fill="#FF7900">.</tspan></text>
+  <text x="76" y="38" font-family="'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="700" letter-spacing="-0.03em" fill="#0B1220">STUDIO<tspan fill="#FF7900">.</tspan></text>
   <!-- Descriptor -->
   <text x="78" y="55" font-family="'IBM Plex Mono', monospace" font-size="9" font-weight="600" letter-spacing="0.16em" fill="#64748B">TECHNOLOGY &amp; INNOVATION STUDIO</text>
 </svg>

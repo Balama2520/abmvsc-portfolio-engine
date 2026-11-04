@@ -664,12 +664,6 @@ nav a.active {
   border-color: var(--accent);
 }
 
-.pillar-box-icon {
-  font-size: 26px;
-  margin-bottom: 10px;
-  color: var(--accent-text);
-}
-
 .pillar-box h4 {
   font-size: 14px;
   font-weight: 700;

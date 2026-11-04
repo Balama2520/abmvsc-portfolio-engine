@@ -57,7 +57,7 @@
       <div class="nav-actions">
         <!-- Link to the company / studio page (hides when no company is configured) -->
         <a href="studio.html" class="company-switch-btn" data-section="company" title="View the studio website">
-          🏢 <span data-bind="company.name">Studio</span> ↗
+          <span data-bind="company.name">Studio</span> ↗
         </a>
         <button class="resume-btn" type="button" data-resume-trigger>
           View Resume
@@ -281,9 +281,12 @@
   <!-- CHAT ASSISTANT -->
   <div class="chatbot" id="chatbot">
     <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat assistant" aria-expanded="false">
-      <span class="chatbot-toggle-icon-open">💬</span>
+      <svg class="chatbot-toggle-icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+        focusable="false">
+        <path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.9 8.9 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
+      </svg>
       <span class="chatbot-toggle-icon-close">✕</span>
-      <span class="chatbot-pulse-ring"></span>
     </button>
 
     <div class="chatbot-window" id="chatbotWindow" aria-hidden="true">

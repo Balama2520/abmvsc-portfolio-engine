@@ -91,12 +91,20 @@
     "company.heroParagraph": co.heroParagraph || co.description || "",
   };
 
+  // Contact cards carry a short text mark rather than a pictograph, so the row
+  // reads the same in every browser and stays legible at 11px.
+  const initialsOf = (text) => {
+    const words = String(text || "").trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return "↗";
+    return (words.length > 1 ? words[0][0] + words[1][0] : words[0].slice(0, 2)).toUpperCase();
+  };
+
   // Contact link cards — explicit config first, otherwise auto-built
   const contactLinks = () => {
     const explicit = arr(cfg.contact && cfg.contact.links);
     if (explicit.length) {
       return explicit.map((l) => ({
-        icon: l.icon || "↗",
+        icon: l.icon || initialsOf(l.label),
         label: l.label,
         sub: l.sub || "",
         url: l.url || "#",
@@ -107,7 +115,7 @@
     const out = [];
     if (!isStudio && co.name) {
       out.push({
-        icon: "🏢",
+        icon: initialsOf(co.name),
         label: co.name,
         sub: co.descriptor || "Company",
         url: co.studioUrl || "studio.html",
@@ -116,7 +124,7 @@
     }
     if (isStudio && p.name) {
       out.push({
-        icon: "👤",
+        icon: initialsOf(p.name),
         label: `${p.name.split(" ")[0]}'s Portfolio`.replace("'s's", "'s"),
         sub: "Personal Portfolio",
         url: "index.html",
@@ -125,10 +133,10 @@
     }
     if (p.linkedin) out.push({ icon: "in", label: "LinkedIn", sub: "Professional Profile", url: p.linkedin, external: true });
     if (p.github)   out.push({ icon: "gh", label: "GitHub",   sub: "Code Repositories",    url: p.github,   external: true });
-    if (p.twitter)  out.push({ icon: "𝕏",  label: "Twitter / X", sub: "Updates",           url: p.twitter,  external: true });
-    if (p.website)  out.push({ icon: "🌐", label: "Website",  sub: "Personal site",        url: p.website,  external: true });
-    if (p.huggingface)  out.push({ icon: "🤗", label: "Hugging Face", sub: "Models & datasets", url: p.huggingface, external: true });
-    if (p.researchgate) out.push({ icon: "🔬", label: "ResearchGate", sub: "Publications",      url: p.researchgate, external: true });
+    if (p.twitter)  out.push({ icon: "X",  label: "Twitter / X", sub: "Updates",           url: p.twitter,  external: true });
+    if (p.website)  out.push({ icon: "W",  label: "Website",  sub: "Personal site",        url: p.website,  external: true });
+    if (p.huggingface)  out.push({ icon: "HF", label: "Hugging Face", sub: "Models & datasets", url: p.huggingface, external: true });
+    if (p.researchgate) out.push({ icon: "RG", label: "ResearchGate", sub: "Publications",      url: p.researchgate, external: true });
     if (p.resume)   out.push({ icon: "cv", label: "Resume",   sub: "Download the PDF",     url: p.resume,   external: false });
     return out;
   };
@@ -177,7 +185,7 @@
         </div>
         <h3>${esc(pr.name || "Untitled Project")}</h3>
         <p>${esc(pr.description || "")}</p>
-        ${pr.result ? `<div class="project-metric">✦ ${esc(pr.result)}</div>` : ""}
+        ${pr.result ? `<div class="project-metric">${esc(pr.result)}</div>` : ""}
         <p class="tech-stack">${arr(pr.tech).map(esc).join(" · ")}</p>
       </article>`;
     })
@@ -228,7 +236,7 @@
   const achievementCards = (items) => items
     .map((a) => `
       <article class="achievement-card">
-        <p class="achievement-tag">🏆 ${esc(a.issuer || "Recognition")}</p>
+        <p class="achievement-tag">${esc(a.issuer || "Recognition")}</p>
         <h3>${esc(a.title || "Achievement")}</h3>
         ${a.detail ? `<p>${esc(a.detail)}</p>` : ""}
         ${a.year ? `<span class="exp-date" style="display:inline-block; margin-top:8px;">${esc(a.year)}</span>` : ""}
@@ -249,7 +257,6 @@
   const pillarCards = (items) => items
     .map((b) => `
       <article class="pillar-box">
-        <div class="pillar-box-icon">${esc(b.icon || "◆")}</div>
         <h4>${esc(b.title || "Pillar")}</h4>
         ${b.text ? `<p style="font-size:13px; color:var(--text-muted); margin-top:8px;">${esc(b.text)}</p>` : ""}
       </article>`)
@@ -787,11 +794,11 @@
         "1. **Edit `config.js`** — your name, projects, skills, contact details and company identity all live in one file.\n" +
         "2. **`index.html`** renders your personal portfolio and **`studio.html`** renders your company page. Both read the same config.\n" +
         "3. **Zero dependencies** — no build step, no npm install, no framework.\n" +
-        "4. **I'm config-aware** — I answer questions using the data in `config.js`, with no external AI service.\n\n" +
+        "4. **I answer from `config.js`** — this is keyword matching, not a language model. No network call, no external service.\n\n" +
         "Try asking about **skills**, **projects** or **experience**.",
 
-      greeting: chat.greeting || `Hello! I'm ${p.name || "the portfolio owner"}'s AI assistant. Ask me about their projects, skills or experience.`,
-      studioGreeting: chat.studioGreeting || `Welcome to ${co.name || "the studio"}! Ask me about our products, capabilities or how to collaborate.`,
+      greeting: chat.greeting || `I answer questions about ${p.name || "the portfolio owner"}'s projects, skills and background, using the details on this page.`,
+      studioGreeting: chat.studioGreeting || `Welcome to ${co.name || "the studio"}. Ask me about our products, capabilities and how to work with us.`,
 
       summary: `**${p.name || "Portfolio Owner"}** — ${p.role || "Developer"}.\n\n${p.bio || ""}\n\n**Location:** ${p.location || "—"} | **Availability:** ${p.availability || "—"}`,
       skills: skillsText(),
@@ -819,10 +826,10 @@
       hobbies: custom.hobbies ||
         `${p.name || "The portfolio owner"} enjoys building things and learning new technology.`,
       fallback: custom.fallback ||
-        `I'm trained on ${p.name || "this"}'s portfolio. Ask about **skills**, **projects**, **experience**, **research** or **how to get in touch**.`,
-      joke: "Why do programmers prefer dark mode? Because light attracts bugs!",
-      thanks: "You're welcome! Ask anything else about the portfolio.",
-      bot: `I'm ${p.name || "the portfolio owner"}'s AI assistant, running entirely on this site's config — no external AI service.`,
+        `I answer from ${p.name || "this"}'s own details. Ask about **skills**, **projects**, **experience**, **research** or **how to get in touch**.`,
+      joke: "Why do programmers prefer dark mode? Because light attracts bugs.",
+      thanks: "You're welcome. Ask anything else about the portfolio.",
+      bot: `I'm a keyword assistant built into this site. I answer from the details in config.js, with no language model and no network call.`,
     };
 
     // Deep-dive answers become first-class topics
@@ -876,8 +883,8 @@
     const projectButtons = () =>
       projects.slice(0, 3).filter((pr) => pr.liveUrl || pr.githubUrl).map((pr) =>
         pr.liveUrl
-          ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🚀 ${esc(pr.name)}</a>`
-          : `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 ${esc(pr.name)}</a>`
+          ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">${esc(pr.name)}</a>`
+          : `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">${esc(pr.name)}</a>`
       ).join("\n            ");
 
     const getActions = (key) => {
@@ -891,19 +898,19 @@
       switch (key) {
         case "resume":
           return `<div class="chat-actions">
-            <button type="button" class="chat-action-btn primary" data-action="resume">📄 Open Resume</button>
-            <a href="${esc(resumeFile)}" download class="chat-action-btn">⬇️ Download PDF</a>
-            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn">✉️ Get in Touch</a>` : ""}
+            <button type="button" class="chat-action-btn primary" data-action="resume">Open Resume</button>
+            <a href="${esc(resumeFile)}" download class="chat-action-btn">Download PDF</a>
+            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn">Get in Touch</a>` : ""}
           </div>`;
 
         case "hiring":
         case "contact":
         case "location":
           return `<div class="chat-actions">
-            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn primary">✉️ Send Email</a>` : ""}
-            ${phone ? `<a href="${esc(phoneHref)}" class="chat-action-btn">📞 Call</a>` : ""}
-            <button type="button" class="chat-action-btn" data-action="resume">📄 View Resume</button>
-            ${linkedin ? `<a href="${esc(linkedin)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🔗 LinkedIn</a>` : ""}
+            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn primary">Send Email</a>` : ""}
+            ${phone ? `<a href="${esc(phoneHref)}" class="chat-action-btn">Call</a>` : ""}
+            <button type="button" class="chat-action-btn" data-action="resume">View Resume</button>
+            ${linkedin ? `<a href="${esc(linkedin)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">LinkedIn</a>` : ""}
           </div>`;
 
         case "projects":
@@ -912,13 +919,13 @@
         case "whyHire":
           return `<div class="chat-actions">
             ${projectButtons()}
-            ${github ? `<a href="${esc(github)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub</a>` : ""}
-            <button type="button" class="chat-action-btn" data-action="resume">📄 Resume</button>
+            ${github ? `<a href="${esc(github)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">GitHub</a>` : ""}
+            <button type="button" class="chat-action-btn" data-action="resume">Resume</button>
           </div>`;
 
         case "research": {
           const links = research.filter((r) => r.url).slice(0, 2).map((r, i) =>
-            `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn ${i === 0 ? "primary" : ""}">📚 ${esc(r.publisher || "Paper")}</a>`
+            `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn ${i === 0 ? "primary" : ""}">${esc(r.publisher || "Paper")}</a>`
           ).join("\n            ");
           return links ? `<div class="chat-actions">${links}</div>` : "";
         }
@@ -928,9 +935,9 @@
           return co.name
             ? `<div class="chat-actions">
                 ${isStudio
-                  ? `<a href="index.html" class="chat-action-btn primary">👤 ${esc((p.name || "Founder").split(" ")[0])}'s Portfolio</a>`
-                  : `<a href="${esc(studioHref)}" class="chat-action-btn primary">🏢 ${esc(co.name)}</a>`}
-                <button type="button" class="chat-action-btn" data-q="projects">🚀 Products</button>
+                  ? `<a href="index.html" class="chat-action-btn primary">${esc((p.name || "Founder").split(" ")[0])}'s Portfolio</a>`
+                  : `<a href="${esc(studioHref)}" class="chat-action-btn primary">${esc(co.name)}</a>`}
+                <button type="button" class="chat-action-btn" data-q="projects">Products</button>
               </div>`
             : "";
 

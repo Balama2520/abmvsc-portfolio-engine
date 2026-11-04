@@ -160,7 +160,7 @@ window.PORTFOLIO_CONFIG = {
 
     // The four reason cards. Delete the array to hide the grid.
     reasons: [
-      { title: "Delivery",        text: "Every project ships with a live link and a public repo — verifiable, not just claimed." },
+      { title: "Delivery",        text: "Every project ships with a live link and a public repo, so the work can be checked." },
       { title: "Full-stack + AI", text: "Equally comfortable in React/Node.js and PyTorch/LangChain — fewer handoffs, faster iteration." },
       { title: "Performance First", text: "Obsessed with sub-100ms response times, 95+ Lighthouse audits and resilient architectures." },
       { title: "Fast Ramp-up",    text: "A quick, self-directed learner with a track record of shipping complex software into production." },
@@ -196,7 +196,7 @@ window.PORTFOLIO_CONFIG = {
     {
       name: "Project One",
       category: "Web Application",
-      description: "A production web application with a modern frontend, scalable APIs and robust data persistence. Explain the problem it solves and who it is for.",
+      description: "A production web application with a modern frontend, scalable APIs and reliable data storage. Explain the problem it solves and who it is for.",
       tech: ["React", "Node.js", "PostgreSQL", "Docker"],
       liveUrl: "https://your-project.netlify.app",
       githubUrl: "https://github.com/yourusername/project-one",
@@ -314,7 +314,7 @@ window.PORTFOLIO_CONFIG = {
 
     name: "Your Studio",
     descriptor: "Technology & Innovation Studio",
-    tagline: "Engineering Ideas. Empowering Tomorrow.",
+    tagline: "Engineering ideas, shipped.",
     philosophy: "Build • Research • Innovate • Scale • Impact",
 
     // 2–3 sentences describing what the studio does and who it serves.
@@ -363,11 +363,11 @@ window.PORTFOLIO_CONFIG = {
 
     // The engineering pillars grid. Add or remove freely.
     pillars: [
-      { icon: "</>", title: "Software Engineering",  text: "React, TypeScript, Node.js, FastAPI and cloud microservices." },
-      { icon: "🥞",  title: "AI & Automation",       text: "LangChain, RAG pipelines, vector indexing and workflow automation." },
-      { icon: "📊",  title: "Data & Analytics",      text: "Python, statistical modelling, dashboards and telemetry." },
-      { icon: "☁️",  title: "Cloud & Distributed Systems", text: "Containerised microservices, Docker, AWS and automated CI/CD." },
-      { icon: "🧪",  title: "Research & Innovation", text: "Benchmarked models, algorithm design and open-source science." },
+      { title: "Software Engineering",  text: "React, TypeScript, Node.js, FastAPI and cloud microservices." },
+      { title: "AI & Automation",       text: "LangChain, RAG pipelines, vector indexing and workflow automation." },
+      { title: "Data & Analytics",      text: "Python, statistical modelling, dashboards and telemetry." },
+      { title: "Cloud & Distributed Systems", text: "Containerised microservices, Docker, AWS and automated CI/CD." },
+      { title: "Research & Innovation", text: "Benchmarked models, algorithm design and open-source science." },
     ],
 
     // The studio research cards. Leave [] to reuse top-level `research`.
@@ -416,7 +416,7 @@ window.PORTFOLIO_CONFIG = {
     greeting: "Hi. I answer questions about Alex's projects, skills, experience and how to get in touch, using the details on this site.",
 
     // Opening message on studio.html.
-    studioGreeting: "Welcome to our studio! Ask me about our products, capabilities or how we can collaborate.",
+    studioGreeting: "Welcome to our studio. Ask me about our products, capabilities or how we can collaborate.",
 
     // ── Deep-dive answers (optional) ──────────────────────────────
     // Teach the chatbot to answer specialist questions. Each entry adds
