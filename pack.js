@@ -211,6 +211,19 @@
     return [...refs].filter(Boolean);
   };
 
+  // A web manifest names its icons as JSON, so no HTML attribute points at them.
+  const collectIconRefs = (manifestJson) => {
+    let manifest;
+    try {
+      manifest = JSON.parse(manifestJson);
+    } catch (err) {
+      return [];
+    }
+    return (manifest.icons || [])
+      .map((icon) => (icon && icon.src ? String(icon.src).replace(/^\//, "") : ""))
+      .filter(Boolean);
+  };
+
   // Assets the pages name only through config, so no attribute points at them.
   const configAssets = (config) => {
     const personal = config.personal || {};
@@ -232,6 +245,8 @@
       const html = files[page];
       if (html) collectRefs(html).forEach((ref) => wanted.add(ref));
     });
+    const manifest = files["site.webmanifest"];
+    if (manifest) collectIconRefs(manifest).forEach((path) => wanted.add(path));
     configAssets(config).forEach((path) => wanted.add(path));
     extra.forEach((path) => wanted.add(path));
 
@@ -302,6 +317,7 @@
     writeZip,
     readZip,
     collectRefs,
+    collectIconRefs,
     buildManifest,
     checkUpload,
     uploadPath,

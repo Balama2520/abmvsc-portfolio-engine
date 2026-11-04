@@ -22,18 +22,22 @@ const loadConfig = () => {
 const TEXT = /\.(html|css|js|txt|xml|toml|json|webmanifest)$/;
 
 // Loads the project the way the generator does: the core files, plus whatever
-// the pages turn out to reference.
+// the pages turn out to reference. References resolve to a fixed point because
+// a named file can itself name more files (site.webmanifest names its icons).
 const loadSite = () => {
   const config = loadConfig();
-  const pages = { "index.html": read("index.html"), "studio.html": read("studio.html") };
-  const first = Pack.buildManifest({ files: pages, config });
-  const files = { ...pages };
+  const files = { "index.html": read("index.html"), "studio.html": read("studio.html") };
 
-  [...first.include, ...first.missing].forEach((path) => {
-    const absolute = join(ROOT, path);
-    if (!existsSync(absolute)) return;
-    files[path] = TEXT.test(path) ? read(path) : readBytes(path);
-  });
+  for (;;) {
+    const { include, missing } = Pack.buildManifest({ files, config });
+    const toLoad = [...new Set([...include, ...missing])].filter(
+      (path) => !(path in files) && existsSync(join(ROOT, path))
+    );
+    if (!toLoad.length) break;
+    toLoad.forEach((path) => {
+      files[path] = TEXT.test(path) ? read(path) : readBytes(path);
+    });
+  }
 
   return { config, files };
 };
@@ -83,6 +87,14 @@ test("pack: a generated archive contains every file its pages ask for", () => {
         assert.ok(present.has(ref), `${entry.path} points at ${ref}, which is not in the archive`);
       });
     });
+
+  // The web manifest names its icons as JSON, so the archive has to carry those
+  // too — otherwise an unzipped copy 404s on its own home-screen icons.
+  const manifest = back.find((e) => e.path === "site.webmanifest");
+  assert.ok(manifest, "site.webmanifest should be in the archive");
+  Pack.collectIconRefs(decoder.decode(manifest.data)).forEach((ref) => {
+    assert.ok(present.has(ref), `site.webmanifest points at ${ref}, which is not in the archive`);
+  });
 });
 
 test("pack: crc32 matches the reference value for a known string", () => {

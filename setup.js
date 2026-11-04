@@ -1101,17 +1101,94 @@
     }
   };
 
-  const download = () => {
-    const blob = new Blob([buildConfigSource()], { type: "text/javascript" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "config.js";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  const saveFile = (data, filename, type) => {
+    const url = URL.createObjectURL(new Blob([data], { type }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
+  };
+
+  const download = () => {
+    saveFile(buildConfigSource(), "config.js", "text/javascript");
     toast("Downloaded <strong>config.js</strong> — drop it into your project folder, replacing the existing one.");
+  };
+
+  /* ── the whole website, as a ZIP ─────────────────────────────── */
+
+  // Text extensions in this project are safe to read as strings; everything
+  // else (images, the resume PDF) has to stay bytes or the file arrives corrupt.
+  const TEXT_FILE = /\.(?:html|css|js|json|txt|xml|toml|webmanifest|svg)$/i;
+
+  const fetchSiteFile = async (path) => {
+    const res = await fetch(path, { cache: "no-store" });
+    if (!res.ok) throw new Error(`${path} returned HTTP ${res.status}`);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    return TEXT_FILE.test(path) ? new TextDecoder().decode(bytes) : bytes;
+  };
+
+  const zipName = () => {
+    const slug = str(buildConfig().personal.name)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    return `${slug || "portfolio"}-website.zip`;
+  };
+
+  // The archive is built from the files the pages name, so an unzipped copy
+  // opens without a single missing request. Anything referenced but absent is
+  // reported rather than shipped as a broken link.
+  const buildZip = async () => {
+    const config = Pack.withUploadPaths(buildConfig(), uploads);
+    const pages = {
+      "index.html": await fetchSiteFile("index.html"),
+      "studio.html": await fetchSiteFile("studio.html"),
+    };
+    const { include, missing } = Pack.buildManifest({ files: pages, config });
+    const wanted = [...new Set([...include, ...missing])].sort();
+
+    const entries = [];
+    const absent = [];
+    for (const path of wanted) {
+      if (path === "config.js") {
+        entries.push({ path, data: buildConfigSource() });
+        continue;
+      }
+      const upload = [uploads.photo, uploads.resume].find((file) => file && file.path === path);
+      if (upload) {
+        entries.push({ path, data: upload.bytes });
+        continue;
+      }
+      try {
+        entries.push({ path, data: await fetchSiteFile(path) });
+      } catch (err) {
+        absent.push(path);
+      }
+    }
+
+    if (absent.length) throw new Error(`these files are missing: ${absent.join(", ")}`);
+    return Pack.writeZip(entries);
+  };
+
+  const downloadZip = async () => {
+    const btn = $("#genZipBtn");
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Building the ZIP…";
+    try {
+      saveFile(await buildZip(), zipName(), "application/zip");
+      toast("Downloaded your website. Unzip it, then drag the folder onto Netlify Drop.");
+    } catch (err) {
+      toast(previewFetchable
+        ? `Could not build the ZIP — ${esc(err.message)}.`
+        : "Building the ZIP needs the page served over http(s). Run <code>npx serve .</code> and open the address it prints.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
   };
 
   const copy = async () => {
@@ -1167,6 +1244,7 @@
     form.addEventListener("click", onFormEvent);
 
     $("#genDownloadBtn").addEventListener("click", download);
+    $("#genZipBtn").addEventListener("click", downloadZip);
     $("#genCopyBtn").addEventListener("click", copy);
     $("#genRefreshCode").addEventListener("click", updateOutput);
     $("#genRefreshPreview").addEventListener("click", () => refreshPreview(true));
