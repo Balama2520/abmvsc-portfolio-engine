@@ -279,6 +279,29 @@ test("the studio card hides itself when no card image is configured", async () =
   }
 });
 
+test("the demo banner offers one clear route to the generator", async () => {
+  const cfg = readConfig();
+  const expected = cfg.theme && cfg.theme.showDemoNotice === true;
+
+  for (const file of ["index.html", "studio.html"]) {
+    const { doc } = await loadPage(file);
+    const banner = doc.querySelector("[data-demo-banner]");
+    assert.ok(banner, `${file} is missing the demo banner`);
+    assert.equal(
+      banner.hasAttribute("hidden"),
+      !expected,
+      `${file} demo banner visibility does not follow theme.showDemoNotice`
+    );
+    if (expected) {
+      const cta = banner.querySelector("a");
+      assert.ok(
+        cta && /setup\.html/.test(cta.getAttribute("href") || ""),
+        `${file} demo banner has no link to the generator`
+      );
+    }
+  }
+});
+
 test("every data-list in the HTML is registered in the engine", () => {
   const script = fs.readFileSync(path.join(ROOT, "script.js"), "utf8");
   const required = new Set();

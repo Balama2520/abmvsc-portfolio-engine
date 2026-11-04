@@ -1488,6 +1488,36 @@ footer {
   font-size: 12px;
 }
 
+/* Sample-content strip at the top of the demo site, carrying one clear action.
+   Shown only while config.js is still the shipped sample
+   (theme.showDemoNotice === true). A generated site never renders it. It sits
+   in normal flow, so it scrolls away with the page and cannot cover content. */
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+}
+
+.demo-banner-cta {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.demo-banner-cta:focus-visible {
+  outline-color: #fff;
+}
+
 /* "This is the demo" notice — shown only while config.js is still the shipped
    sample (theme.showDemoNotice === true in config.js). Removable via config. */
 .demo-notice {

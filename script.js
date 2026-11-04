@@ -571,22 +571,36 @@
     el.textContent = "Made with the Portfolio Engine";
   };
 
-  // 3g. Demo notice — [data-demo-notice]
+  // 3g. Demo chrome — [data-demo-banner] and [data-demo-notice]
   // Shown only while config.js is still the shipped sample
   // (theme.showDemoNotice === true). A config made in setup.html always has
-  // this off, so the notice disappears the moment the site becomes yours.
+  // this off, so the sample chrome disappears the moment the site becomes
+  // yours. The top strip carries one clear action; the corner notice repeats
+  // the same line for people who have scrolled away from the top.
+  const DEMO_TEXT = "This is sample content.";
   const hydrateDemoNotice = () => {
-    const el = q("[data-demo-notice]");
-    if (!el) return;
-    if (theme.showDemoNotice !== true) {
-      setHidden(el, true);
-      return;
+    const on = theme.showDemoNotice === true;
+
+    const banner = q("[data-demo-banner]");
+    if (banner) {
+      setHidden(banner, !on);
+      if (on) {
+        banner.innerHTML =
+          `<span class="demo-banner-text">${DEMO_TEXT}</span>` +
+          '<a class="demo-banner-cta" href="setup.html">Create your own portfolio</a>';
+      }
     }
-    setHidden(el, false);
-    el.innerHTML =
-      '<span class="demo-notice-tag">Demo</span>' +
-      '<span class="demo-notice-text">This is sample content.</span>' +
-      '<a href="setup.html">Make it yours →</a>';
+
+    const notice = q("[data-demo-notice]");
+    if (notice) {
+      setHidden(notice, !on);
+      if (on) {
+        notice.innerHTML =
+          '<span class="demo-notice-tag">Demo</span>' +
+          `<span class="demo-notice-text">${DEMO_TEXT}</span>` +
+          '<a href="setup.html">Make it yours →</a>';
+      }
+    }
   };
 
   const hydrate = () => {

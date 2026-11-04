@@ -56,6 +56,15 @@ test("pack: the manifest picks up the icons, manifest and social image", () => {
   }
 });
 
+test("pack: the generator page is never part of a generated site", () => {
+  const { config, files } = loadSite();
+  const { include } = Pack.buildManifest({ files, config });
+  assert.ok(
+    !include.includes("setup.html"),
+    "setup.html is the builder, not part of a visitor's site — it must not be packaged"
+  );
+});
+
 test("pack: an archive round-trips through the reader", () => {
   const entries = [
     { path: "index.html", data: "<!doctype html><title>One</title>" },
