@@ -452,9 +452,12 @@ window.PORTFOLIO_CONFIG = {
      Colours and fonts, applied at runtime — no CSS editing needed.
      ═══════════════════════════════════════════════════════════════ */
   theme: {
-    primaryColor: "#10264B",   // Navbar, headings, dark sections
-    accentColor:  "#FF7900",   // Highlights, call-to-action accents
-    blueColor:    "#2563EB",   // Links, tags, active states
+    // "light", "dark" or "minimal". Minimal keeps the light palette but drops
+    // the shadows and softens the accent, for a flatter, quieter page.
+    mode: "light",
+
+    primaryColor: "#10264B",   // Navbar, dark banners, page furniture
+    accentColor:  "#FF7900",   // Buttons, highlights. Text on top uses primaryColor.
     fontHeading:  "'Space Grotesk', sans-serif",
     fontBody:     "'Inter', sans-serif",
     fontMono:     "'IBM Plex Mono', monospace",

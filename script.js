@@ -321,15 +321,43 @@
      3. HYDRATION PASSES
      ══════════════════════════════════════════════════════════════ */
 
-  // 3a. Theme colours + fonts
+  // Blends a hex colour toward black (amount < 0) or white (amount > 0). One
+  // accent value then yields a readable text shade and a soft background,
+  // instead of asking the visitor to pick three colours that agree.
+  const blend = (hex, amount) => {
+    const match = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(hex).trim());
+    if (!match) return hex;
+    const digits = match[1].length === 3
+      ? match[1].replace(/./g, (c) => c + c)
+      : match[1];
+    const to = amount < 0 ? 0 : 255;
+    const ratio = Math.min(1, Math.abs(amount));
+    const channels = [0, 2, 4].map((i) => {
+      const value = parseInt(digits.slice(i, i + 2), 16);
+      return Math.round(value + (to - value) * ratio).toString(16).padStart(2, "0");
+    });
+    return "#" + channels.join("");
+  };
+
+  // 3a. Theme mode, colours + fonts. Mode is "light", "dark" or "minimal".
   const hydrateTheme = () => {
     const root = document.documentElement;
-    if (theme.primaryColor) root.style.setProperty("--navy", theme.primaryColor);
-    if (theme.accentColor)  root.style.setProperty("--orange", theme.accentColor);
-    if (theme.blueColor)    root.style.setProperty("--blue", theme.blueColor);
-    if (theme.fontHeading)  root.style.setProperty("--font-heading", theme.fontHeading);
-    if (theme.fontBody)     root.style.setProperty("--font-body", theme.fontBody);
-    if (theme.fontMono)     root.style.setProperty("--font-mono", theme.fontMono);
+    const dark = theme.mode === "dark";
+    root.dataset.theme = theme.mode === "dark" || theme.mode === "minimal" ? theme.mode : "light";
+
+    if (theme.primaryColor) {
+      root.style.setProperty("--navy", theme.primaryColor);
+      root.style.setProperty("--on-accent", theme.primaryColor);
+    }
+    if (theme.accentColor) {
+      root.style.setProperty("--accent", theme.accentColor);
+      root.style.setProperty("--accent-hover", blend(theme.accentColor, dark ? 0.14 : -0.14));
+      root.style.setProperty("--accent-text", blend(theme.accentColor, dark ? 0.4 : -0.34));
+      root.style.setProperty("--accent-soft", blend(theme.accentColor, dark ? -0.82 : 0.9));
+    }
+    if (theme.fontHeading) root.style.setProperty("--font-heading", theme.fontHeading);
+    if (theme.fontBody) root.style.setProperty("--font-body", theme.fontBody);
+    if (theme.fontMono) root.style.setProperty("--font-mono", theme.fontMono);
   };
 
   // 3b. <head> — title, meta, social cards, structured data

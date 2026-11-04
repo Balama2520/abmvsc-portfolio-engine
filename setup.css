@@ -1,6 +1,6 @@
 /* ==========================================================================
    Portfolio Engine — Generator UI (setup.html)
-   Loads AFTER style.css so it can reuse the design tokens (--navy, --orange…).
+   Loads after style.css so it can reuse the design tokens defined there.
    Everything is scoped under .gen-* so it can never leak into the site.
    ========================================================================== */
 
@@ -13,7 +13,7 @@ body.gen-body {
   position: sticky;
   top: 0;
   z-index: 500;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--bar-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
@@ -34,7 +34,7 @@ body.gen-body {
   gap: 10px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: var(--navy);
+  color: var(--text);
   font-size: 17px;
   margin-right: auto;
 }
@@ -58,8 +58,8 @@ body.gen-body {
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  padding: 9px 14px;
-  border-radius: 10px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
@@ -77,14 +77,14 @@ body.gen-body {
 }
 
 .gen-btn-primary {
-  background: var(--orange);
-  border-color: var(--orange);
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 
 .gen-btn-primary:hover {
-  filter: brightness(0.94);
-  border-color: var(--orange);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .gen-btn-dark {
@@ -99,9 +99,9 @@ body.gen-body {
 }
 
 .gen-btn-sm {
-  padding: 5px 9px;
+  padding: 4px 8px;
   font-size: 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .gen-btn-danger {
@@ -165,7 +165,7 @@ body.gen-body {
 .gen-banner code {
   background: rgba(255, 255, 255, 0.14);
   padding: 2px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 12px;
 }
@@ -191,7 +191,7 @@ body.gen-body {
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--text);
   margin-right: auto;
 }
 
@@ -221,8 +221,8 @@ body.gen-body {
 }
 
 .gen-rail-step.is-active {
-  border-color: var(--orange);
-  background: var(--orange-soft);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .gen-rail-step.is-done .gen-rail-num {
@@ -246,9 +246,9 @@ body.gen-body {
 }
 
 .gen-rail-step.is-active .gen-rail-num {
-  background: var(--orange);
-  border-color: var(--orange);
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 
 .gen-rail-text {
@@ -260,7 +260,7 @@ body.gen-body {
 
 .gen-rail-text b {
   font-size: 13px;
-  color: var(--navy);
+  color: var(--text);
 }
 
 .gen-rail-text small {
@@ -295,7 +295,7 @@ body.gen-body {
 
 .gen-launch h2 {
   font-size: 18px;
-  color: var(--navy);
+  color: var(--text);
   margin-bottom: 6px;
 }
 
@@ -383,16 +383,14 @@ body.gen-body {
   user-select: none;
 }
 
-.gen-card-head h2 {
-  font-size: 15px;
-  color: var(--navy);
-  margin-right: auto;
+.gen-card-head:hover {
+  background: var(--border);
 }
 
-.gen-card-head .gen-icon {
-  font-size: 16px;
-  width: 22px;
-  text-align: center;
+.gen-card-head h2 {
+  font-size: 15px;
+  color: var(--text);
+  margin-right: auto;
 }
 
 .gen-card-head .gen-count {
@@ -401,7 +399,7 @@ body.gen-body {
   color: var(--text-soft);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 999px;
   padding: 2px 10px;
 }
 
@@ -460,16 +458,21 @@ body.gen-body {
 }
 
 .gen-input,
-.gen-textarea {
+.gen-textarea,
+.gen-select {
   font: inherit;
   font-size: 14px;
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--border-strong);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
   transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.gen-select {
+  cursor: pointer;
 }
 
 .gen-textarea {
@@ -479,10 +482,10 @@ body.gen-body {
 }
 
 .gen-input:focus,
-.gen-textarea:focus {
-  outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+.gen-textarea:focus,
+.gen-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .gen-help {
@@ -503,7 +506,7 @@ body.gen-body {
   height: 40px;
   padding: 2px;
   border: 1px solid var(--border-strong);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   cursor: pointer;
   flex: none;
@@ -521,7 +524,7 @@ body.gen-body {
 .gen-check input {
   width: 18px;
   height: 18px;
-  accent-color: var(--orange);
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
@@ -549,8 +552,8 @@ body.gen-body {
 }
 
 .gen-upload-pick:focus-within .gen-btn {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .gen-upload-name {
@@ -593,7 +596,7 @@ body.gen-body {
 
 .gen-list-head h3 {
   font-size: 13px;
-  color: var(--navy);
+  color: var(--text);
   margin-right: auto;
 }
 
@@ -668,7 +671,7 @@ body.gen-body {
 
 .gen-panel-head h2 {
   font-size: 13px;
-  color: var(--navy);
+  color: var(--text);
   margin-right: auto;
 }
 
@@ -681,7 +684,7 @@ body.gen-body {
   gap: 6px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 3px;
 }
 
@@ -693,8 +696,14 @@ body.gen-body {
   background: transparent;
   color: var(--text-muted);
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.gen-tab:hover {
+  color: var(--text);
+  background: var(--bg-alt);
 }
 
 .gen-tab.is-active {
@@ -707,15 +716,14 @@ body.gen-body {
   height: 420px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: #fff;
+  background: var(--surface);
   display: block;
 }
 
 .gen-preview-empty {
   font-size: 13px;
   color: var(--text-muted);
-  background: var(--orange-soft);
-  border: 1px solid #fed7aa;
+  background: var(--accent-soft);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
   line-height: 1.6;
@@ -725,7 +733,7 @@ body.gen-body {
 /* ── Meter ───────────────────────────────────────────────────────────── */
 .gen-meter {
   height: 8px;
-  border-radius: 20px;
+  border-radius: 999px;
   background: var(--bg-alt);
   overflow: hidden;
   margin: 8px 0 6px;
@@ -735,7 +743,7 @@ body.gen-body {
   display: block;
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, var(--blue), var(--orange));
+  background: var(--accent);
   transition: width 0.3s ease;
 }
 
@@ -754,8 +762,8 @@ body.gen-body {
   color: #fff;
   font-size: 13.5px;
   padding: 12px 20px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s, transform 0.2s;
@@ -770,13 +778,13 @@ body.gen-body {
 }
 
 .gen-toast a {
-  color: var(--orange);
+  color: var(--accent);
   text-decoration: underline;
 }
 
 /* ── "What now?" panel ───────────────────────────────────────────────── */
 .gen-whatnow {
-  border-color: var(--orange);
+  border-color: var(--accent);
 }
 
 .gen-whatnow-steps {
@@ -807,8 +815,8 @@ body.gen-body {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--orange);
-  color: var(--navy);
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 11px;
   font-weight: 700;
 }
@@ -822,7 +830,7 @@ body.gen-body {
 }
 
 .gen-whatnow-steps a {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ── Footer note ─────────────────────────────────────────────────────── */
@@ -835,5 +843,5 @@ body.gen-body {
 }
 
 .gen-foot a {
-  color: var(--accent);
+  color: var(--accent-text);
 }

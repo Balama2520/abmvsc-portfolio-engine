@@ -1,30 +1,43 @@
-/* ==========================================================================
-   Clean, Professional Portfolio & Studio Design System
-   Human-crafted, readable, high-contrast, zero AI-template bloat
-   ========================================================================== */
+/* Design tokens. One accent, one neutral scale, one shadow, one spacing
+   scale. Every rule below reads from these, so a theme is a token swap. */
 
 :root {
+  /* Neutrals. --navy is the brand dark; config.theme.primaryColor overrides it
+     at runtime, and the rest of the scale stays put. */
+  --navy: #10264b;
   --bg: #f8fafc;
   --bg-alt: #f1f5f9;
   --surface: #ffffff;
+  --bar-bg: rgba(248, 250, 252, 0.95);
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
   --text: #0f172a;
   --text-muted: #475569;
   --text-soft: #64748b;
-  --primary: #0f172a;
-  --navy: #10264b;
-  --blue: #2563eb;
-  --accent: var(--blue);
-  --accent-soft: #dbeafe;
-  --accent-dark: #1d4ed8;
-  --orange: #ff7900;
-  --orange-soft: #fff3e6;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --radius: 14px;
+
+  /* Accent — orange. Fills carry navy text. Text on a light background uses
+     --accent-text, a darker shade that clears 4.5:1 against --bg and --surface. */
+  --accent: #ff7900;
+  --accent-hover: #e06b00;
+  --accent-text: #c2410c;
+  --accent-soft: #fff3e6;
+  --on-accent: #10264b;
+
+  /* Spacing — 4px base */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+
+  --radius: 12px;
   --radius-sm: 8px;
   --max-width: 1100px;
-  --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.10);
+  --shadow: 0 1px 2px rgba(16, 38, 75, 0.06), 0 10px 30px rgba(16, 38, 75, 0.08);
 
   /* Fonts — overwritten at runtime by config.theme.font* */
   --font-heading: "Space Grotesk", "Inter", sans-serif;
@@ -32,9 +45,62 @@
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 }
 
+:root[data-theme="dark"] {
+  --bg: #0b1220;
+  --bg-alt: #0f1830;
+  --surface: #121c31;
+  --bar-bg: rgba(11, 18, 32, 0.9);
+  --border: #22304a;
+  --border-strong: #33445f;
+  --text: #e8eef7;
+  --text-muted: #b3c0d4;
+  --text-soft: #8fa0b8;
+  --accent-text: #ffa64d;
+  --accent-soft: #2a1c0a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Minimal keeps the light palette but removes depth: no shadows, tighter
+   corners, heavier rules. A quieter page for people who want the content to
+   carry it. */
+:root[data-theme="minimal"] {
+  --bg: #ffffff;
+  --bg-alt: #fafafa;
+  --surface: #ffffff;
+  --bar-bg: rgba(255, 255, 255, 0.96);
+  --border: #d8d8d8;
+  --border-strong: #b8b8b8;
+  --text: #111111;
+  --text-muted: #4a4a4a;
+  --text-soft: #6b6b6b;
+  --accent-soft: #f3f3f3;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --shadow: none;
+}
+
 /* The [hidden] attribute must always win over component display rules */
 [hidden] {
   display: none !important;
+}
+
+/* One visible focus ring for every control, so keyboard use is never guesswork. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 * {
@@ -94,10 +160,10 @@ strong {
   width: 1px;
   height: 1px;
   overflow: hidden;
-  background: var(--primary);
+  background: var(--navy);
   color: #fff;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   z-index: 2000;
 }
 
@@ -114,14 +180,14 @@ strong {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(248, 250, 252, 0.95);
+  background: var(--bar-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   transition: box-shadow 0.2s ease;
 }
 
 .navbar.scrolled {
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .navbar .container {
@@ -136,7 +202,7 @@ strong {
 .logo {
   font-size: 20px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.5px;
   display: flex;
   align-items: center;
@@ -144,11 +210,11 @@ strong {
 }
 
 .logo-accent {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .brand-v {
-  color: var(--orange);
+  color: var(--accent-text);
 }
 
 nav {
@@ -166,7 +232,7 @@ nav a {
 
 nav a:hover,
 nav a.active {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .nav-actions {
@@ -179,8 +245,8 @@ nav a.active {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #ffffff;
-  color: var(--navy);
+  background: var(--surface);
+  color: var(--text);
   border: 1px solid var(--border-strong);
   padding: 8px 14px;
   border-radius: var(--radius-sm);
@@ -190,16 +256,16 @@ nav a.active {
 }
 
 .company-switch-btn:hover {
-  border-color: var(--orange);
-  color: var(--orange);
-  background: var(--orange-soft);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  background: var(--accent-soft);
   transform: translateY(-1px);
 }
 
 .resume-btn {
   display: inline-flex;
   align-items: center;
-  background: var(--primary);
+  background: var(--navy);
   color: #fff;
   padding: 9px 16px;
   border-radius: var(--radius-sm);
@@ -245,14 +311,14 @@ nav a.active {
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid var(--surface);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -267,20 +333,14 @@ nav a.active {
   height: 8px;
   background: #22c55e;
   border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.3); }
 }
 
 .studio-pill-tag {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--orange-soft);
-  color: var(--orange);
+  background: var(--accent-soft);
+  color: var(--accent-text);
   border: 1px solid rgba(255, 121, 0, 0.25);
   font-size: 12px;
   font-weight: 600;
@@ -294,13 +354,13 @@ nav a.active {
   font-size: clamp(40px, 5.5vw, 64px);
   line-height: 1.08;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   margin-bottom: 20px;
   letter-spacing: -1.5px;
 }
 
 .hero-accent {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .hero-description {
@@ -337,7 +397,7 @@ nav a.active {
   display: block;
   font-size: 22px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.5px;
 }
 
@@ -368,7 +428,7 @@ nav a.active {
   display: inline-flex;
   align-items: center;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   padding: 12px 22px;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -379,7 +439,7 @@ nav a.active {
 }
 
 .btn-primary:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -398,7 +458,7 @@ nav a.active {
 
 .btn-secondary:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-soft);
 }
 
@@ -417,13 +477,13 @@ nav a.active {
 
 .btn-studio:hover {
   background: #091730;
-  border-color: var(--orange);
+  border-color: var(--accent);
   transform: translateY(-1px);
 }
 
 /* SKILLS BAR MARQUEE */
 .skills-bar {
-  background: var(--primary);
+  background: var(--navy);
   padding: 14px 0;
   overflow: hidden;
 }
@@ -473,20 +533,20 @@ nav a.active {
   display: block;
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   margin-bottom: 8px;
 }
 
 .section-label-orange {
-  color: var(--orange);
+  color: var(--accent-text);
 }
 
 .section h2 {
   font-size: 32px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.5px;
 }
 
@@ -507,7 +567,7 @@ nav a.active {
 .company-feature-banner h3 {
   font-size: 24px;
   font-weight: 800;
-  color: var(--navy);
+  color: var(--text);
   margin-bottom: 8px;
 }
 
@@ -522,7 +582,7 @@ nav a.active {
   font-size: 16px;
   font-weight: 700;
   font-style: italic;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 12px;
 }
 
@@ -571,7 +631,7 @@ nav a.active {
 .reason-title {
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
   margin-bottom: 6px;
 }
 
@@ -607,13 +667,13 @@ nav a.active {
 .pillar-box-icon {
   font-size: 26px;
   margin-bottom: 10px;
-  color: var(--orange);
+  color: var(--accent-text);
 }
 
 .pillar-box h4 {
   font-size: 14px;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--text);
   line-height: 1.3;
 }
 
@@ -626,12 +686,12 @@ nav a.active {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: var(--navy);
+  color: var(--text);
   margin-top: 24px;
 }
 
 .philosophy-banner span {
-  color: var(--orange);
+  color: var(--accent-text);
 }
 
 /* PROJECTS GRID */
@@ -654,7 +714,7 @@ nav a.active {
 }
 
 .project-card:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   transform: translateY(-2px);
 }
 
@@ -672,7 +732,7 @@ nav a.active {
 .project-tag {
   display: inline-block;
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -684,7 +744,7 @@ nav a.active {
 .project-card h3 {
   font-size: 20px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.3px;
 }
 
@@ -697,7 +757,7 @@ nav a.active {
 .project-metric {
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-soft);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
@@ -717,7 +777,7 @@ nav a.active {
 }
 
 .project-links a {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 13px;
   font-weight: 600;
   transition: opacity 0.2s;
@@ -777,11 +837,11 @@ nav a.active {
 .exp-header h3 {
   font-size: 20px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
 }
 
 .exp-company {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 14px;
   font-weight: 600;
   margin-top: 4px;
@@ -827,8 +887,8 @@ nav a.active {
 }
 
 .achievement-highlight {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--navy);
+  border-color: var(--navy);
 }
 
 .achievement-highlight h3,
@@ -851,7 +911,7 @@ nav a.active {
 .achievement-card h3 {
   font-size: 18px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
 }
 
 .achievement-card p {
@@ -861,7 +921,7 @@ nav a.active {
 }
 
 .achievement-link {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 13px;
   font-weight: 600;
   margin-top: 4px;
@@ -869,6 +929,11 @@ nav a.active {
 
 .achievement-link:hover {
   text-decoration: underline;
+}
+
+/* On the dark highlight card the light accent is the readable one. */
+.achievement-highlight .achievement-link {
+  color: var(--accent);
 }
 
 /* CERTIFICATIONS */
@@ -890,7 +955,7 @@ nav a.active {
 .cert-issuer {
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 6px;
@@ -899,7 +964,7 @@ nav a.active {
 .cert-card h3 {
   font-size: 15px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
   line-height: 1.4;
 }
 
@@ -916,7 +981,7 @@ nav a.active {
 }
 
 .inline-links a {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -927,7 +992,7 @@ nav a.active {
 
 /* CONTACT */
 .contact-section {
-  background: var(--primary);
+  background: var(--navy);
 }
 
 .contact-section .section-label {
@@ -960,7 +1025,7 @@ nav a.active {
 }
 
 .contact-section .btn-primary:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
 }
 
 .contact-phone {
@@ -994,7 +1059,7 @@ nav a.active {
   width: 36px;
   height: 36px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1049,7 +1114,7 @@ nav a.active {
   margin: 6vh auto 0;
   background: var(--surface);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1064,7 +1129,7 @@ nav a.active {
   border-bottom: 1px solid var(--border);
   font-size: 14px;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--text);
   flex-shrink: 0;
 }
 
@@ -1075,7 +1140,7 @@ nav a.active {
 }
 
 .resume-modal-actions a {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1116,9 +1181,7 @@ nav a.active {
   }
 }
 
-/* ==========================================================================
-   ADVANCED REAL AI CHATBOT WIDGET
-   ========================================================================== */
+/* CHAT ASSISTANT */
 .chatbot {
   position: fixed;
   right: 20px;
@@ -1132,9 +1195,9 @@ nav a.active {
   border-radius: 50%;
   border: none;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 22px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1144,23 +1207,8 @@ nav a.active {
 }
 
 .chatbot-toggle:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
   transform: translateY(-2px);
-}
-
-.chatbot-pulse-ring {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 2px solid rgba(37, 99, 235, 0.4);
-  animation: pulse-ring 2.5s infinite;
-  pointer-events: none;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.15); opacity: 0; }
-  100% { transform: scale(0.95); opacity: 0; }
 }
 
 .chatbot-toggle-icon-close {
@@ -1175,10 +1223,6 @@ nav a.active {
   display: inline;
 }
 
-.chatbot.open .chatbot-pulse-ring {
-  display: none;
-}
-
 .chatbot-window {
   position: absolute;
   right: 0;
@@ -1190,7 +1234,7 @@ nav a.active {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1212,7 +1256,7 @@ nav a.active {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 18px;
-  background: linear-gradient(135deg, #10264b 0%, #0b1220 100%);
+  background: var(--navy);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
@@ -1222,14 +1266,7 @@ nav a.active {
   height: 9px;
   border-radius: 50%;
   background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
   display: inline-block;
-  animation: pulse-dot 2s infinite ease-in-out;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.85); }
 }
 
 .chatbot-header-title {
@@ -1281,14 +1318,14 @@ nav a.active {
 .chat-msg {
   max-width: 88%;
   padding: 11px 15px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   font-size: 13px;
   line-height: 1.55;
   word-break: break-word;
 }
 
 .chat-msg a {
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: underline;
   font-weight: 600;
 }
@@ -1304,7 +1341,7 @@ nav a.active {
   background: var(--bg-alt);
   border: 1px solid var(--border);
   padding: 2px 5px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .chat-msg.bot {
@@ -1312,19 +1349,16 @@ nav a.active {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
-  border-bottom-left-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
 
 .chat-msg.user {
   align-self: flex-end;
   background: var(--accent);
-  color: #fff;
-  border-bottom-right-radius: 2px;
+  color: var(--on-accent);
 }
 
 .chat-msg.user strong {
-  color: #fff;
+  color: var(--on-accent);
 }
 
 /* Action buttons inside bot messages */
@@ -1344,7 +1378,7 @@ nav a.active {
   font-size: 11px;
   font-weight: 600;
   padding: 5px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-strong);
   background: var(--bg);
   color: var(--text) !important;
@@ -1357,18 +1391,18 @@ nav a.active {
 .chat-action-btn:hover {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent) !important;
+  color: var(--accent-text) !important;
   transform: translateY(-1px);
 }
 
 .chat-action-btn.primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff !important;
+  color: var(--on-accent) !important;
 }
 
 .chat-action-btn.primary:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
 }
 
 .chatbot-quick-replies {
@@ -1397,7 +1431,7 @@ nav a.active {
 
 .chatbot-quick-replies button:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-soft);
 }
 
@@ -1422,15 +1456,14 @@ nav a.active {
 }
 
 .chatbot-input-row input:focus {
-  outline: none;
   border-color: var(--accent);
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .chatbot-input-row button {
   border: none;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   width: 38px;
   border-radius: var(--radius-sm);
   font-size: 14px;
@@ -1443,7 +1476,7 @@ nav a.active {
 }
 
 .chatbot-input-row button:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
 }
 
 /* FOOTER */
@@ -1464,7 +1497,7 @@ footer {
 }
 
 .built-by a {
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 600;
   text-decoration: none;
 }
@@ -1488,15 +1521,15 @@ footer {
   background: var(--navy);
   color: #fff;
   border-radius: 999px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   font-size: 12.5px;
   line-height: 1.4;
 }
 
 .demo-notice-tag {
   flex: 0 0 auto;
-  background: var(--orange);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -1508,14 +1541,14 @@ footer {
 .demo-notice code {
   background: rgba(255, 255, 255, 0.16);
   padding: 1px 5px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 11.5px;
 }
 
 .demo-notice a {
   flex: 0 0 auto;
-  color: var(--orange);
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
@@ -1532,7 +1565,7 @@ footer {
     right: 12px;
     bottom: 84px;
     max-width: none;
-    border-radius: 14px;
+    border-radius: var(--radius);
   }
 }
 
@@ -1655,7 +1688,7 @@ section:focus {
 .skill-card h3 {
   font-size: 16px;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--text);
   margin-bottom: 12px;
 }
 

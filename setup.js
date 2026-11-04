@@ -50,7 +50,7 @@
      ══════════════════════════════════════════════════════════════ */
   const SCHEMA = [
     {
-      id: "personal", icon: "👤", title: "You", page: "portfolio", chapter: "you",
+      id: "personal", title: "You", page: "portfolio", chapter: "you",
       help: "Drives the navbar, hero, about, contact, footer and the chatbot.",
       fields: [
         { key: "name", label: "Full name", placeholder: "Your name", required: true },
@@ -82,7 +82,7 @@
     },
 
     {
-      id: "seo", icon: "🔍", title: "SEO & social preview", page: "both", chapter: "launch",
+      id: "seo", title: "SEO & social preview", page: "both", chapter: "launch",
       help: "Written straight into <head> at runtime: title, description, canonical, Open Graph, Twitter Card and JSON-LD. No HTML editing.",
       fields: [
         { key: "siteUrl", label: "Public site URL", placeholder: "https://your-site.netlify.app", wide: true, help: "No trailing slash — the canonical URL and social tags are built from it" },
@@ -97,7 +97,7 @@
     },
 
     {
-      id: "hero", icon: "🎯", title: "Hero", page: "portfolio", chapter: "look",
+      id: "hero", title: "Hero", page: "portfolio", chapter: "look",
       help: "Leave these blank and the hero builds itself from your name, role and availability.",
       fields: [
         { key: "eyebrow", label: "Eyebrow line", placeholder: "Open to work", wide: true, help: "Falls back to personal.availability" },
@@ -112,7 +112,7 @@
     },
 
     {
-      id: "about", icon: "📝", title: "About / why work with me", page: "portfolio", chapter: "look",
+      id: "about", title: "About / why work with me", page: "portfolio", chapter: "look",
       help: "The “Why work with me” section on the portfolio page.",
       fields: [
         { key: "vision", label: "Highlighted call-out", type: "textarea", wide: true, placeholder: "What you're looking for next." },
@@ -124,7 +124,7 @@
     },
 
     {
-      id: "skills", icon: "🧰", title: "Skills", page: "portfolio", chapter: "work",
+      id: "skills", title: "Skills", page: "portfolio", chapter: "work",
       help: "Each category becomes a card and also feeds the chatbot's skills answer.",
       fields: [
         { key: "summary", label: "Skills summary", type: "textarea", wide: true, placeholder: "One line describing your stack." },
@@ -142,13 +142,13 @@
     },
 
     {
-      id: "projects", icon: "🚀", title: "Projects", page: "portfolio", chapter: "work",
+      id: "projects", title: "Projects", page: "portfolio", chapter: "work",
       help: "Shown on the portfolio page and reused as the studio's product ecosystem when you don't define separate products. The chatbot can answer questions about each one by name.",
       lists: [{ key: "projects", title: "Project cards", kind: "object", fields: PROJECT_FIELDS, addLabel: "project", itemTitle: (o) => o.name }],
     },
 
     {
-      id: "experience", icon: "💼", title: "Experience", page: "portfolio", chapter: "work",
+      id: "experience", title: "Experience", page: "portfolio", chapter: "work",
       help: "Most recent role first — the page renders them in this order.",
       lists: [{
         key: "experience", title: "Roles", kind: "object", addLabel: "role", itemTitle: (o) => o.role,
@@ -165,7 +165,7 @@
     },
 
     {
-      id: "education", icon: "🎓", title: "Education", page: "portfolio", chapter: "work",
+      id: "education", title: "Education", page: "portfolio", chapter: "work",
       help: "Leave every field blank to hide the Education section entirely.",
       fields: [
         { key: "degree", label: "Degree", placeholder: "B.S. in Computer Science & Engineering", wide: true },
@@ -179,13 +179,13 @@
     },
 
     {
-      id: "research", icon: "📄", title: "Research & publications", page: "both", chapter: "extras",
+      id: "research", title: "Research & publications", page: "both", chapter: "extras",
       help: "Papers, theses and preprints. Leave the list empty to hide the section.",
       lists: [{ key: "research", title: "Publications", kind: "object", fields: RESEARCH_FIELDS, addLabel: "paper", itemTitle: (o) => o.title }],
     },
 
     {
-      id: "achievements", icon: "🏆", title: "Achievements", page: "portfolio", chapter: "extras",
+      id: "achievements", title: "Achievements", page: "portfolio", chapter: "extras",
       help: "Awards, hackathon results and honours.",
       lists: [{
         key: "achievements", title: "Awards", kind: "object", addLabel: "award", itemTitle: (o) => o.title,
@@ -200,7 +200,7 @@
     },
 
     {
-      id: "certifications", icon: "📜", title: "Certifications", page: "portfolio", chapter: "extras",
+      id: "certifications", title: "Certifications", page: "portfolio", chapter: "extras",
       help: "Professional certificates and course completions.",
       lists: [{
         key: "certifications", title: "Certificates", kind: "object", addLabel: "certificate", itemTitle: (o) => o.title,
@@ -214,7 +214,7 @@
     },
 
     {
-      id: "company", icon: "🏢", title: "Company / studio", page: "studio", chapter: "company",
+      id: "company", title: "Company / studio", page: "studio", chapter: "company",
       help: "Powers the entire studio.html page, the studio banner on the portfolio page and the chatbot's studio answers. Leave the name blank to remove the studio page entirely.",
       fields: [
         { key: "name", label: "Company name", placeholder: "Your Studio" },
@@ -259,7 +259,7 @@
     },
 
     {
-      id: "contact", icon: "🔗", title: "Contact links", page: "both", chapter: "launch",
+      id: "contact", title: "Contact links", page: "both", chapter: "launch",
       help: "The stack of link cards in the contact section. Leave empty and the cards build themselves from your email, LinkedIn, GitHub and resume.",
       lists: [{
         key: "links", title: "Link cards", kind: "object", addLabel: "link", itemTitle: (o) => o.label,
@@ -273,7 +273,7 @@
     },
 
     {
-      id: "chatbot", icon: "🤖", title: "AI assistant", page: "both", chapter: "look",
+      id: "chatbot", title: "Assistant", page: "both", chapter: "look",
       help: "Tune the assistant's name and greetings. Everything else it knows is generated automatically from the sections above. Supports **bold**, *italic* and `code`.",
       fields: [
         { key: "assistantName", label: "Assistant name", placeholder: "Alex's AI Assistant", wide: true },
@@ -301,12 +301,20 @@
     },
 
     {
-      id: "theme", icon: "🎨", title: "Theme", page: "both", chapter: "look",
-      help: "Colours and fonts, applied at runtime as CSS custom properties. No CSS editing needed.",
+      id: "theme", title: "Theme", page: "both", chapter: "look",
+      help: "Mode, colours and fonts. Applied at runtime as CSS custom properties, so no CSS editing is needed.",
       fields: [
+        {
+          key: "mode", label: "Mode", type: "select", default: "light", wide: true,
+          options: [
+            { value: "light", label: "Light" },
+            { value: "dark", label: "Dark" },
+            { value: "minimal", label: "Minimal" },
+          ],
+          help: "Light and dark are the tuned themes. Minimal strips the shadows and softens the palette.",
+        },
         { key: "primaryColor", label: "Primary (navy)", type: "color", default: "#10264B" },
-        { key: "accentColor", label: "Accent (orange)", type: "color", default: "#FF7900" },
-        { key: "blueColor", label: "Blue (links)", type: "color", default: "#2563EB" },
+        { key: "accentColor", label: "Accent", type: "color", default: "#FF7900" },
         { key: "fontHeading", label: "Heading font", placeholder: "'Space Grotesk', sans-serif", wide: true },
         { key: "fontBody", label: "Body font", placeholder: "'Inter', sans-serif", wide: true },
         { key: "fontMono", label: "Mono font", placeholder: "'IBM Plex Mono', monospace", wide: true },
@@ -564,6 +572,11 @@
           <input type="color" data-path="${esc(path)}" id="${id}" value="${esc(value || f.default || "#000000")}" />
           <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}" placeholder="${esc(f.placeholder || "#10264B")}" />
         </div>`;
+    } else if (f.type === "select") {
+      const options = (f.options || []).map((o) =>
+        `<option value="${esc(o.value)}"${str(value) === str(o.value) ? " selected" : ""}>${esc(o.label)}</option>`
+      ).join("");
+      control = `<select class="gen-select" data-path="${esc(path)}" id="${id}">${options}</select>`;
     } else if (f.type === "textarea") {
       control = `<textarea class="gen-textarea" data-path="${esc(path)}" id="${id}"
         placeholder="${esc(f.placeholder || "")}">${esc(value)}</textarea>`;
@@ -644,7 +657,6 @@
 
     return `<section class="gen-card" data-section-id="${esc(sec.id)}" data-chapter="${esc(sec.chapter || "")}">
         <div class="gen-card-head" data-toggle="${esc(sec.id)}">
-          <span class="gen-icon">${esc(sec.icon)}</span>
           <h2>${esc(sec.title)}</h2>
           <span class="gen-count" data-section-count="${esc(sec.id)}"></span>
           <span class="gen-chevron">▾</span>
