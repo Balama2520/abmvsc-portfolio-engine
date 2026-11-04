@@ -24,7 +24,12 @@ jobs:
       - name: Install dev dependencies
         run: npm ci
 
-      # Covers both the hydration contract (test/hydration.test.mjs) and the
-      # zero-dependency / no-build-step guardrails (test/guardrails.test.mjs).
+      # The smoke test drives the real generator in Chromium.
+      - name: Install Chromium for the smoke test
+        run: npx playwright install --with-deps chromium
+
+      # Covers the hydration contract (test/hydration.test.mjs), the
+      # zero-dependency / no-build-step guardrails (test/guardrails.test.mjs)
+      # and the end-to-end browser smoke test (test/browser-smoke.test.mjs).
       - name: Run the full test suite
         run: npm test
