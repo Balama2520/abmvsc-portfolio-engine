@@ -81,7 +81,7 @@
       id: "seo", title: "SEO & social preview", page: "both", chapter: "launch",
       help: "Written straight into <head> at runtime: title, description, canonical, Open Graph, Twitter Card and JSON-LD. No HTML editing.",
       fields: [
-        { key: "siteUrl", label: "Public site URL", placeholder: "https://your-site.netlify.app", wide: true, help: "No trailing slash — the canonical URL and social tags are built from it" },
+        { key: "siteUrl", label: "Your website address", placeholder: "https://your-site.netlify.app", wide: true, help: "The live address of your finished site, once you have one, so links you share point at the real pages and use the right preview image." },
         { key: "title", label: "Browser tab title", placeholder: "Your name — what you do", wide: true },
         { key: "description", label: "Meta description", type: "textarea", wide: true, placeholder: "One sentence for search results and link previews." },
         { key: "ogImage", label: "Social preview image", placeholder: "og-image.png", help: "1200 × 630 px works best" },
