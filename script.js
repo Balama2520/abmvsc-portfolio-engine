@@ -625,6 +625,10 @@
 
   /* 5. Site chrome — nav, scroll-spy, smooth scroll, reveal */
   const setupChrome = () => {
+    // Copyright year — kept here so neither page needs an inline script.
+    const yearEl = document.getElementById("footer-year");
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
     const sections = qa("section[id]");
     const navLinks = qa("nav a");
     const navbar = q(".navbar");

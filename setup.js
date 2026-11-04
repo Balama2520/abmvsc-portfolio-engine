@@ -658,7 +658,7 @@
   let chapterIndex = 0;
   let showEverything = false;
 
-  // How much of one chapter is filled in — drives the ✓ in the step rail.
+  // How much of one chapter is filled in — drives the step rail's done state.
   const chapterProgress = (chapterId) => {
     let filled = 0;
     SCHEMA.filter((s) => s.chapter === chapterId).forEach((sec) => {
@@ -684,9 +684,12 @@
     rail.innerHTML = CHAPTERS.map((c, i) => {
       const done = chapterProgress(c.id) > 0;
       const active = !showEverything && i === chapterIndex;
+      // The done state is a filled badge, not a colour change alone, so it is
+      // still readable without colour; the label says the same thing in words.
       return `<button type="button" class="gen-rail-step${active ? " is-active" : ""}${done ? " is-done" : ""}"
-          data-goto="${i}" aria-current="${active ? "step" : "false"}">
-          <span class="gen-rail-num">${done ? "✓" : i + 1}</span>
+          data-goto="${i}" aria-current="${active ? "step" : "false"}"
+          aria-label="${esc(c.title)}: ${esc(c.hint)}${done ? " (started)" : ""}">
+          <span class="gen-rail-num">${i + 1}</span>
           <span class="gen-rail-text"><b>${esc(c.title)}</b><small>${esc(c.hint)}</small></span>
         </button>`;
     }).join("");

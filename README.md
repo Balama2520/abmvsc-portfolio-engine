@@ -121,36 +121,36 @@ npm test
 30 tests, no network access required:
 
 ```
-✔ guardrail: the template has no runtime dependencies
-✔ guardrail: the template has no build step
-✔ guardrail: every JavaScript file parses
-✔ guardrail: the pages load no third-party JavaScript
-✔ guardrail: every file referenced by the HTML exists
-✔ guardrail: the generator stays out of search results
-✔ guardrail: the licence is MIT and attributed
-✔ config.js defines all 15 documented sections
-✔ browsing pages are content-free (content lives in config.js)
-✔ setup.html is excluded from search engines
-✔ the generator renders every section
-✔ the generator offers the ZIP download and the follow-up steps
-✔ the generator round-trips config.js with zero data loss
-✔ array-shaped sections keep their shape through the generator
-✔ index.html hydrates from config.js
-✔ studio.html hydrates from config.js
-✔ both pages inject SEO tags from config, not from HTML
-✔ every data-list in the HTML is registered in the engine
-✔ pack: every href and src in the pages resolves to a real file
-✔ pack: the manifest picks up the icons, manifest and social image
-✔ pack: an archive round-trips through the reader
-✔ pack: a generated archive contains every file its pages ask for
-✔ pack: crc32 matches the reference value for a known string
-✔ pack: only stored entries are read back
-✔ pack: upload validation rejects the wrong type and size
-✔ pack: uploaded files get predictable paths and the config follows them
-✔ browser: the generator ships a ZIP that opens as a working site
-✔ layout: nothing overflows at 375px
-✔ layout: nothing overflows at 768px
-✔ layout: nothing overflows at 1280px
+guardrail: the template has no runtime dependencies
+guardrail: the template has no build step
+guardrail: every JavaScript file parses
+guardrail: the pages load no third-party JavaScript
+guardrail: every file referenced by the HTML exists
+guardrail: the generator stays out of search results
+guardrail: the licence is MIT and attributed
+config.js defines all 15 documented sections
+browsing pages are content-free (content lives in config.js)
+setup.html is excluded from search engines
+the generator renders every section
+the generator offers the ZIP download and the follow-up steps
+the generator round-trips config.js with zero data loss
+array-shaped sections keep their shape through the generator
+index.html hydrates from config.js
+studio.html hydrates from config.js
+both pages inject SEO tags from config, not from HTML
+every data-list in the HTML is registered in the engine
+pack: every href and src in the pages resolves to a real file
+pack: the manifest picks up the icons, manifest and social image
+pack: an archive round-trips through the reader
+pack: a generated archive contains every file its pages ask for
+pack: crc32 matches the reference value for a known string
+pack: only stored entries are read back
+pack: upload validation rejects the wrong type and size
+pack: uploaded files get predictable paths and the config follows them
+browser: the generator ships a ZIP that opens as a working site
+layout: nothing overflows at 375px
+layout: nothing overflows at 768px
+layout: nothing overflows at 1280px
 ```
 
 The guardrails are the point. They fail the build if anyone adds a runtime dependency, adds a build step, pulls in third-party JavaScript or points a tag at a file that does not exist — so the promises in the badges above are enforced, not just advertised.
