@@ -1139,20 +1139,46 @@
   };
 
   // The archive is built from the files the pages name, so an unzipped copy
-  // opens without a single missing request. Anything referenced but absent is
-  // reported rather than shipped as a broken link.
-  const buildZip = async () => {
-    const config = Pack.withUploadPaths(buildConfig(), uploads);
-    const pages = {
+  // opens without a single missing request. The list is worked out to a fixed
+  // point: a file the pages name can name more files of its own (the web
+  // manifest names its icons), so we load what the manifest asks for until it
+  // stops growing. Anything still absent is reported instead of shipped.
+  const collectSite = async (config) => {
+    const files = {
       "index.html": await fetchSiteFile("index.html"),
       "studio.html": await fetchSiteFile("studio.html"),
     };
-    const { include, missing } = Pack.buildManifest({ files: pages, config });
-    const wanted = [...new Set([...include, ...missing])].sort();
+    const supplied = new Set([
+      "config.js",
+      ...[uploads.photo, uploads.resume].filter(Boolean).map((file) => file.path),
+    ]);
+    const skip = (path) =>
+      supplied.has(path) || Object.prototype.hasOwnProperty.call(files, path);
+
+    for (;;) {
+      const manifest = Pack.buildManifest({ files, config, extra: [...supplied] });
+      const next = manifest.include.concat(manifest.missing).find((path) => !skip(path));
+      if (!next) return { files, manifest };
+      try {
+        files[next] = await fetchSiteFile(next);
+      } catch (err) {
+        supplied.add(next); // not on disk; the manifest will report it as missing
+      }
+    }
+  };
+
+  const buildZip = async () => {
+    const config = Pack.withUploadPaths(buildConfig(), uploads);
+    const { files, manifest } = await collectSite(config);
+    const wanted = [...new Set([...manifest.include, ...manifest.missing])].sort();
 
     const entries = [];
     const absent = [];
     for (const path of wanted) {
+      if (Object.prototype.hasOwnProperty.call(files, path)) {
+        entries.push({ path, data: files[path] });
+        continue;
+      }
       if (path === "config.js") {
         entries.push({ path, data: buildConfigSource() });
         continue;
@@ -1162,11 +1188,7 @@
         entries.push({ path, data: upload.bytes });
         continue;
       }
-      try {
-        entries.push({ path, data: await fetchSiteFile(path) });
-      } catch (err) {
-        absent.push(path);
-      }
+      absent.push(path);
     }
 
     if (absent.length) throw new Error(`these files are missing: ${absent.join(", ")}`);
