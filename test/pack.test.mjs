@@ -65,6 +65,56 @@ test("pack: the generator page is never part of a generated site", () => {
   );
 });
 
+/* Static render: what a crawler sees without running script.js */
+
+test("prerender: the generated index.html reads correctly with no JavaScript", () => {
+  const config = loadConfig();
+  const html = Pack.prerenderPage(read("index.html"), config, "index.html");
+
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  assert.ok(html.includes(`<title>${esc(config.seo.title)}</title>`), "title is written into the HTML");
+  assert.match(html, /property="og:title"\s+content="[^"]+"/, "og:title is present");
+  assert.match(html, /property="og:description"\s+content="[^"]+"/, "og:description is present");
+  assert.match(html, /name="twitter:card"\s+content="summary_large_image"/, "twitter:card is present");
+  assert.match(html, /<link rel="canonical" href="https:\/\/[^"]+"/, "canonical is present");
+  assert.ok(html.includes(config.personal.name), "the person's name appears in the markup");
+  assert.ok(html.includes(config.seo.description), "the description appears in the markup");
+
+  // The hero text is filled too, so the first paint is not empty.
+  assert.ok(!html.includes('data-bind="hero.titleLine1"></span>'), "the hero headline is pre-filled");
+  assert.ok(!html.includes('data-bind="personal.bio"></p>'), "the hero bio is pre-filled");
+});
+
+test("prerender: the studio page carries Organization data with the studio name", () => {
+  const config = loadConfig();
+  const html = Pack.prerenderPage(read("studio.html"), config, "studio.html");
+
+  const ld = JSON.parse(html.match(/<script id="pf-ld-json"[^>]*>([\s\S]*?)<\/script>/)[1]);
+  assert.equal(ld["@type"], "Organization");
+  assert.equal(ld.name, config.company.name);
+  assert.match(html, /property="og:title"\s+content="[^"]+"/, "og:title is present");
+});
+
+test("prerender: running twice leaves one copy of everything", () => {
+  const config = loadConfig();
+  const once = Pack.prerenderPage(read("index.html"), config, "index.html");
+  const twice = Pack.prerenderPage(once, config, "index.html");
+  assert.equal(twice, once, "prerendering must be idempotent");
+  assert.equal((twice.match(/property="og:title"/g) || []).length, 1, "og:title must appear once");
+  assert.equal((twice.match(/id="pf-ld-json"/g) || []).length, 1, "structured data must appear once");
+});
+
+test("prerender: the page still names only files that exist", () => {
+  const config = loadConfig();
+  const source = read("index.html");
+  const html = Pack.prerenderPage(source, config, "index.html");
+  assert.deepEqual(
+    Pack.collectRefs(html).sort(),
+    Pack.collectRefs(source).sort(),
+    "prerendering must not introduce or drop a file reference"
+  );
+});
+
 test("pack: an archive round-trips through the reader", () => {
   const entries = [
     { path: "index.html", data: "<!doctype html><title>One</title>" },

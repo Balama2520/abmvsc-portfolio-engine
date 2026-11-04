@@ -87,6 +87,14 @@ test("browser: the generator ships a ZIP that opens as a working site", async ()
   assert.ok(files.has("photo.png"), "the uploaded photo should be in the archive");
   assert.ok(files.has("resume.pdf"), "the uploaded resume should be in the archive");
 
+  // A crawler that never runs script.js must still see the owner's name and the
+  // social tags: they are baked into the shipped HTML at build time.
+  const indexHtml = text("index.html");
+  assert.ok(indexHtml.includes(NAME), "the shipped index.html carries the name without JavaScript");
+  assert.match(indexHtml, /property="og:title"\s+content="[^"]+"/, "the shipped index.html has og:title");
+  assert.match(indexHtml, /name="twitter:card"\s+content="summary_large_image"/, "twitter:card is set");
+  assert.match(text("studio.html"), /id="pf-ld-json"/, "the shipped studio.html has structured data");
+
   // Every reference inside the archive resolves to another entry in it.
   for (const entry of entries.filter((e) => e.path.endsWith(".html"))) {
     const html = decoder.decode(entry.data);

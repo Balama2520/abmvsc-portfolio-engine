@@ -262,6 +262,167 @@
     return { include, missing };
   };
 
+  /* Static render — what a crawler that cannot run script.js must still see */
+
+  // A social crawler fetches the HTML and stops; it never runs script.js, so
+  // anything injected at runtime is invisible to it. At ZIP time the same
+  // values are written straight into the two pages. Runtime injection stays as
+  // the fallback for a hand-edited site that skipped the generator.
+  const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  const escapeText = (v) => String(v ?? "").replace(/[&<>]/g, (c) => ESC[c]);
+  const escapeAttr = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ESC[c]);
+
+  const isStudioPage = (page) => /studio/i.test(String(page || ""));
+
+  const asArray = (v) => (Array.isArray(v) ? v : v ? [v] : []);
+
+  // The values script.js derives rather than reads. Kept in step with the
+  // runtime engine by the drift test in test/pack.test.mjs.
+  const staticVirtual = (config, studio) => {
+    const p = config.personal || {};
+    const co = config.company || {};
+    const hero = config.hero || {};
+
+    const roleBits = String(p.role || "").split("&").map((s) => s.trim());
+    const roleLine1 = roleBits[0] || "";
+    const roleLine2 = roleBits.length > 1 ? `& ${roleBits.slice(1).join(" & ")}` : "";
+    const taglineBits = String(co.tagline || "").split(".").map((s) => s.trim()).filter(Boolean);
+
+    return {
+      "hero.eyebrow": hero.eyebrow || p.availability || "",
+      "hero.badge": hero.badge || (co.name ? `Founder @ ${co.name}` : ""),
+      "hero.titleLine1": hero.titleLine1 || roleLine1,
+      "hero.titleLine2": hero.titleLine2 || roleLine2,
+      "company.eyebrow": [co.descriptor, co.founded ? `Founded ${co.founded}` : ""].filter(Boolean).join(" · "),
+      "company.titleLine1": taglineBits[0] ? `${taglineBits[0]}.` : "",
+      "company.titleLine2": taglineBits.length > 1 ? `${taglineBits.slice(1).join(". ")}.` : "",
+      "company.heroParagraph": co.heroParagraph || co.description || "",
+      "personal.name": p.name || "",
+      "personal.role": p.role || "",
+      "personal.bio": p.bio || "",
+      studio: studio,
+    };
+  };
+
+  // The head tags, as a marked block so the rewrite is idempotent and the
+  // tests can point at one region.
+  const staticHeadTags = (config, studio) => {
+    const p = config.personal || {};
+    const co = config.company || {};
+    const seo = config.seo || {};
+    const theme = config.theme || {};
+
+    const base = String(seo.siteUrl || "").replace(/\/+$/, "");
+    const canonical = base ? (studio ? `${base}/studio.html` : `${base}/`) : "";
+    const title = studio
+      ? `${co.name || "Studio"} — ${co.descriptor || "Company"}`
+      : seo.title || `${p.name || "Portfolio"} | ${p.role || "Developer"}`;
+    const description = studio ? co.description || "" : seo.description || p.bio || "";
+    const ogImage = seo.ogImage
+      ? (base ? `${base}/${String(seo.ogImage).replace(/^\/+/, "")}` : seo.ogImage)
+      : "";
+    const siteName = studio ? co.name || "" : p.name || "";
+    const locale = seo.locale || "en_US";
+    const themeColor = seo.themeColor || theme.primaryColor || "";
+
+    const meta = (attr, key, content) =>
+      content ? `  <meta ${attr}="${escapeAttr(key)}" content="${escapeAttr(content)}" />\n` : "";
+    const link = (rel, href) => (href ? `  <link rel="${escapeAttr(rel)}" href="${escapeAttr(href)}" />\n` : "");
+
+    const education = asArray(config.education);
+    const sameAs = [p.linkedin, p.github, p.twitter, p.website, p.huggingface, p.researchgate].filter(Boolean);
+    const ld = studio
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: co.name || "",
+          alternateName: co.descriptor || "",
+          url: canonical,
+          slogan: co.tagline || "",
+          description: co.description || "",
+          founder: p.name ? { "@type": "Person", name: p.name, url: base || undefined } : undefined,
+          sameAs,
+        }
+      : {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: p.name || "",
+          jobTitle: p.role || "",
+          description: seo.description || p.bio || "",
+          url: canonical,
+          image: ogImage || (p.photo || ""),
+          email: p.email ? `mailto:${p.email}` : undefined,
+          telephone: p.phone || undefined,
+          address: p.location ? { "@type": "PostalAddress", addressLocality: p.location } : undefined,
+          alumniOf:
+            education[0] && education[0].university
+              ? { "@type": "CollegeOrUniversity", name: education[0].university }
+              : undefined,
+          sameAs,
+          knowsAbout: asArray(config.skills && config.skills.categories).flatMap((c) => asArray(c.items)),
+        };
+
+    let tags = "";
+    tags += meta("name", "description", description);
+    tags += meta("name", "theme-color", themeColor);
+    tags += meta("name", "google-site-verification", seo.googleVerification);
+    tags += link("canonical", canonical);
+    tags += meta("property", "og:type", "website");
+    tags += meta("property", "og:title", title);
+    tags += meta("property", "og:description", description);
+    tags += meta("property", "og:url", canonical);
+    tags += meta("property", "og:site_name", siteName);
+    tags += meta("property", "og:locale", locale);
+    tags += meta("property", "og:image", ogImage);
+    if (ogImage) {
+      tags += meta("property", "og:image:width", "1200");
+      tags += meta("property", "og:image:height", "630");
+      tags += meta("property", "og:image:alt", title);
+    }
+    tags += meta("name", "twitter:card", "summary_large_image");
+    tags += meta("name", "twitter:title", title);
+    tags += meta("name", "twitter:description", description);
+    tags += meta("name", "twitter:image", ogImage);
+    tags += meta("name", "twitter:site", seo.twitterHandle);
+    tags += `  <script id="pf-ld-json" type="application/ld+json">${JSON.stringify(ld)}</script>\n`;
+
+    return { title, tags };
+  };
+
+  // Fills an element's text from config, so the first paint already carries the
+  // value. Text-only elements (span, p, h1…) are the ones the hero uses.
+  const escapeRe = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const fillBind = (html, path, value) => {
+    const re = new RegExp(
+      `<([a-zA-Z][\\w-]*)\\b([^>]*\\bdata-bind="${escapeRe(path)}"[^>]*)>[\\s\\S]*?</\\1>`
+    );
+    return html.replace(re, (m, tag, attrs) => `<${tag}${attrs}>${escapeText(value)}</${tag}>`);
+  };
+
+  /**
+   * Writes the title, social tags, structured data and hero text straight into
+   * a page so it reads correctly without JavaScript. Safe to run twice.
+   * @param {string} html   the page source
+   * @param {object} config the user's config
+   * @param {string} page   "index.html" | "studio.html" (studio by name)
+   */
+  const prerenderPage = (html, config, page) => {
+    const studio = isStudioPage(page);
+    const { title, tags } = staticHeadTags(config, studio);
+
+    let out = String(html);
+    out = out.replace(/\n?\s*<!-- pf:static -->[\s\S]*?<!-- \/pf:static -->/, "");
+    out = out.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeText(title)}</title>`);
+    out = out.replace(/<\/head>/i, `  <!-- pf:static -->\n${tags}  <!-- /pf:static -->\n</head>`);
+
+    const virtual = staticVirtual(config, studio);
+    for (const key of Object.keys(virtual)) {
+      if (key === "studio") continue;
+      out = fillBind(out, key, virtual[key]);
+    }
+    return out;
+  };
+
   /* Uploads */
 
   const PHOTO_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
@@ -319,6 +480,9 @@
     collectRefs,
     collectIconRefs,
     buildManifest,
+    prerenderPage,
+    staticHeadTags,
+    staticVirtual,
     checkUpload,
     uploadPath,
     withUploadPaths,

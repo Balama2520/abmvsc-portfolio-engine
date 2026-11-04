@@ -18,7 +18,11 @@ import fs from "node:fs";
 import path from "node:path";
 import http from "node:http";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { JSDOM, VirtualConsole, ResourceLoader } from "jsdom";
+
+const require = createRequire(import.meta.url);
+const Pack = require("../pack.js");
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -299,6 +303,51 @@ test("the demo banner offers one clear route to the generator", async () => {
         `${file} demo banner has no link to the generator`
       );
     }
+  }
+});
+
+test("the static head matches what the runtime engine injects", async () => {
+  const cfg = readConfig();
+  const content = (doc, sel) => {
+    const el = doc.querySelector(sel);
+    return el && el.getAttribute("content");
+  };
+  const href = (doc, sel) => {
+    const el = doc.querySelector(sel);
+    return el && el.getAttribute("href");
+  };
+
+  for (const file of ["index.html", "studio.html"]) {
+    const { doc } = await loadPage(file);
+    const staticHtml = Pack.prerenderPage(
+      fs.readFileSync(path.join(ROOT, file), "utf8"),
+      cfg,
+      file
+    );
+    // No scripts: this is exactly what a crawler sees.
+    const staticDoc = new JSDOM(staticHtml).window.document;
+
+    assert.equal(staticDoc.title, doc.title, `${file}: static title differs from the runtime value`);
+    assert.equal(
+      content(staticDoc, 'meta[property="og:title"]'),
+      content(doc, 'meta[property="og:title"]'),
+      `${file}: static og:title differs`
+    );
+    assert.equal(
+      content(staticDoc, 'meta[property="og:description"]'),
+      content(doc, 'meta[property="og:description"]'),
+      `${file}: static og:description differs`
+    );
+    assert.equal(
+      href(staticDoc, 'link[rel="canonical"]'),
+      href(doc, 'link[rel="canonical"]'),
+      `${file}: static canonical differs`
+    );
+    assert.deepEqual(
+      JSON.parse(staticDoc.getElementById("pf-ld-json").textContent),
+      JSON.parse(doc.getElementById("pf-ld-json").textContent),
+      `${file}: static structured data drifted from the runtime version`
+    );
   }
 });
 

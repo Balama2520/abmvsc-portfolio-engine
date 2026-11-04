@@ -1164,6 +1164,16 @@
   const buildZip = async () => {
     const config = Pack.withUploadPaths(buildConfig(), uploads);
     const { files, manifest } = await collectSite(config);
+
+    // A crawler fetches the HTML and stops; it never runs script.js. Bake the
+    // title, social tags, structured data and hero text into the two pages so
+    // the shared link shows the owner's name instead of a generic placeholder.
+    Pack.PAGES.forEach((page) => {
+      if (typeof files[page] === "string") {
+        files[page] = Pack.prerenderPage(files[page], config, page);
+      }
+    });
+
     const wanted = [...new Set([...manifest.include, ...manifest.missing])].sort();
 
     const entries = [];
