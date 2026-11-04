@@ -1255,14 +1255,6 @@ nav a.active {
   flex-shrink: 0;
 }
 
-.chat-status-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #22c55e;
-  display: inline-block;
-}
-
 .chatbot-header-title {
   color: #fff;
   font-size: 14px;
@@ -1483,21 +1475,11 @@ footer {
   background: var(--surface);
 }
 
-/* Opt-in "Made with Portfolio Engine" credit — rendered only when
-   theme.showBuiltBy is true in config.js */
+/* Opt-in "Made with the Portfolio Engine" credit — rendered only when
+   theme.showBuiltBy is true in config.js. Plain text, no link. */
 .built-by {
   margin-top: 8px;
   font-size: 12px;
-}
-
-.built-by a {
-  color: var(--accent-text);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.built-by a:hover {
-  text-decoration: underline;
 }
 
 /* "This is the demo" notice — shown only while config.js is still the shipped
@@ -1640,6 +1622,10 @@ section:focus {
   .stat-row {
     width: 100%;
   }
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
   .project-grid,
   .achievement-grid,
   .cert-grid,
@@ -1661,10 +1647,7 @@ section:focus {
   }
 }
 
-
-/* ==========================================================================
-   SKILLS GRID — rendered by script.js from config.skills.categories
-   ========================================================================== */
+/* Skills grid, rendered by script.js from config.skills.categories */
 .skill-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
