@@ -585,7 +585,7 @@
     setHidden(el, false);
     el.innerHTML =
       '<span class="demo-notice-tag">Demo</span>' +
-      '<span class="demo-notice-text">This is sample content — your details go in <code>config.js</code>.</span>' +
+      '<span class="demo-notice-text">This is sample content.</span>' +
       '<a href="setup.html">Make it yours →</a>';
   };
 
@@ -794,11 +794,11 @@
 
     const brain = {
       templateGuide:
-        "**How this site works — one config, two websites:**\n\n" +
-        "1. **Edit `config.js`** — your name, projects, skills, contact details and company identity all live in one file.\n" +
-        "2. **`index.html`** renders your personal portfolio and **`studio.html`** renders your company page. Both read the same config.\n" +
-        "3. **Zero dependencies** — no build step, no npm install, no framework.\n" +
-        "4. **I answer from `config.js`** — this is keyword matching, not a language model. No network call, no external service.\n\n" +
+        "**How this site works:**\n\n" +
+        "1. **One set of details, two pages** — the personal portfolio and the company page read the same information, so they never drift apart.\n" +
+        "2. **Built to be filled in** — a short form turns the owner's details into a finished website they can download and host for free.\n" +
+        "3. **No frameworks, no build step, no plugins** — plain HTML, CSS and JavaScript.\n" +
+        "4. **I answer from those details** — this is keyword matching, not a language model. No network call, no external service.\n\n" +
         "Try asking about **skills**, **projects** or **experience**.",
 
       greeting: chat.greeting || `I answer questions about ${p.name || "the portfolio owner"}'s projects, skills and background, using the details on this page.`,
@@ -833,7 +833,7 @@
         `I answer from ${p.name || "this"}'s own details. Ask about **skills**, **projects**, **experience**, **research** or **how to get in touch**.`,
       joke: "Why do programmers prefer dark mode? Because light attracts bugs.",
       thanks: "You're welcome. Ask anything else about the portfolio.",
-      bot: `I'm a keyword assistant built into this site. I answer from the details in config.js, with no language model and no network call.`,
+      bot: `I'm a keyword assistant built into this site. I answer from the details on this page, with no language model and no network call.`,
     };
 
     // Deep-dive answers become first-class topics
