@@ -350,36 +350,6 @@ body.gen-body {
   margin-bottom: 8px;
 }
 
-.gen-launch-warn {
-  background: #fff7ed;
-  border-left: 3px solid var(--orange);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: #9a3412 !important;
-}
-
-.gen-copy-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-.gen-code {
-  flex: 1 1 260px;
-  min-width: 0;
-  overflow-x: auto;
-  white-space: nowrap;
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text);
-}
-
 .gen-launch-foot {
   display: flex;
   gap: 8px;
@@ -802,6 +772,57 @@ body.gen-body {
 .gen-toast a {
   color: var(--orange);
   text-decoration: underline;
+}
+
+/* ── "What now?" panel ───────────────────────────────────────────────── */
+.gen-whatnow {
+  border-color: var(--orange);
+}
+
+.gen-whatnow-steps {
+  list-style: none;
+  counter-reset: whatnow;
+  display: grid;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.gen-whatnow-steps > li {
+  counter-increment: whatnow;
+  position: relative;
+  padding-left: 30px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.gen-whatnow-steps > li::before {
+  content: counter(whatnow);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gen-whatnow-steps b {
+  color: var(--text);
+}
+
+.gen-whatnow-steps p {
+  margin: 2px 0 0;
+}
+
+.gen-whatnow-steps a {
+  color: var(--accent);
 }
 
 /* ── Footer note ─────────────────────────────────────────────────────── */

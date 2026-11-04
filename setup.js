@@ -1173,6 +1173,13 @@
     return Pack.writeZip(entries);
   };
 
+  const showWhatNow = () => {
+    const panel = $("#genWhatNow");
+    if (!panel) return;
+    panel.hidden = false;
+    if (panel.scrollIntoView) panel.scrollIntoView({ block: "nearest" });
+  };
+
   const downloadZip = async () => {
     const btn = $("#genZipBtn");
     const label = btn.textContent;
@@ -1180,6 +1187,7 @@
     btn.textContent = "Building the ZIP…";
     try {
       saveFile(await buildZip(), zipName(), "application/zip");
+      showWhatNow();
       toast("Downloaded your website. Unzip it, then drag the folder onto Netlify Drop.");
     } catch (err) {
       toast(previewFetchable
@@ -1205,27 +1213,6 @@
     }
   };
 
-  // Copy any string (used by the launch snippets) and flash the button.
-  const copyText = async (text, btn) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-    }
-    if (btn) {
-      const original = btn.textContent;
-      btn.textContent = "Copied ✓";
-      setTimeout(() => { btn.textContent = original; }, 1600);
-    }
-  };
-
   const applyImported = (raw, message) => {
     state = normalize(raw);
     // A config brought in from outside replaces everything, uploads included —
@@ -1245,6 +1232,7 @@
 
     $("#genDownloadBtn").addEventListener("click", download);
     $("#genZipBtn").addEventListener("click", downloadZip);
+    $("#genWhatNowDismiss").addEventListener("click", () => $("#genWhatNow").hidden = true);
     $("#genCopyBtn").addEventListener("click", copy);
     $("#genRefreshCode").addEventListener("click", updateOutput);
     $("#genRefreshPreview").addEventListener("click", () => refreshPreview(true));
@@ -1323,17 +1311,9 @@
     const showAll = $("#genShowAll");
     if (showAll) showAll.addEventListener("click", setShowEverything);
 
-    // ── launch panel: extra download button and the copyable snippets
-    const launchDownload = $("#genLaunchDownload");
-    if (launchDownload) launchDownload.addEventListener("click", download);
-
-    const launch = $("#genLaunch");
-    if (launch) {
-      launch.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-copy]");
-        if (btn) copyText(btn.dataset.copy, btn);
-      });
-    }
+    // ── launch panel: the same ZIP download, next to the deployment steps
+    const launchZip = $("#genLaunchZip");
+    if (launchZip) launchZip.addEventListener("click", downloadZip);
   };
 
   /* ══════════════════════════════════════════════════════════════

@@ -164,6 +164,14 @@ test("the generator renders every section", async () => {
   assert.deepEqual(errors, [], `setup.html logged errors:\n${errors.join("\n")}`);
 });
 
+test("the generator offers the ZIP download and the follow-up steps", async () => {
+  const { doc, errors } = await loadPage("setup.html");
+  assert.ok(doc.querySelector("#genZipBtn"), "the ZIP download button is present");
+  assert.ok(doc.querySelector("#genWhatNow"), "the what-now panel is present");
+  assert.ok(doc.querySelector("#genWhatNow").hidden, "the panel stays hidden until a download finishes");
+  assert.deepEqual(errors, []);
+});
+
 test("the generator round-trips config.js with zero data loss", async () => {
   const { doc } = await loadPage("setup.html");
   const generated = doc.querySelector("#genOutput").value;

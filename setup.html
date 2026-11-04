@@ -77,49 +77,62 @@
       <!-- LAUNCH: shown on the final step (or with "Show everything") -->
       <section class="gen-launch" id="genLaunch" hidden>
         <h2>Launch your website</h2>
-        <p class="gen-launch-lead">Four steps from here to a live site. No code, no hosting bill, no build tools.</p>
+        <p class="gen-launch-lead">
+          Everything you filled in is already written into the site. Download it as one ZIP, unzip it, and
+          put the folder online. There is nothing to install and no build step.
+        </p>
 
         <ol class="gen-launch-steps">
           <li>
-            <b>Download your <code>config.js</code></b>
-            <p>Everything you just typed is packed into that one file.</p>
-            <button type="button" class="gen-btn gen-btn-sm gen-btn-primary" id="genLaunchDownload">Download config.js</button>
+            <b>Download your website (ZIP)</b>
+            <p>The archive holds the pages, the styles, the script, your photo, your resume and the generated <code>config.js</code>.</p>
+            <button type="button" class="gen-btn gen-btn-sm gen-btn-primary" id="genLaunchZip">Download website (ZIP)</button>
           </li>
           <li>
-            <b>Take your own copy of the engine</b>
-            <p>Open the template repository and click <strong>Use this template</strong>, or clone it.</p>
-            <div class="gen-copy-row">
-              <code class="gen-code">https://github.com/Balama2520/abmvsc-portfolio-template</code>
-              <button type="button" class="gen-btn gen-btn-sm"
-                data-copy="https://github.com/Balama2520/abmvsc-portfolio-template">Copy</button>
-            </div>
-            <div class="gen-copy-row">
-              <code class="gen-code">git clone https://github.com/Balama2520/abmvsc-portfolio-template.git my-site</code>
-              <button type="button" class="gen-btn gen-btn-sm"
-                data-copy="git clone https://github.com/Balama2520/abmvsc-portfolio-template.git my-site">Copy</button>
-            </div>
+            <b>Unzip the folder</b>
+            <p>Double-click the ZIP, or right-click it and choose Extract.</p>
           </li>
           <li>
-            <b>Drop in the <code>config.js</code> you downloaded</b>
-            <p>Replace the file the engine shipped with. Both <code>index.html</code> and <code>studio.html</code> now read your details.</p>
-            <p class="gen-launch-warn">The file in the repo is ABMVSC's demo data — replacing it is the step that makes the site yours.</p>
+            <b>Drag the folder onto Netlify Drop</b>
+            <p>Open <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">app.netlify.com/drop</a> and drop the folder in. An account is optional.</p>
           </li>
           <li>
-            <b>Put it online — free</b>
-            <p>Drag your project folder onto <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Netlify Drop</a>, or push to GitHub and switch on Pages. Live in about a minute.</p>
+            <b>Copy the address Netlify gives you</b>
+            <p>That address is your live site. GitHub Pages and Cloudflare Pages work the same way — the README has the steps for both.</p>
           </li>
         </ol>
 
         <div class="gen-launch-foot">
           <a class="gen-btn gen-btn-dark" href="https://github.com/Balama2520/abmvsc-portfolio-template"
-            target="_blank" rel="noopener noreferrer">Open the template on GitHub ↗</a>
-          <a class="gen-btn" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Deploy on Netlify ↗</a>
+            target="_blank" rel="noopener noreferrer">Open the template on GitHub</a>
+          <a class="gen-btn" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Open Netlify Drop</a>
         </div>
       </section>
     </main>
 
     <!-- RIGHT: PREVIEW + EXPORT -->
     <aside class="gen-side">
+      <section class="gen-panel gen-whatnow" id="genWhatNow" hidden>
+        <div class="gen-panel-head">
+          <h2>What now?</h2>
+          <button type="button" class="gen-btn gen-btn-sm gen-btn-ghost" id="genWhatNowDismiss">Dismiss</button>
+        </div>
+        <div class="gen-panel-body">
+          <ol class="gen-whatnow-steps">
+            <li><b>Unzip the folder.</b><p>Double-click the ZIP, or right-click it and choose Extract. The folder holds your whole site.</p></li>
+            <li><b>Open Netlify Drop.</b><p><a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">app.netlify.com/drop</a> — an account is optional.</p></li>
+            <li><b>Drag the unzipped folder onto the page.</b><p>Netlify uploads it and shows a live address in a few seconds.</p></li>
+            <li><b>Copy that address.</b><p>It is your site. You can rename it under Netlify's site settings.</p></li>
+          </ol>
+          <p class="gen-help">Prefer GitHub Pages or Cloudflare Pages? The README has the steps for both.</p>
+          <div class="gen-launch-foot">
+            <a class="gen-btn gen-btn-sm gen-btn-dark"
+              href="https://github.com/Balama2520/abmvsc-portfolio-template#deploy" target="_blank"
+              rel="noopener noreferrer">Read the deploy guide</a>
+          </div>
+        </div>
+      </section>
+
       <section class="gen-panel">
         <div class="gen-panel-head">
           <h2>Live preview</h2>
