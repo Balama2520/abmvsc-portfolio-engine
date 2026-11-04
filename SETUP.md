@@ -175,11 +175,12 @@ theme: {
 
 | File | Replace with |
 |---|---|
-| `assets/engineer-avatar.svg` | Your own profile photo |
+| `assets/engineer-avatar.svg` | Your own profile photo (this file is a neutral placeholder) |
 | `resume.pdf` | Your own resume PDF |
 | `og-image.png` | Your own 1200×630 social preview |
 | `favicon.*`, `apple-touch-icon.png`, `android-chrome-*` | Your own icons ([favicon.io](https://favicon.io/favicon-converter/)) |
-| `assets/logo-card.png` | Your own studio card image (or leave the placeholder) |
+
+The studio card image and logo files are optional: name them in `company.logo` and drop them in the project folder, or leave `company.logo.card` empty and the studio card is hidden.
 
 Then update `site.webmanifest` with your brand name and theme colour.
 

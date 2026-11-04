@@ -335,14 +335,16 @@ window.PORTFOLIO_CONFIG = {
     // array above (recommended — one place for all products).
     products: [],
 
-    // Studio logo files. If you only have one logo, point them all at it.
+    // Studio logo files. All optional — leave them blank and no logo block is
+    // shown anywhere. Drop your files in the project root and name them here.
+    // `card` is the one image the portfolio and studio pages display.
     logo: {
-      primary: "assets/logo/logo-primary.svg",
-      white:   "assets/logo/logo-white.svg",
-      mono:    "assets/logo/logo-mono.svg",
-      symbol:  "assets/logo/symbol.svg",
-      avatar:  "assets/logo/avatar.svg",
-      card:    "assets/logo-card.png",
+      primary: "",
+      white:   "",
+      mono:    "",
+      symbol:  "",
+      avatar:  "",
+      card:    "",
     },
   },
 

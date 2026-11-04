@@ -228,13 +228,14 @@
       ],
       subs: [{
         key: "logo", title: "Logo files",
+        help: "Optional. Leave blank to show no logo anywhere. Name files you have added to your project folder.",
         fields: [
-          { key: "primary", label: "Primary", placeholder: "assets/logo/logo-primary.svg" },
-          { key: "white", label: "White", placeholder: "assets/logo/logo-white.svg" },
-          { key: "mono", label: "Monochrome", placeholder: "assets/logo/logo-mono.svg" },
-          { key: "symbol", label: "Symbol", placeholder: "assets/logo/symbol.svg" },
-          { key: "avatar", label: "Avatar", placeholder: "assets/logo/avatar.svg" },
-          { key: "card", label: "Card image", placeholder: "assets/logo-card.jpg", help: "Shown in the portfolio's studio banner" },
+          { key: "primary", label: "Primary", placeholder: "logo.png" },
+          { key: "white", label: "White", placeholder: "logo-white.png" },
+          { key: "mono", label: "Monochrome", placeholder: "logo-mono.png" },
+          { key: "symbol", label: "Symbol", placeholder: "symbol.png" },
+          { key: "avatar", label: "Avatar", placeholder: "avatar.png" },
+          { key: "card", label: "Card image", placeholder: "studio-card.png", help: "Shown in the portfolio's studio banner and the studio hero" },
         ],
       }],
       lists: [
