@@ -1,0 +1,315 @@
+/**
+ * pack.js — the packaging half of the config generator.
+ *
+ * Two jobs, neither of which needs a dependency:
+ *
+ *   1. Write and read ZIP archives. STORE only: no compression, no library.
+ *      A portfolio site is a few hundred kilobytes, so compression would buy
+ *      nothing worth the code.
+ *   2. Work out which files a generated site actually needs by reading the
+ *      pages, rather than trusting a hand-written list that drifts.
+ *
+ * Loaded in the browser as window.Pack, required in Node as a module, so the
+ * test suite runs exactly the code the generator ships.
+ */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory();
+  else root.Pack = factory();
+})(typeof self !== "undefined" ? self : this, function () {
+  "use strict";
+
+  /* ── CRC-32 ──────────────────────────────────────────────────────────── */
+
+  const CRC_TABLE = (() => {
+    const table = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+      table[i] = c >>> 0;
+    }
+    return table;
+  })();
+
+  const crc32 = (bytes) => {
+    let c = 0xffffffff;
+    for (let i = 0; i < bytes.length; i++) {
+      c = CRC_TABLE[(c ^ bytes[i]) & 0xff] ^ (c >>> 8);
+    }
+    return (c ^ 0xffffffff) >>> 0;
+  };
+
+  /* ── byte helpers ────────────────────────────────────────────────────── */
+
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  const toBytes = (data) => {
+    if (typeof data === "string") return encoder.encode(data);
+    if (data instanceof Uint8Array) return data;
+    return new Uint8Array(data);
+  };
+
+  const concat = (chunks) => {
+    const total = chunks.reduce((n, c) => n + c.length, 0);
+    const out = new Uint8Array(total);
+    let at = 0;
+    chunks.forEach((c) => {
+      out.set(c, at);
+      at += c.length;
+    });
+    return out;
+  };
+
+  /* ── ZIP writer ──────────────────────────────────────────────────────── */
+
+  // ZIP stores timestamps as MS-DOS packed fields, which start in 1980.
+  const dosStamp = (date) => ({
+    time: (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1),
+    date: ((Math.max(1980, date.getFullYear()) - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate(),
+  });
+
+  const writeZip = (entries, now = new Date()) => {
+    const stamp = dosStamp(now);
+    const chunks = [];
+    const central = [];
+    let offset = 0;
+
+    entries.forEach((entry) => {
+      const name = encoder.encode(entry.path);
+      const data = toBytes(entry.data);
+      const sum = crc32(data);
+
+      const local = new DataView(new ArrayBuffer(30));
+      local.setUint32(0, 0x04034b50, true); // local file header
+      local.setUint16(4, 20, true); // version needed: 2.0
+      local.setUint16(6, 0, true); // flags
+      local.setUint16(8, 0, true); // method: STORE
+      local.setUint16(10, stamp.time, true);
+      local.setUint16(12, stamp.date, true);
+      local.setUint32(14, sum, true);
+      local.setUint32(18, data.length, true); // compressed size
+      local.setUint32(22, data.length, true); // uncompressed size
+      local.setUint16(26, name.length, true);
+      local.setUint16(28, 0, true); // extra field length
+
+      chunks.push(new Uint8Array(local.buffer), name, data);
+
+      const dir = new DataView(new ArrayBuffer(46));
+      dir.setUint32(0, 0x02014b50, true); // central directory header
+      dir.setUint16(4, 20, true); // version made by
+      dir.setUint16(6, 20, true); // version needed
+      dir.setUint16(8, 0, true);
+      dir.setUint16(10, 0, true);
+      dir.setUint16(12, stamp.time, true);
+      dir.setUint16(14, stamp.date, true);
+      dir.setUint32(16, sum, true);
+      dir.setUint32(20, data.length, true);
+      dir.setUint32(24, data.length, true);
+      dir.setUint16(28, name.length, true);
+      dir.setUint16(30, 0, true); // extra
+      dir.setUint16(32, 0, true); // comment
+      dir.setUint16(34, 0, true); // disk number
+      dir.setUint16(36, 0, true); // internal attributes
+      dir.setUint32(38, 0, true); // external attributes
+      dir.setUint32(42, offset, true); // offset of this entry's local header
+
+      central.push(new Uint8Array(dir.buffer), name);
+
+      offset += 30 + name.length + data.length;
+    });
+
+    const centralBytes = concat(central);
+
+    const end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); // end of central directory
+    end.setUint16(4, 0, true);
+    end.setUint16(6, 0, true);
+    end.setUint16(8, entries.length, true);
+    end.setUint16(10, entries.length, true);
+    end.setUint32(12, centralBytes.length, true);
+    end.setUint32(16, offset, true);
+    end.setUint16(20, 0, true); // comment length
+
+    return concat([...chunks, centralBytes, new Uint8Array(end.buffer)]);
+  };
+
+  /* ── ZIP reader ──────────────────────────────────────────────────────── */
+
+  // Reads back what writeZip produced. STORE only; anything else throws rather
+  // than returning bytes that would be silently wrong.
+  const readZip = (bytes) => {
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+
+    // The central directory's size is unknown, so find the end record by
+    // scanning back for its signature. 22 bytes is the minimum record.
+    let end = -1;
+    for (let i = bytes.length - 22; i >= 0; i--) {
+      if (view.getUint32(i, true) === 0x06054b50) {
+        end = i;
+        break;
+      }
+    }
+    if (end < 0) throw new Error("Not a ZIP file: no end-of-central-directory record");
+
+    const count = view.getUint16(end + 10, true);
+    let at = view.getUint32(end + 16, true);
+    const entries = [];
+
+    for (let i = 0; i < count; i++) {
+      if (view.getUint32(at, true) !== 0x02014b50) throw new Error("Corrupt central directory");
+      const method = view.getUint16(at + 10, true);
+      const size = view.getUint32(at + 24, true);
+      const nameLength = view.getUint16(at + 28, true);
+      const extraLength = view.getUint16(at + 30, true);
+      const commentLength = view.getUint16(at + 32, true);
+      const localAt = view.getUint32(at + 42, true);
+      const path = decoder.decode(bytes.subarray(at + 46, at + 46 + nameLength));
+
+      if (method !== 0) throw new Error(`${path}: only stored (uncompressed) entries are supported`);
+
+      const localNameLength = view.getUint16(localAt + 26, true);
+      const localExtraLength = view.getUint16(localAt + 28, true);
+      const start = localAt + 30 + localNameLength + localExtraLength;
+
+      entries.push({ path, data: bytes.subarray(start, start + size) });
+      at += 46 + nameLength + extraLength + commentLength;
+    }
+
+    return entries;
+  };
+
+  /* ── which files does a site need? ───────────────────────────────────── */
+
+  // Always shipped, whatever the pages happen to say.
+  const CORE_FILES = [
+    "index.html",
+    "studio.html",
+    "style.css",
+    "script.js",
+    "config.js",
+    "robots.txt",
+    "sitemap.xml",
+    "netlify.toml",
+    "_headers",
+  ];
+
+  const PAGES = ["index.html", "studio.html"];
+
+  // Absolute URLs, protocol-relative URLs, fragments and mail links are not
+  // files in the project, so they are left out of the manifest.
+  const NOT_A_FILE = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i;
+
+  const collectRefs = (html) => {
+    const refs = new Set();
+    const attribute = /\b(?:href|src)\s*=\s*"([^"]*)"/gi;
+    let match;
+    while ((match = attribute.exec(html))) {
+      const value = match[1].trim();
+      if (!value || NOT_A_FILE.test(value)) continue;
+      refs.add(value.split("#")[0].split("?")[0]);
+    }
+    return [...refs].filter(Boolean);
+  };
+
+  // Assets the pages name only through config, so no attribute points at them.
+  const configAssets = (config) => {
+    const personal = config.personal || {};
+    const company = config.company || {};
+    const seo = config.seo || {};
+    return [personal.photo, (company.logo || {}).card, seo.ogImage].filter(Boolean);
+  };
+
+  /**
+   * @param {{files: Record<string, string>, config: object, extra?: string[]}} input
+   *   files  — contents of the project, keyed by path. Paths the caller could
+   *            not load are simply absent.
+   * @returns {{include: string[], missing: string[]}} include is what to zip;
+   *   missing is referenced-but-absent, which is a bug worth surfacing.
+   */
+  const buildManifest = ({ files, config, extra = [] }) => {
+    const wanted = new Set(CORE_FILES);
+    PAGES.forEach((page) => {
+      const html = files[page];
+      if (html) collectRefs(html).forEach((ref) => wanted.add(ref));
+    });
+    configAssets(config).forEach((path) => wanted.add(path));
+    extra.forEach((path) => wanted.add(path));
+
+    const include = [];
+    const missing = [];
+    wanted.forEach((path) => {
+      if (Object.prototype.hasOwnProperty.call(files, path)) include.push(path);
+      else missing.push(path);
+    });
+
+    include.sort();
+    missing.sort();
+    return { include, missing };
+  };
+
+  /* ── uploads ─────────────────────────────────────────────────────────── */
+
+  const PHOTO_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+  const PHOTO_MAX = 2 * 1024 * 1024;
+  const RESUME_MAX = 5 * 1024 * 1024;
+
+  /**
+   * Checks an upload before it is read, so the user gets one clear sentence
+   * instead of a silent failure later.
+   * @returns {string} an error message, or "" when the file is acceptable.
+   */
+  const checkUpload = (kind, file) => {
+    if (!file) return "";
+    if (kind === "photo") {
+      if (!PHOTO_TYPES[file.type]) return "That photo is not a JPG, PNG or WebP. Convert it and try again.";
+      if (file.size > PHOTO_MAX) return `That photo is ${mb(file.size)} MB. The limit is 2 MB — resize it and try again.`;
+      return "";
+    }
+    if (kind === "resume") {
+      const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+      if (!isPdf) return "That resume is not a PDF. Export it as PDF and try again.";
+      if (file.size > RESUME_MAX) return `That resume is ${mb(file.size)} MB. The limit is 5 MB — compress it and try again.`;
+      return "";
+    }
+    return "";
+  };
+
+  const mb = (bytes) => (bytes / 1024 / 1024).toFixed(1);
+
+  // Uploaded files live at the project root under a predictable name, so the
+  // generated config can point at them without knowing what the user called
+  // the file on their own machine.
+  const uploadPath = (kind, file) => {
+    if (kind === "photo") return `photo.${PHOTO_TYPES[file.type] || "jpg"}`;
+    return "resume.pdf";
+  };
+
+  /**
+   * Returns a copy of the config with the photo and resume paths pointing at
+   * the uploaded files. The config is a plain object of scalars, so a JSON
+   * round-trip is a safe deep copy here.
+   */
+  const withUploadPaths = (config, uploads) => {
+    const out = JSON.parse(JSON.stringify(config));
+    out.personal = out.personal || {};
+    if (uploads.photo) out.personal.photo = uploads.photo.path;
+    if (uploads.resume) out.personal.resume = uploads.resume.path;
+    return out;
+  };
+
+  return {
+    crc32,
+    writeZip,
+    readZip,
+    collectRefs,
+    buildManifest,
+    checkUpload,
+    uploadPath,
+    withUploadPaths,
+    PHOTO_TYPES,
+    PHOTO_MAX,
+    RESUME_MAX,
+    CORE_FILES,
+    PAGES,
+  };
+});
