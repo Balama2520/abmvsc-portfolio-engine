@@ -162,7 +162,7 @@ theme: {
   fontHeading:  "'Space Grotesk', 'Inter', sans-serif",
   fontBody:     "'Inter', -apple-system, sans-serif",
   fontMono:     "'IBM Plex Mono', monospace",
-  showBuiltBy:  true,           // false ⇒ remove the ABMVSC footer credit
+  showBuiltBy:  false,          // true ⇒ add a small credit linking to the project
   showDemoNotice: true,         // false ⇒ hide the floating "this is the demo" notice
 }
 ```
@@ -179,7 +179,7 @@ theme: {
 | `resume.pdf` | Your own resume PDF |
 | `og-image.png` | Your own 1200×630 social preview |
 | `favicon.*`, `apple-touch-icon.png`, `android-chrome-*` | Your own icons ([favicon.io](https://favicon.io/favicon-converter/)) |
-| `assets/abmvsc-hero-banner.jpg`, `assets/abmvsc-logo-card.jpg` | Your own studio imagery (or leave the placeholders) |
+| `assets/hero-banner.png`, `assets/logo-card.png` | Your own studio imagery (or leave the placeholders) |
 
 Then update `site.webmanifest` with your brand name and theme colour.
 
@@ -229,7 +229,7 @@ No build step. No environment variables. No dependencies to install.
 ## The Checklist — before you deploy
 
 Work down this list once. Skip it and the most likely outcome is that your site
-goes live still showing the ABMVSC demo content.
+goes live still showing the demo content.
 
 **Content — `config.js`**
 
@@ -280,4 +280,4 @@ goes live still showing the ABMVSC demo content.
 
 - **Email:** contact@abmvsc.studio
 - **GitHub:** [github.com/Balama2520](https://github.com/Balama2520)
-- **Studio:** [abms-portfolio.netlify.app/studio.html](https://abms-portfolio.netlify.app/studio.html)
+- **Studio:** `your-site.netlify.app/studio.html` once you deploy your own copy

@@ -1,9 +1,9 @@
 /**
- * ABMVSC Portfolio Engine — config generator (setup.html)
+ * Portfolio Engine — config generator (setup.html)
  * ------------------------------------------------------------------
- * A zero-dependency form that writes a ready-to-use config.js for the
- * ABMVSC Portfolio Engine. It is schema-driven: SCHEMA below is the
- * single description of the config shape, and everything else
+ * A zero-dependency form that writes a ready-to-deploy website from
+ * config.js. It is schema-driven: SCHEMA below is the single
+ * description of the config shape, and everything else
  * (rendering, import, export, preview) is derived from it.
  *
  * Keep SCHEMA in sync with config.js — that file is the contract.
@@ -53,7 +53,7 @@
       id: "personal", icon: "👤", title: "You", page: "portfolio", chapter: "you",
       help: "Drives the navbar, hero, about, contact, footer and the chatbot.",
       fields: [
-        { key: "name", label: "Full name", placeholder: "Alex Rivera", required: true },
+        { key: "name", label: "Full name", placeholder: "Your name", required: true },
         { key: "initials", label: "Logo badge", placeholder: "AR", help: "1–3 characters" },
         { key: "role", label: "Professional role", placeholder: "Full-Stack Developer & AI Engineer" },
         { key: "tagline", label: "Tagline", placeholder: "Engineering Ideas Into Real-World Impact.", wide: true },
@@ -86,7 +86,7 @@
       help: "Written straight into <head> at runtime: title, description, canonical, Open Graph, Twitter Card and JSON-LD. No HTML editing.",
       fields: [
         { key: "siteUrl", label: "Public site URL", placeholder: "https://your-site.netlify.app", wide: true, help: "No trailing slash — the canonical URL and social tags are built from it" },
-        { key: "title", label: "Browser tab title", placeholder: "Alex Rivera — Full-Stack & AI Engineer", wide: true },
+        { key: "title", label: "Browser tab title", placeholder: "Your name — what you do", wide: true },
         { key: "description", label: "Meta description", type: "textarea", wide: true, placeholder: "One sentence for search results and link previews." },
         { key: "ogImage", label: "Social preview image", placeholder: "og-image.png", help: "1200 × 630 px works best" },
         { key: "locale", label: "Locale", placeholder: "en_US" },
@@ -217,7 +217,7 @@
       id: "company", icon: "🏢", title: "Company / studio", page: "studio", chapter: "company",
       help: "Powers the entire studio.html page, the studio banner on the portfolio page and the chatbot's studio answers. Leave the name blank to remove the studio page entirely.",
       fields: [
-        { key: "name", label: "Company name", placeholder: "ABMVSC Studio" },
+        { key: "name", label: "Company name", placeholder: "Your Studio" },
         { key: "descriptor", label: "Descriptor", placeholder: "Technology & Innovation Studio" },
         { key: "tagline", label: "Tagline", placeholder: "Engineering Ideas. Empowering Tomorrow.", wide: true, help: "Split into the studio hero headline on each full stop" },
         { key: "philosophy", label: "Philosophy strip", placeholder: "Build • Research • Innovate • Scale • Impact", wide: true },
@@ -310,7 +310,7 @@
         { key: "fontHeading", label: "Heading font", placeholder: "'Space Grotesk', sans-serif", wide: true },
         { key: "fontBody", label: "Body font", placeholder: "'Inter', sans-serif", wide: true },
         { key: "fontMono", label: "Mono font", placeholder: "'IBM Plex Mono', monospace", wide: true },
-        { key: "showBuiltBy", label: "Show the “Built with the ABMVSC Portfolio Engine” footer credit", type: "bool", default: true, wide: true },
+        { key: "showBuiltBy", label: "Show a small “Made with Portfolio Engine” credit in the footer", type: "bool", default: false, wide: true, help: "Off by default. Turning it on links back to the project." },
       ],
     },
   ];
@@ -810,8 +810,8 @@
      ══════════════════════════════════════════════════════════════ */
   const OUTPUT_HEADER = `/**
  * ╔══════════════════════════════════════════════════════════════════╗
- * ║          ABMVSC PORTFOLIO ENGINE — config.js                     ║
- * ║          Generated with the ABMVSC config generator              ║
+ * ║          PORTFOLIO ENGINE — config.js                            ║
+ * ║          Generated with the Portfolio Engine config generator    ║
  * ╚══════════════════════════════════════════════════════════════════╝
  *
  *  This is the ONLY file your website reads. Drop it into your project
@@ -822,7 +822,7 @@
  *  • Empty any array ([]) and that whole section disappears.
  *  • Nothing here is required — the site degrades gracefully.
  *
- *  ABMVSC Portfolio Engine · MIT License
+ *  Portfolio Engine · MIT License
  */
 
 `;
@@ -917,7 +917,7 @@
   /* ══════════════════════════════════════════════════════════════
      8. DRAFT (localStorage)
      ══════════════════════════════════════════════════════════════ */
-  const DRAFT_KEY = "abmvsc-portfolio-draft-v1";
+  const DRAFT_KEY = "portfolio-engine-draft-v1";
   let draftTimer = null;
 
   const saveDraft = () => {

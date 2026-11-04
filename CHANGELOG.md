@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the ABMVSC Portfolio Template are documented here.
+All notable changes to the Portfolio Engine are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
@@ -33,7 +33,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - **`setup.html` — a full in-browser config generator.** A schema-driven form for all 15 config sections with a live preview of both pages, a completeness meter, paste-ready output, `config.js` import/export, and local draft saving. Replaces the old modal generator. Ships as `setup.html` + `setup.css` (scoped under `.gen-*`) + `setup.js`.
-- **Removable footer credit** — `theme.showBuiltBy` (default `true`) controls the "Built with the ABMVSC Portfolio Engine" line, rendered by `hydrateBuiltBy()` into `[data-built-by]` on both pages. Set it to `false` for a clean footer.
+- **Removable footer credit** — `theme.showBuiltBy` (default `true`) controls the "Built with the Portfolio Engine" line, rendered by `hydrateBuiltBy()` into `[data-built-by]` on both pages. Set it to `false` for a clean footer.
 - **Derived (VIRTUAL) bindings** in `script.js` — `hero.eyebrow`, `hero.badge`, `hero.titleLine1/2`, `company.eyebrow`, `company.titleLine1/2` and `company.heroParagraph` now compute sensible fallbacks instead of rendering blank when unset.
 - **New list renderers & keys** — `about-paragraphs`, `about-reasons`, `purpose-paragraphs`, plus a generic paragraph block renderer.
 - **`data-list-host` attribute** — marks the exact element to hide when a list is empty, so a multi-list section is no longer hidden by one empty list.
@@ -89,7 +89,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `CHANGELOG.md` — This file.
 - `.gitignore` — Ignores backup folders, OS files, `.env`, `node_modules`.
 - Full favicon package: ICO, PNG 16/32, Apple Touch, Android Chrome 192/512, PWA manifest.
-- `site.webmanifest` — PWA-ready with ABMVSC branding and theme colour.
+- `site.webmanifest` — PWA-ready with neutral branding and theme colour.
 
 ### Changed
 - `README.md` — Completely rewritten as a professional agency product page.
@@ -108,7 +108,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Initial production release.
-- Dual-page system: `index.html` (personal portfolio) + `studio.html` (ABMVSC Studio).
+- Dual-page system: `index.html` (personal portfolio) + `studio.html` (company studio page).
 - AI Chatbot Engine with streaming, latency badge, telemetry, markdown rendering.
 - 34 intent rules covering skills, projects, research, experience, system design, and more.
 - Full SVG brand asset system: primary logo, white logo, mono logo, symbol, avatar.

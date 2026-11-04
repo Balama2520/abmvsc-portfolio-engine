@@ -1,6 +1,6 @@
-# Contributing to ABMVSC Portfolio Template
+# Contributing to Portfolio Engine
 
-Thank you for your interest in contributing! This project is maintained by **ABMVSC Technology & Innovation Studio**.
+Thank you for your interest in contributing. This project is maintained by **ABMVSC Technology & Innovation Studio**.
 
 ---
 

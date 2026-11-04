@@ -1,16 +1,14 @@
 <div align="center">
 
-<img src="assets/abmvsc-hero-banner.jpg" alt="ABMVSC Technology & Innovation Studio" width="100%" />
+<img src="assets/hero-banner.png" alt="Portfolio Engine" width="100%" />
 
 <br/>
 
-# ABMVSC Portfolio Engine
+# Portfolio Engine
 
 **A zero-dependency developer portfolio + company site, rendered entirely from one config file.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-abms--portfolio.netlify.app-2563EB?style=for-the-badge&logo=netlify)](https://abms-portfolio.netlify.app/)
-[![Studio Page](https://img.shields.io/badge/Studio-ABMVSC-FF7900?style=for-the-badge)](https://abms-portfolio.netlify.app/studio.html)
-[![Config Generator](https://img.shields.io/badge/Config%20Generator-setup.html-38BDF8?style=for-the-badge)](https://abms-portfolio.netlify.app/setup.html)
+[![Config Generator](https://img.shields.io/badge/Config%20Generator-setup.html-FF7900?style=for-the-badge)](setup.html)
 [![License](https://img.shields.io/badge/License-MIT-10264B?style=for-the-badge)](LICENSE)
 [![No Build Step](https://img.shields.io/badge/Build%20Step-none-38BDF8?style=for-the-badge)](.)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-10264B?style=for-the-badge)](.)
@@ -25,7 +23,7 @@
 
 ## What Is This?
 
-A complete, **zero-dependency** portfolio template engineered by [ABMVSC Technology & Innovation Studio](https://abms-portfolio.netlify.app/studio.html).
+A complete, **zero-dependency** portfolio template. One config file drives a personal portfolio and an optional company page; there is no build step and nothing to install.
 
 You edit **one file** — `config.js` — and both pages rebuild themselves: text, lists, images, links, colours, fonts, the AI chatbot, the SEO tags and the social preview cards. No framework, no bundler, no Node, no `npm install`. Pure HTML5 + CSS3 + vanilla JavaScript, MIT licensed, ready to drag onto Netlify.
 
@@ -103,9 +101,9 @@ your-portfolio/
 └── assets/
     ├── readme-architecture.svg  ← The diagram above
     ├── engineer-avatar.svg      ← Default profile avatar used by config.js
-    ├── abmvsc-hero-banner.jpg   ← Studio page hero image
-    ├── abmvsc-logo-card.jpg     ← Studio logo card
-    └── logo/                    ← ABMVSC brand marks (swap these for your own)
+    ├── hero-banner.png          ← Placeholder hero banner (replace it)
+    ├── logo-card.png            ← Placeholder studio logo card
+    └── logo/                    ← Placeholder brand marks (swap these for your own)
 ```
 
 ---
@@ -260,8 +258,8 @@ theme: {
   fontBody:     "'Inter', -apple-system, sans-serif",
   fontMono:     "'IBM Plex Mono', monospace",
 
-  showBuiltBy: true,         // false → removes the "Built with the ABMVSC
-                             //          Portfolio Engine" footer credit
+  showBuiltBy: false,        // true → adds a small "Made with Portfolio Engine"
+                             //        credit linking back to the project
   showDemoNotice: true,      // false → hides the floating "this is the demo"
                              //          notice (the generator always writes false)
 }
@@ -403,7 +401,7 @@ advertised.
 ## Licence
 
 Released under the **MIT Licence**.
-Free to use, modify and distribute for personal and commercial projects. Attribution to ABMVSC is appreciated but not required.
+Free to use, modify and distribute for personal and commercial projects. Attribution is appreciated but not required.
 
 See [LICENSE](LICENSE) for full terms.
 
@@ -411,14 +409,4 @@ See [LICENSE](LICENSE) for full terms.
 
 ## Built By
 
-<div align="center">
-
-**ABMVSC Technology & Innovation Studio**
-
-*Engineering Ideas. Empowering Tomorrow.*
-
-`BUILD · RESEARCH · INNOVATE · SCALE · IMPACT`
-
-[Studio](https://abms-portfolio.netlify.app/studio.html) · [GitHub](https://github.com/Balama2520) · [Contact](mailto:contact@abmvsc.studio)
-
-</div>
+ABMVSC Technology & Innovation Studio · [GitHub](https://github.com/Balama2520) · [contact@abmvsc.studio](mailto:contact@abmvsc.studio)

@@ -13,7 +13,7 @@ endobj
 stream
 BT /F1 20 Tf 72 770 Td (Placeholder Resume) Tj ET
 BT /F1 11 Tf 72 740 Td () Tj ET
-BT /F1 11 Tf 72 722 Td (This file ships with the ABMVSC Portfolio Engine as a stand-in.) Tj ET
+BT /F1 11 Tf 72 722 Td (This file ships with the Portfolio Engine itself as a stand-in.) Tj ET
 BT /F1 11 Tf 72 704 Td (Replace it with your own resume PDF, or point personal.resume in) Tj ET
 BT /F1 11 Tf 72 686 Td (config.js at a file of your own.) Tj ET
 endstream

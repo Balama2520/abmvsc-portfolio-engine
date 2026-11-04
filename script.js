@@ -1,5 +1,5 @@
 /**
- * ABMVSC Portfolio Engine
+ * Portfolio Engine
  * ------------------------------------------------------------------
  * A single, dependency-free script that renders BOTH websites —
  * index.html (your portfolio) and studio.html (your company) —
@@ -534,12 +534,11 @@
     }
     setHidden(el, false);
     el.innerHTML =
-      'Built with the <a href="setup.html">ABMVSC Portfolio Engine</a>' +
-      '<span class="built-by-sep">·</span><a href="setup.html">Make this yours →</a>';
+      'Made with <a href="https://github.com/Balama2520/abmvsc-portfolio-template">Portfolio Engine</a>';
   };
 
   // 3g. Demo notice — [data-demo-notice]
-  // Shown only while config.js is still the shipped ABMVSC sample
+  // Shown only while config.js is still the shipped sample
   // (theme.showDemoNotice === true). A config made in setup.html always has
   // this off, so the notice disappears the moment the site becomes yours.
   const hydrateDemoNotice = () => {

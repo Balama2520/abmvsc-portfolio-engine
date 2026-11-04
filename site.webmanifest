@@ -1,7 +1,7 @@
 {
-  "name": "ABMVSC — Technology & Innovation Studio",
-  "short_name": "ABMVSC",
-  "description": "Engineering Ideas. Empowering Tomorrow.",
+  "name": "My Portfolio",
+  "short_name": "Portfolio",
+  "description": "A personal portfolio and company site.",
   "icons": [
     { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }

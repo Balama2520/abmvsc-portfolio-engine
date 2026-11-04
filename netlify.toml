@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────────────
-#  ABMVSC Portfolio Engine — Netlify configuration
+#  Portfolio Engine — Netlify configuration
 # ──────────────────────────────────────────────────────────────────────
 #  The site is 100% static. There is no build step and nothing to
 #  compile — Netlify just publishes the repository root as-is.

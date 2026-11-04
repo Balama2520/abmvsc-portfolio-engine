@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ABMVSC Portfolio Engine — Generator UI (setup.html)
+   Portfolio Engine — Generator UI (setup.html)
    Loads AFTER style.css so it can reuse the design tokens (--navy, --orange…).
    Everything is scoped under .gen-* so it can never leak into the site.
    ========================================================================== */

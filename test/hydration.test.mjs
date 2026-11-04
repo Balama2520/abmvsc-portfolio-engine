@@ -1,6 +1,6 @@
 /**
  * ══════════════════════════════════════════════════════════════════════
- *  ABMVSC Portfolio Engine — regression tests
+ *  Portfolio Engine — regression tests
  * ══════════════════════════════════════════════════════════════════════
  *
  *  These tests lock in the engine's contract:

@@ -1,13 +1,13 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════╗
- * ║          ABMVSC PORTFOLIO ENGINE — config.js                     ║
- * ║          Single Source of Truth · Version 3.0                    ║
+ * ║          PORTFOLIO ENGINE — config.js                            ║
+ * ║          Single Source of Truth · Version 3.1                    ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  This is the ONLY file you need to edit.                         ║
  * ║                                                                  ║
- * ║  Fill in your details below and BOTH websites — index.html       ║
+ * ║  Fill in your details below and BOTH pages — index.html          ║
  * ║  (your portfolio) and studio.html (your company) — update        ║
- * ║  automatically, including the AI chatbot, SEO tags and social    ║
+ * ║  automatically, including the assistant, SEO tags and social     ║
  * ║  preview cards.                                                  ║
  * ║                                                                  ║
  * ║  DO NOT edit: index.html  studio.html  style.css  script.js      ║
@@ -21,8 +21,7 @@
  *  • Add as many entries to any array as you like — copy an existing
  *    block and edit it.
  *
- *  ABMVSC Portfolio Engine · MIT License
- *  Built by ABMVSC Technology & Innovation Studio
+ *  Portfolio Engine · MIT License
  */
 
 window.PORTFOLIO_CONFIG = {
@@ -313,7 +312,7 @@ window.PORTFOLIO_CONFIG = {
      ═══════════════════════════════════════════════════════════════ */
   company: {
 
-    name: "ABMVSC Studio",
+    name: "Your Studio",
     descriptor: "Technology & Innovation Studio",
     tagline: "Engineering Ideas. Empowering Tomorrow.",
     philosophy: "Build • Research • Innovate • Scale • Impact",
@@ -380,12 +379,12 @@ window.PORTFOLIO_CONFIG = {
 
     // Studio logo files. If you only have one logo, point them all at it.
     logo: {
-      primary: "assets/logo/abmvsc-logo-primary.svg",
-      white:   "assets/logo/abmvsc-logo-white.svg",
-      mono:    "assets/logo/abmvsc-logo-mono.svg",
-      symbol:  "assets/logo/abmvsc-symbol.svg",
-      avatar:  "assets/logo/abmvsc-avatar.svg",
-      card:    "assets/abmvsc-logo-card.jpg",
+      primary: "assets/logo/logo-primary.svg",
+      white:   "assets/logo/logo-white.svg",
+      mono:    "assets/logo/logo-mono.svg",
+      symbol:  "assets/logo/symbol.svg",
+      avatar:  "assets/logo/avatar.svg",
+      card:    "assets/logo-card.png",
     },
   },
 
@@ -417,7 +416,7 @@ window.PORTFOLIO_CONFIG = {
     greeting: "Hi! I'm Alex's AI assistant. Ask me anything about his projects, skills, experience or how to get in touch.",
 
     // Opening message on studio.html.
-    studioGreeting: "Welcome to ABMVSC Studio! Ask me about our products, capabilities or how we can collaborate.",
+    studioGreeting: "Welcome to our studio! Ask me about our products, capabilities or how we can collaborate.",
 
     // ── Deep-dive answers (optional) ──────────────────────────────
     // Teach the chatbot to answer specialist questions. Each entry adds
@@ -460,9 +459,10 @@ window.PORTFOLIO_CONFIG = {
     fontBody:     "'Inter', sans-serif",
     fontMono:     "'IBM Plex Mono', monospace",
 
-    // Footer credit: "Built with the ABMVSC Portfolio Engine".
-    // Set to false for a completely clean footer with no third-party credit.
-    showBuiltBy: true,
+    // Opt-in footer credit: "Made with Portfolio Engine", linked back to
+    // the project. Off by default so a generated site carries no credit
+    // the owner did not ask for. Turn it on to support the project.
+    showBuiltBy: false,
 
     // Floating "this is the demo" notice. The config you generate in
     // setup.html always sets this to false, so the notice disappears as soon

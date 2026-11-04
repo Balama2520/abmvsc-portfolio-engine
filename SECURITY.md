@@ -9,7 +9,7 @@
 
 ## What this project is
 
-The ABMVSC Portfolio Engine is a **fully static template**. It ships no server,
+The Portfolio Engine is a **fully static template**. It ships no server,
 no database, no authentication and no user accounts. Everything runs in the
 visitor's browser from files in this repository.
 

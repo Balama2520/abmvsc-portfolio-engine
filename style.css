@@ -1547,8 +1547,8 @@ footer {
   background: var(--surface);
 }
 
-/* "Built with the ABMVSC Portfolio Engine" credit — removable via
-   theme.showBuiltBy in config.js */
+/* Opt-in "Made with Portfolio Engine" credit — rendered only when
+   theme.showBuiltBy is true in config.js */
 .built-by {
   margin-top: 8px;
   font-size: 12px;
@@ -1564,12 +1564,7 @@ footer {
   text-decoration: underline;
 }
 
-.built-by-sep {
-  margin: 0 8px;
-  opacity: 0.5;
-}
-
-/* "This is the demo" notice — shown only while config.js is still the ABMVSC
+/* "This is the demo" notice — shown only while config.js is still the shipped
    sample (theme.showDemoNotice === true in config.js). Removable via config. */
 .demo-notice {
   position: fixed;

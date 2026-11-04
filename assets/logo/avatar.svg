@@ -21,7 +21,7 @@
   </g>
 
   <!-- Typography Base -->
-  <text x="256" y="375" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="44" font-weight="700" letter-spacing="-0.02em" fill="#FFFFFF" text-anchor="middle">ABMVSC<tspan fill="#FF7900">.</tspan></text>
+  <text x="256" y="375" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="44" font-weight="700" letter-spacing="-0.02em" fill="#FFFFFF" text-anchor="middle">STUDIO<tspan fill="#FF7900">.</tspan></text>
   <text x="256" y="408" font-family="'IBM Plex Mono', monospace" font-size="14" font-weight="600" letter-spacing="0.22em" fill="#94A3B8" text-anchor="middle">TECHNOLOGY &amp; INNOVATION STUDIO</text>
 </svg>
 
