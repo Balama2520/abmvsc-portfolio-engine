@@ -591,6 +591,12 @@ nav a.active {
   border: 1px solid var(--border);
 }
 
+/* With no studio card configured the banner has a single child. Collapsing the
+   grid keeps the text on its own instead of leaving an empty column. */
+.company-feature-banner:has(> [data-section="company-logo"][hidden]) {
+  grid-template-columns: 1fr;
+}
+
 /* ABOUT / WHY HIRE ME */
 .about-grid {
   display: grid;

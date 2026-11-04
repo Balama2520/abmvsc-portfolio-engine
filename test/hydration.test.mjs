@@ -261,6 +261,24 @@ test("the hero headline keeps the & from the role", async () => {
 
 /* 4. Graceful degradation */
 
+test("the studio card hides itself when no card image is configured", async () => {
+  const cfg = readConfig();
+  const configured = !!(cfg.company && cfg.company.logo && cfg.company.logo.card);
+  if (configured) return; // nothing to assert while a card image is set
+
+  for (const file of ["index.html", "studio.html"]) {
+    const { doc } = await loadPage(file);
+    const wraps = [...doc.querySelectorAll('[data-section="company-logo"]')];
+    assert.ok(wraps.length > 0, `${file} should have a studio card block`);
+    wraps.forEach((el) => {
+      assert.ok(
+        el.hasAttribute("hidden"),
+        `${file} shows the studio card block with no image configured — that renders an empty box`
+      );
+    });
+  }
+});
+
 test("every data-list in the HTML is registered in the engine", () => {
   const script = fs.readFileSync(path.join(ROOT, "script.js"), "utf8");
   const required = new Set();
