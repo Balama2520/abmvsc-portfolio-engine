@@ -36,13 +36,18 @@
       </div>
 
       <div class="gen-actions">
-        <button type="button" class="gen-btn gen-btn-ghost" id="genLoadCurrent" hidden>Load current config.js</button>
-        <button type="button" class="gen-btn" id="genImportBtn">Import config.js</button>
-        <button type="button" class="gen-btn" id="genResetBtn">Start from scratch</button>
-        <button type="button" class="gen-btn gen-btn-dark" id="genCopyBtn">Copy config.js</button>
-        <button type="button" class="gen-btn" id="genDownloadBtn">Download config.js</button>
+        <details class="gen-adv" id="genAdvanced">
+          <summary class="gen-btn">Advanced</summary>
+          <div class="gen-adv-panel" role="group" aria-label="Advanced actions">
+            <button type="button" class="gen-btn gen-btn-ghost" id="genLoadCurrent" hidden>Load current config.js</button>
+            <button type="button" class="gen-btn" id="genImportBtn">Import config.js</button>
+            <button type="button" class="gen-btn" id="genResetBtn">Start from scratch</button>
+            <button type="button" class="gen-btn" id="genCopyBtn">Copy config.js</button>
+            <button type="button" class="gen-btn" id="genDownloadBtn">Download config.js</button>
+            <input type="file" id="genImportInput" accept=".js,text/javascript" hidden />
+          </div>
+        </details>
         <button type="button" class="gen-btn gen-btn-primary" id="genZipBtn">Download website (ZIP)</button>
-        <input type="file" id="genImportInput" accept=".js,text/javascript" hidden />
       </div>
     </div>
   </header>

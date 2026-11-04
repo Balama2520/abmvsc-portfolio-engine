@@ -51,6 +51,56 @@ body.gen-body {
   flex-wrap: wrap;
 }
 
+/* One primary action in the header; the rest sit behind "Advanced". */
+.gen-adv {
+  position: relative;
+}
+
+.gen-adv > summary {
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gen-adv > summary::-webkit-details-marker {
+  display: none;
+}
+
+.gen-adv > summary::after {
+  content: "▾";
+  font-size: 10px;
+  color: var(--text-soft);
+}
+
+.gen-adv[open] > summary {
+  border-color: var(--text-soft);
+}
+
+.gen-adv[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+.gen-adv-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 232px;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.gen-adv-panel .gen-btn {
+  text-align: left;
+}
+
 /* Buttons */
 .gen-btn {
   font: inherit;
