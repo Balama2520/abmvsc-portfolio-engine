@@ -10,6 +10,7 @@
 //
 //   npx playwright install chromium
 //   npm test
+//   SMOKE_BROWSER=firefox npm test   (after: npx playwright install firefox)
 
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
@@ -18,11 +19,17 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { chromium } from "playwright";
+import { chromium, firefox, webkit } from "playwright";
 import { serve } from "./static-server.mjs";
 
 const require = createRequire(import.meta.url);
 const Pack = require("../pack.js");
+
+// Chromium is what CI installs and what the suite runs by default. Set
+// SMOKE_BROWSER=firefox (or webkit) to drive the same flow in another engine
+// after `npx playwright install firefox webkit`.
+const ENGINES = { chromium, firefox, webkit };
+const ENGINE = process.env.SMOKE_BROWSER || "chromium";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const decoder = new TextDecoder();
@@ -38,7 +45,7 @@ let tempDir;
 before(async () => {
   repo = await serve(ROOT);
   tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "portfolio-smoke-"));
-  browser = await chromium.launch();
+  browser = await ENGINES[ENGINE].launch();
 });
 
 after(async () => {
@@ -55,7 +62,7 @@ const writeFiles = (dir, entries) => {
   }
 };
 
-test("browser: the generator ships a ZIP that opens as a working site", async () => {
+test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working site`, async () => {
   const page = await browser.newPage();
   await page.goto(`${repo.base}/setup.html`);
 
