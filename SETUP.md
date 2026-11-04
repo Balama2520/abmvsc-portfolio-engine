@@ -20,7 +20,7 @@ The template includes a **config generator** at `setup.html` — a form that wri
 
 The generator asks its questions in **six chapters** — You → Your work → Extras → Your company → Look & feel → Launch — and shows one at a time. Use the step rail to jump to any chapter, or click **Show everything** to see the whole form at once.
 
-1. Open `setup.html` (from your copy, or the live demo at `/setup.html`)
+1. Open `setup.html` in your copy of the template
 2. Answer the chapters — every field is optional
 3. Watch both sites update in the live preview as you type
 4. Click **Download config.js**
@@ -109,7 +109,7 @@ Each of these is an array — copy an existing entry and edit it. Empty array �
 company: {
   name:         "Your Studio",
   descriptor:   "Technology & Innovation Studio",
-  tagline:      "Engineering Ideas. Empowering Tomorrow.",
+  tagline:      "Engineering ideas, shipped.",
   philosophy:   "Build • Research • Innovate • Scale • Impact",
   description:  "What your studio does.",
   heroParagraph: "",            // optional — falls back to description
@@ -136,9 +136,9 @@ If `products` is empty, the Ecosystem section reuses your personal projects so t
 
 ```js
 chatbot: {
-  assistantName: "Your AI Assistant",
-  greeting:      "Hello! Ask me about my projects, skills or experience.",
-  studioGreeting: "Welcome to the studio!",
+  assistantName: "Your assistant",
+  greeting:      "Ask me about my projects, skills or experience.",
+  studioGreeting: "Welcome to the studio. Ask about our products or capabilities.",
   customResponses: {
     whyHire: "",
     pricing: "…",
@@ -156,13 +156,13 @@ All other answers are generated automatically from the sections you already fill
 
 ```js
 theme: {
+  mode:         "light",        // "light", "dark" or "minimal"
   primaryColor: "#10264B",
   accentColor:  "#FF7900",
-  blueColor:    "#2563EB",
   fontHeading:  "'Space Grotesk', 'Inter', sans-serif",
   fontBody:     "'Inter', -apple-system, sans-serif",
   fontMono:     "'IBM Plex Mono', monospace",
-  showBuiltBy:  false,          // true ⇒ add a small credit linking to the project
+  showBuiltBy:  false,          // true ⇒ add a small "Made with the Portfolio Engine" credit
   showDemoNotice: true,         // false ⇒ hide the floating "this is the demo" notice
 }
 ```
@@ -179,7 +179,7 @@ theme: {
 | `resume.pdf` | Your own resume PDF |
 | `og-image.png` | Your own 1200×630 social preview |
 | `favicon.*`, `apple-touch-icon.png`, `android-chrome-*` | Your own icons ([favicon.io](https://favicon.io/favicon-converter/)) |
-| `assets/hero-banner.png`, `assets/logo-card.png` | Your own studio imagery (or leave the placeholders) |
+| `assets/logo-card.png` | Your own studio card image (or leave the placeholder) |
 
 Then update `site.webmanifest` with your brand name and theme colour.
 
@@ -211,7 +211,7 @@ And set `seo.siteUrl` in `config.js` to the same domain.
 ```
 1. app.netlify.com → Add new site → Deploy manually
 2. Drag your folder onto the page
-3. Live in seconds ✓
+3. Live in seconds
 ```
 
 **GitHub Pages:**
@@ -219,7 +219,7 @@ And set `seo.siteUrl` in `config.js` to the same domain.
 ```
 1. Push to GitHub
 2. Settings → Pages → Deploy from main branch → / (root)
-3. Live at: https://yourusername.github.io/repo-name ✓
+3. Live at: https://yourusername.github.io/repo-name
 ```
 
 No build step. No environment variables. No dependencies to install.

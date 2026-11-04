@@ -7,12 +7,12 @@ Thank you for your interest in contributing. This project is maintained by **ABM
 ## How to Contribute
 
 ### Report a Bug
-1. Open a [GitHub Issue](https://github.com/Balama2520/abmvsc-portfolio-template/issues)
+1. Open a [GitHub Issue](../../issues)
 2. Use the label `bug`
 3. Include: browser, OS, screenshot, and steps to reproduce
 
 ### Suggest a Feature
-1. Open a [GitHub Issue](https://github.com/Balama2520/abmvsc-portfolio-template/issues)
+1. Open a [GitHub Issue](../../issues)
 2. Use the label `enhancement`
 3. Describe the use case clearly
 
@@ -40,21 +40,22 @@ Thank you for your interest in contributing. This project is maintained by **ABM
 
 ```bash
 npm install
+npx playwright install chromium   # the two browser tests drive real Chromium
 npm test
 ```
 
-CI runs the same command, so a green suite locally means a green build.
+CI runs the same commands, so a green suite locally means a green build.
 
 Before submitting, confirm:
-- [ ] `npm test` passes (hydration contract + guardrails)
+- [ ] `npm test` passes (guardrails + hydration + packaging + browser)
 - [ ] `node --check script.js` and `node --check config.js` return no errors
 - [ ] Both pages hydrate with no errors in the browser console
 - [ ] No user content is hardcoded in `index.html` / `studio.html` — everything comes from `config.js`
 - [ ] Every `data-list` name has a matching entry in `RENDERERS` and `LIST_COUNTS`
 - [ ] Emptying any array in `config.js` hides its section cleanly (and its nav link)
-- [ ] Chatbot responds to: hello, skills, projects, contact, resume
-- [ ] Mobile responsive (test at 375px, 768px, 1280px)
-- [ ] Colour and font overrides in `config.theme` take effect
+- [ ] The assistant answers: hello, skills, projects, contact, resume
+- [ ] No layout overflows at 375px, 768px or 1280px (`npm test` covers this)
+- [ ] Colour, font and theme overrides in `config.theme` take effect
 
 ### What you must never break
 

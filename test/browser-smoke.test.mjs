@@ -1,31 +1,25 @@
-/**
- * ══════════════════════════════════════════════════════════════════════
- *  Portfolio Engine — browser smoke test
- * ══════════════════════════════════════════════════════════════════════
- *
- *  The jsdom tests check the engine's contract in a simulated DOM. This
- *  test does the one thing jsdom cannot: it drives the real generator in
- *  Chromium, uploads real files, takes the ZIP it downloads, unzips it and
- *  opens the result. If the unzipped site renders the name the user typed,
- *  the whole path from form to deployable folder works.
- *
- *  DEVELOPMENT ONLY, like the rest of the suite. The template that ships to
- *  users has no dependencies and no build step.
- *
- *    npx playwright install chromium
- *    npm test
- * ══════════════════════════════════════════════════════════════════════
- */
+/* Portfolio Engine — browser smoke test */
+// The jsdom tests check the engine's contract in a simulated DOM. This
+// test does the one thing jsdom cannot: it drives the real generator in
+// Chromium, uploads real files, takes the ZIP it downloads, unzips it and
+// opens the result. If the unzipped site renders the name the user typed,
+// the whole path from form to deployable folder works.
+//
+// DEVELOPMENT ONLY, like the rest of the suite. The template that ships to
+// users has no dependencies and no build step.
+//
+//   npx playwright install chromium
+//   npm test
 
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import http from "node:http";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { chromium } from "playwright";
+import { serve } from "./static-server.mjs";
 
 const require = createRequire(import.meta.url);
 const Pack = require("../pack.js");
@@ -36,39 +30,6 @@ const decoder = new TextDecoder();
 // A name that cannot appear by accident, so a match proves the value the
 // test typed into the form reached the rendered page.
 const NAME = "Zephyr Quill";
-
-const MIME = {
-  ".html": "text/html",
-  ".js": "text/javascript",
-  ".css": "text/css",
-  ".json": "application/json",
-  ".svg": "image/svg+xml",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".ico": "image/x-icon",
-  ".pdf": "application/pdf",
-  ".xml": "application/xml",
-  ".txt": "text/plain",
-  ".webmanifest": "application/manifest+json",
-};
-
-/* ── A static server, rooted wherever we point it ── */
-
-const serve = async (root) => {
-  const server = http.createServer((req, res) => {
-    const rel = decodeURIComponent(req.url.split("?")[0]).replace(/^\/+/, "") || "index.html";
-    const file = path.join(root, rel);
-    if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-      res.writeHead(404);
-      res.end("not found");
-      return;
-    }
-    res.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream" });
-    res.end(fs.readFileSync(file));
-  });
-  await new Promise((r) => server.listen(0, "127.0.0.1", r));
-  return { server, base: `http://127.0.0.1:${server.address().port}` };
-};
 
 let repo;
 let browser;
