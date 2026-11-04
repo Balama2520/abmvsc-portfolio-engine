@@ -678,6 +678,49 @@ body.gen-body {
   margin-top: 6px;
 }
 
+/* A collapsed block of secondary fields inside a section card. */
+.gen-group {
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-alt);
+  padding: 0 14px;
+}
+
+.gen-group[open] {
+  padding-bottom: 14px;
+}
+
+.gen-group > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 11px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.gen-group > summary::-webkit-details-marker {
+  display: none;
+}
+
+.gen-group > summary::before {
+  content: "▸ ";
+  color: var(--accent-text);
+}
+
+.gen-group[open] > summary::before {
+  content: "▾ ";
+}
+
+.gen-group > summary:hover {
+  color: var(--text);
+}
+
+.gen-group .gen-grid {
+  margin-top: 4px;
+}
+
 /* Repeating lists */
 .gen-list-head {
   display: flex;

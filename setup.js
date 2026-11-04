@@ -69,8 +69,11 @@
         { key: "github", label: "GitHub URL", placeholder: "https://github.com/you" },
         { key: "twitter", label: "Twitter / X URL" },
         { key: "website", label: "Personal website" },
-        { key: "huggingface", label: "Hugging Face URL" },
-        { key: "researchgate", label: "ResearchGate URL" },
+        { key: "huggingface", label: "Hugging Face URL", group: "more" },
+        { key: "researchgate", label: "ResearchGate URL", group: "more" },
+      ],
+      groups: [
+        { id: "more", title: "More links", help: "Optional. Shown in your contact cards and in the page's structured data." },
       ],
     },
 
@@ -628,13 +631,33 @@
   };
 
   const renderSection = (sec) => {
+    const allFields = sec.fields || [];
+    const groups = sec.groups || [];
+    const inGroup = new Set(groups.flatMap((g) => allFields.filter((f) => f.group === g.id).map((f) => f.key)));
+
+    const grid = (fields) =>
+      fields.length
+        ? `<div class="gen-grid">${fields.map((f) => renderField(`${sec.id}.${f.key}`, f, state[sec.id][f.key])).join("")}</div>`
+        : "";
+
+    // A group is a collapsed block of secondary fields. It only changes how
+    // they are shown — state, import and export still read sec.fields.
+    const groupBlock = (g) => {
+      const fields = allFields.filter((f) => f.group === g.id);
+      if (!fields.length) return "";
+      return `<details class="gen-group">
+          <summary>${esc(g.title)}</summary>
+          ${g.help ? `<p class="gen-help">${esc(g.help)}</p>` : ""}
+          ${grid(fields)}
+        </details>`;
+    };
+
     const body = [
       sec.help ? `<p class="gen-card-help">${esc(sec.help)}</p>` : "",
-      sec.fields && sec.fields.length
-        ? `<div class="gen-grid">${sec.fields.map((f) => renderField(`${sec.id}.${f.key}`, f, state[sec.id][f.key])).join("")}</div>`
-        : "",
+      grid(allFields.filter((f) => !inGroup.has(f.key))),
       (sec.subs || []).map((sub) => renderSub(sec, sub)).join(""),
       (sec.lists || []).map((list) => renderList(sec, list)).join(""),
+      groups.map(groupBlock).join(""),
     ].join("");
 
     return `<section class="gen-card" data-section-id="${esc(sec.id)}" data-chapter="${esc(sec.chapter || "")}">
