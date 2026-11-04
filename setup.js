@@ -1,19 +1,14 @@
-/**
- * Portfolio Engine — config generator (setup.html)
- * ------------------------------------------------------------------
- * A zero-dependency form that writes a ready-to-deploy website from
- * config.js. It is schema-driven: SCHEMA below is the single
- * description of the config shape, and everything else
- * (rendering, import, export, preview) is derived from it.
- *
- * Keep SCHEMA in sync with config.js — that file is the contract.
- */
+/* Portfolio Engine — config generator (setup.html) */
+// A zero-dependency form that writes a ready-to-deploy website from
+// config.js. It is schema-driven: SCHEMA below is the single
+// description of the config shape, and everything else
+// (rendering, import, export, preview) is derived from it.
+//
+// Keep SCHEMA in sync with config.js — that file is the contract.
 (() => {
   "use strict";
 
-  /* ══════════════════════════════════════════════════════════════
-     1. REUSABLE FIELD SETS
-     ══════════════════════════════════════════════════════════════ */
+  /* 1. Reusable field sets */
   const PROJECT_FIELDS = [
     { key: "name", label: "Project name", placeholder: "Project One" },
     { key: "category", label: "Category / tag", placeholder: "Web Application" },
@@ -45,9 +40,7 @@
     { key: "text", label: "Text", type: "textarea", placeholder: "One or two sentences." },
   ];
 
-  /* ══════════════════════════════════════════════════════════════
-     2. SCHEMA — the description of config.js
-     ══════════════════════════════════════════════════════════════ */
+  /* 2. Schema — the description of config.js */
   const SCHEMA = [
     {
       id: "personal", title: "You", page: "portfolio", chapter: "you",
@@ -317,14 +310,12 @@
         { key: "fontHeading", label: "Heading font", placeholder: "'Space Grotesk', sans-serif", wide: true },
         { key: "fontBody", label: "Body font", placeholder: "'Inter', sans-serif", wide: true },
         { key: "fontMono", label: "Mono font", placeholder: "'IBM Plex Mono', monospace", wide: true },
-        { key: "showBuiltBy", label: "Show a small “Made with Portfolio Engine” credit in the footer", type: "bool", default: false, wide: true, help: "Off by default. Turning it on links back to the project." },
+        { key: "showBuiltBy", label: "Show a small “Made with the Portfolio Engine” credit in the footer", type: "bool", default: false, wide: true, help: "Off by default. It is plain text with no link." },
       ],
     },
   ];
 
-  /* ══════════════════════════════════════════════════════════════
-     2b. CHAPTERS — the order the questions are asked in
-     ══════════════════════════════════════════════════════════════ */
+  /* 2b. Chapters — the order the questions are asked in */
   // Every section above belongs to exactly one chapter. The wizard shows one
   // chapter at a time, so a first-time user answers a handful of related
   // questions instead of facing all fifteen sections at once. "Show everything"
@@ -338,9 +329,7 @@
     { id: "launch", title: "Launch", hint: "Search settings, contact links — and going live." },
   ];
 
-  /* ══════════════════════════════════════════════════════════════
-     3. HELPERS
-     ══════════════════════════════════════════════════════════════ */
+  /* 3. Helpers */
   const $ = (sel, root = document) => root.querySelector(sel);
 
   const str = (v) => (v === undefined || v === null ? "" : String(v));
@@ -375,9 +364,7 @@
     toastTimer = setTimeout(() => el.classList.remove("is-visible"), 4200);
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     3b. UPLOADS — files the visitor picks, kept in this tab only
-     ══════════════════════════════════════════════════════════════ */
+  /* 3b. Uploads — files the visitor picks, kept in this tab only */
   // A picked file is read into memory and sent nowhere. The bytes feed the ZIP
   // download; a path string goes into the config so the preview and the
   // generated config.js agree on where the file will end up.
@@ -414,9 +401,7 @@
       reader.readAsArrayBuffer(file);
     });
 
-  /* ══════════════════════════════════════════════════════════════
-     4. STATE — normalize (config → form) and buildConfig (form → config)
-     ══════════════════════════════════════════════════════════════ */
+  /* 4. State — normalize (config → form) and buildConfig (form → config) */
   const emptyItem = (list) => {
     if (list.kind === "string") return "";
     const o = {};
@@ -522,9 +507,7 @@
 
   let state = emptyState();
 
-  /* ══════════════════════════════════════════════════════════════
-     5. RENDERING
-     ══════════════════════════════════════════════════════════════ */
+  /* 5. Rendering */
   const renderUpload = (path, f, value) => {
     const id = uid();
     const picked = uploads[f.upload];
@@ -670,9 +653,7 @@
     applyChapter();
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     5b. WIZARD — ask one chapter at a time
-     ══════════════════════════════════════════════════════════════ */
+  /* 5b. Wizard — ask one chapter at a time */
   const LAST_CHAPTER = CHAPTERS.length - 1;
   let chapterIndex = 0;
   let showEverything = false;
@@ -816,24 +797,20 @@
     updateOutput();
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     6. OUTPUT — config.js source
-     ══════════════════════════════════════════════════════════════ */
+  /* 6. Output — config.js source */
   const OUTPUT_HEADER = `/**
- * ╔══════════════════════════════════════════════════════════════════╗
- * ║          PORTFOLIO ENGINE — config.js                            ║
- * ║          Generated with the Portfolio Engine config generator    ║
- * ╚══════════════════════════════════════════════════════════════════╝
+ * Portfolio Engine — config.js
  *
- *  This is the ONLY file your website reads. Drop it into your project
- *  folder (replacing the existing config.js) and both index.html and
- *  studio.html rebuild themselves from it.
+ * Generated with the Portfolio Engine config generator. This is the ONLY
+ * file your website reads: drop it into your project folder (replacing the
+ * existing config.js) and both index.html and studio.html rebuild
+ * themselves from it.
  *
- *  • Empty any field ("") and that element hides itself.
- *  • Empty any array ([]) and that whole section disappears.
- *  • Nothing here is required — the site degrades gracefully.
+ * - Empty any field ("") and that element hides itself.
+ * - Empty any array ([]) and that whole section disappears.
+ * - Nothing here is required; the site degrades gracefully.
  *
- *  Portfolio Engine · MIT License
+ * Portfolio Engine — MIT License
  */
 
 `;
@@ -854,9 +831,7 @@
     return fn({});
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     7. LIVE PREVIEW
-     ══════════════════════════════════════════════════════════════ */
+  /* 7. Live preview */
   const PREVIEW_FILES = { portfolio: "index.html", studio: "studio.html" };
   let previewPage = "portfolio";
   let previewTimer = null;
@@ -925,9 +900,7 @@
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     8. DRAFT (localStorage)
-     ══════════════════════════════════════════════════════════════ */
+  /* 8. Draft (localStorage) */
   const DRAFT_KEY = "portfolio-engine-draft-v1";
   let draftTimer = null;
 
@@ -951,9 +924,7 @@
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     9. EVENTS
-     ══════════════════════════════════════════════════════════════ */
+  /* 9. Events */
   const findList = (sectionId, listKey) => {
     const sec = SCHEMA.find((s) => s.id === sectionId);
     return sec && (sec.lists || []).find((l) => l.key === listKey);
@@ -1020,7 +991,7 @@
   const onFormEvent = (e) => {
     const t = e.target;
 
-    // ── file uploads
+    // File uploads
     const uploadKind = t.dataset && t.dataset.upload;
     if (uploadKind) {
       const file = t.files && t.files[0];
@@ -1036,7 +1007,7 @@
       return;
     }
 
-    // ── text / colour / checkbox edits
+    // Text / colour / checkbox edits
     if (t.dataset && t.dataset.path) {
       const path = t.dataset.path;
       const value = t.type === "checkbox" ? t.checked : t.value;
@@ -1058,7 +1029,7 @@
       return;
     }
 
-    // ── add / remove / move
+    // Add / remove / move
     const addTarget = t.dataset && t.dataset.add;
     if (addTarget) {
       const [sectionId, listKey] = addTarget.split("|");
@@ -1104,7 +1075,7 @@
       return;
     }
 
-    // ── collapse / expand a section
+    // Collapse / expand a section
     const toggle = t.dataset && t.dataset.toggle;
     if (toggle) {
       const card = document.querySelector(`[data-section-id="${toggle}"]`);
@@ -1128,7 +1099,7 @@
     toast("Downloaded <strong>config.js</strong> — drop it into your project folder, replacing the existing one.");
   };
 
-  /* ── the whole website, as a ZIP ─────────────────────────────── */
+  /* The whole website, as a ZIP */
 
   // Text extensions in this project are safe to read as strings; everything
   // else (images, the resume PDF) has to stay bytes or the file arrives corrupt.
@@ -1326,7 +1297,7 @@
       e.target.textContent = mobile ? "Toggle mobile width" : "Toggle full width";
     });
 
-    // ── wizard: step rail, Back/Next and the "show everything" escape hatch
+    // Wizard: step rail, Back/Next and the "show everything" escape hatch
     const rail = $("#genRail");
     if (rail) {
       rail.addEventListener("click", (e) => {
@@ -1344,14 +1315,12 @@
     const showAll = $("#genShowAll");
     if (showAll) showAll.addEventListener("click", setShowEverything);
 
-    // ── launch panel: the same ZIP download, next to the deployment steps
+    // Launch panel: the same ZIP download, next to the deployment steps
     const launchZip = $("#genLaunchZip");
     if (launchZip) launchZip.addEventListener("click", downloadZip);
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     10. BOOT
-     ══════════════════════════════════════════════════════════════ */
+  /* 10. Boot */
   const boot = () => {
     const draft = loadDraft();
     state = draft ? normalize(draft) : emptyState();

@@ -1,18 +1,12 @@
-/**
- * ══════════════════════════════════════════════════════════════════════
- *  Guardrails — the promises that make this template worth using
- * ══════════════════════════════════════════════════════════════════════
- *
- *  Every one of these failing means the project lost a selling point:
- *
- *    • zero dependencies        • no build step
- *    • no third-party JS        • no broken file references
- *    • every file parses
- *
- *  If you are here because CI is red: the fix is almost never to relax
- *  the guardrail. It is to change the change that broke it.
- * ══════════════════════════════════════════════════════════════════════
- */
+/* Guardrails — the promises that make this template worth using */
+// Every one of these failing means the project lost a selling point:
+//
+//   - zero dependencies        - no build step
+//   - no third-party JS        - no broken file references
+//   - every file parses
+//
+// If you are here because CI is red: the fix is almost never to relax
+// the guardrail. It is to change the change that broke it.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";

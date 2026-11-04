@@ -1,8 +1,6 @@
-# ──────────────────────────────────────────────────────────────────────
-#  Host-agnostic security + caching headers.
-#  Used by Cloudflare Pages, Netlify (as a fallback), and GitHub Pages
-#  does not read this file — see netlify.toml for the Netlify version.
-# ──────────────────────────────────────────────────────────────────────
+# Host-agnostic security + caching headers.
+# Used by Cloudflare Pages, Netlify (as a fallback), and GitHub Pages
+# does not read this file — see netlify.toml for the Netlify version.
 
 /*
   X-Content-Type-Options: nosniff

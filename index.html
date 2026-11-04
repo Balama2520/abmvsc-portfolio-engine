@@ -72,14 +72,14 @@
     <section class="hero">
       <div class="container hero-flex">
         <div class="hero-content">
-          <p class="eyebrow" data-bind="hero.eyebrow">Available for work</p>
+          <p class="eyebrow" data-bind="hero.eyebrow"></p>
           <a href="studio.html" class="studio-pill-tag" data-section="company">
-            <span data-bind="hero.badge">Founder</span> ↗
+            <span data-bind="hero.badge"></span> ↗
           </a>
 
           <h1>
-            <span data-bind="hero.titleLine1">Full-Stack Developer</span><br>
-            <span class="hero-accent" data-bind="hero.titleLine2">&amp; AI Engineer</span>
+            <span data-bind="hero.titleLine1"></span><br>
+            <span class="hero-accent" data-bind="hero.titleLine2"></span>
           </h1>
 
           <p class="hero-description" data-bind="personal.bio"></p>
@@ -291,12 +291,9 @@
 
     <div class="chatbot-window" id="chatbotWindow" aria-hidden="true">
       <div class="chatbot-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="chat-status-dot"></span>
-          <div>
-            <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">Assistant</span></p>
-            <p class="chatbot-header-sub">Answers from the content on this site</p>
-          </div>
+        <div>
+          <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">Assistant</span></p>
+          <p class="chatbot-header-sub">Answers from the content on this site</p>
         </div>
         <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Close chat">✕</button>
       </div>

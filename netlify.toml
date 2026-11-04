@@ -1,14 +1,11 @@
-# ──────────────────────────────────────────────────────────────────────
-#  Portfolio Engine — Netlify configuration
-# ──────────────────────────────────────────────────────────────────────
-#  The site is 100% static. There is no build step and nothing to
-#  compile — Netlify just publishes the repository root as-is.
-# ──────────────────────────────────────────────────────────────────────
+# Portfolio Engine — Netlify configuration
+# The site is 100% static. There is no build step and nothing to
+# compile — Netlify just publishes the repository root as-is.
 
 [build]
   publish = "."
 
-# ── Security headers (all routes) ─────────────────────────────────────
+# Security headers (all routes)
 [[headers]]
   for = "/*"
   [headers.values]
@@ -17,7 +14,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
-# ── config.js is the one file users edit ─────────────────────────────
+# config.js is the one file users edit
 #  Never serve a stale copy — a cached config.js is the #1 cause of
 #  "I changed my content but the site didn't update".
 [[headers]]
@@ -35,7 +32,7 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# ── Immutable assets ─────────────────────────────────────────────────
+# Immutable assets
 [[headers]]
   for = "/assets/*"
   [headers.values]
@@ -51,7 +48,7 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# ── The generator is a tool, not a landing page ──────────────────────
+# The generator is a tool, not a landing page
 [[headers]]
   for = "/setup.html"
   [headers.values]

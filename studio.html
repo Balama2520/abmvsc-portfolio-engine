@@ -71,11 +71,11 @@
     <section class="hero" id="overview">
       <div class="container hero-flex">
         <div class="hero-content">
-          <p class="eyebrow" style="color:var(--orange);" data-bind="company.eyebrow">Technology Studio</p>
+          <p class="eyebrow" data-bind="company.eyebrow"></p>
 
           <h1>
-            <span data-bind="company.titleLine1">Engineering Ideas.</span><br>
-            <span style="color:var(--accent);" data-bind="company.titleLine2">Empowering Tomorrow.</span>
+            <span data-bind="company.titleLine1"></span><br>
+            <span style="color:var(--accent);" data-bind="company.titleLine2"></span>
           </h1>
 
           <p class="hero-description" data-bind="company.heroParagraph"></p>
@@ -91,7 +91,7 @@
 
         <div class="hero-photo-wrap" style="max-width: 280px; width: 100%;" data-section="company-logo">
           <img src="" alt="" data-bind="company.logo.card"
-            style="border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-md);" />
+            style="border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow);" />
         </div>
       </div>
     </section>
@@ -122,7 +122,7 @@
         <div class="about-grid">
           <div class="about-narrative">
             <div data-list="purpose-paragraphs" data-list-host></div>
-            <p class="about-vision" style="border-left-color: var(--orange);"
+            <p class="about-vision" style="border-left-color: var(--accent);"
               data-bind="company.purposeVision"></p>
           </div>
 
@@ -161,10 +161,9 @@
         <div class="company-feature-banner" style="grid-template-columns: 0.8fr 1.2fr;">
           <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
             <img src="" alt="" data-bind="personal.photo"
-              style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: var(--shadow-md); margin-bottom: 14px;" />
-            <h4 style="font-size: 18px; font-weight: 700; color: var(--navy);" data-bind="personal.name">Founder</h4>
-            <p style="font-size: 13px; color: var(--text-soft); font-weight: 500;" data-bind="company.founderRole">
-              Founder</p>
+              style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: var(--shadow); margin-bottom: 14px;" />
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--navy);" data-bind="personal.name"></h4>
+            <p style="font-size: 13px; color: var(--text-soft); font-weight: 500;" data-bind="company.founderRole"></p>
           </div>
 
           <div>
@@ -188,11 +187,10 @@
       <div class="container">
         <div class="contact-grid">
           <div class="contact-left">
-            <p class="section-label" style="color: var(--orange);">Collaborate</p>
+            <p class="section-label" style="color: var(--accent);">Collaborate</p>
             <h2>Start a conversation</h2>
             <p class="contact-desc" data-bind="company.contactDescription"></p>
-            <a class="btn-primary" href="mailto:" style="background: var(--orange);"
-              data-bind="company.email">Contact</a>
+            <a class="btn-primary" href="mailto:" data-bind="company.email">Contact</a>
             <p class="contact-phone" data-bind="company.phone"></p>
           </div>
           <div class="contact-right" data-list="contact-links" data-list-host></div>
@@ -237,12 +235,9 @@
 
     <div class="chatbot-window" id="chatbotWindow" aria-hidden="true">
       <div class="chatbot-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="chat-status-dot"></span>
-          <div>
-            <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">Assistant</span></p>
-            <p class="chatbot-header-sub">Answers from the content on this site</p>
-          </div>
+        <div>
+          <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">Assistant</span></p>
+          <p class="chatbot-header-sub">Answers from the content on this site</p>
         </div>
         <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Close chat">✕</button>
       </div>

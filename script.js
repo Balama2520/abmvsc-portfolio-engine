@@ -1,24 +1,19 @@
-/**
- * Portfolio Engine
- * ------------------------------------------------------------------
- * A single, dependency-free script that renders BOTH websites —
- * index.html (your portfolio) and studio.html (your company) —
- * entirely from window.PORTFOLIO_CONFIG (config.js).
- *
- *   • Hydration engine  — text, links, images, lists, sections, SEO
- *   • Site chrome       — sticky nav, scroll-spy, smooth scroll, reveal
- *   • Resume modal      — zero-dependency PDF preview
- *   • Assistant         — rule-based chat, answered from config.js
- *
- * You should never need to edit this file. Edit config.js instead.
- */
+/* Portfolio Engine */
+// A single, dependency-free script that renders BOTH websites —
+// index.html (your portfolio) and studio.html (your company) —
+// entirely from window.PORTFOLIO_CONFIG (config.js).
+//
+// - Hydration engine  — text, links, images, lists, sections, SEO
+// - Site chrome       — sticky nav, scroll-spy, smooth scroll, reveal
+// - Resume modal      — zero-dependency PDF preview
+// - Assistant         — rule-based chat, answered from config.js
+//
+// You should never need to edit this file. Edit config.js instead.
 
 (() => {
   "use strict";
 
-  /* ══════════════════════════════════════════════════════════════
-     0. CONTEXT & HELPERS
-     ══════════════════════════════════════════════════════════════ */
+  /* 0. Context & helpers */
   const cfg = window.PORTFOLIO_CONFIG || {};
 
   const co   = cfg.company  || {};
@@ -55,9 +50,7 @@
     else el.removeAttribute("hidden");
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     1. DATA SOURCES  (handles both new + legacy config shapes)
-     ══════════════════════════════════════════════════════════════ */
+  /* 1. Data sources (handles both new + legacy config shapes) */
   const projects       = arr(cfg.projects);
   const experience     = arr(cfg.experience);
   const education      = cfg.education ? arr(cfg.education) : [];
@@ -141,9 +134,7 @@
     return out;
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     2. LIST RENDERERS  (one per [data-list="…"] container)
-     ══════════════════════════════════════════════════════════════ */
+  /* 2. List renderers (one per [data-list="…"] container) */
   const statRow = (items, navy) => items
     .map((s, i) => `
       ${i ? '<div class="stat-divider"></div>' : ""}
@@ -324,9 +315,7 @@
     "contact-links": contactLinks().length,
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     3. HYDRATION PASSES
-     ══════════════════════════════════════════════════════════════ */
+  /* 3. Hydration passes */
 
   // Blends a hex colour toward black (amount < 0) or white (amount > 0). One
   // accent value then yields a readable text shade and a soft background,
@@ -568,8 +557,10 @@
       return;
     }
     setHidden(el, false);
-    el.innerHTML =
-      'Made with <a href="https://github.com/Balama2520/abmvsc-portfolio-template">Portfolio Engine</a>';
+    // Plain text on purpose: a generated site should not carry a link to
+    // anyone else's account. The owner opted in to the credit, not to a
+    // backlink, and the template repository is where it belongs.
+    el.textContent = "Made with the Portfolio Engine";
   };
 
   // 3g. Demo notice — [data-demo-notice]
@@ -600,9 +591,7 @@
     hydrateDemoNotice();
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     4. RESUME MODAL
-     ══════════════════════════════════════════════════════════════ */
+  /* 4. Resume modal */
   const resumeModal = document.getElementById("resumeModal");
   const resumeFrame = document.getElementById("resumeFrame");
   const resumeFile = p.resume || "resume.pdf";
@@ -634,9 +623,7 @@
   qa("[data-resume-trigger]").forEach((btn) => btn.addEventListener("click", openResumeModal));
   qa("[data-resume-close]").forEach((el) => el.addEventListener("click", closeResumeModal));
 
-  /* ══════════════════════════════════════════════════════════════
-     5. SITE CHROME — nav, scroll-spy, smooth scroll, reveal
-     ══════════════════════════════════════════════════════════════ */
+  /* 5. Site chrome — nav, scroll-spy, smooth scroll, reveal */
   const setupChrome = () => {
     const sections = qa("section[id]");
     const navLinks = qa("nav a");
@@ -700,9 +687,7 @@
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     6. AI ASSISTANT — rule-based, fully built from config.js
-     ══════════════════════════════════════════════════════════════ */
+  /* 6. AI assistant — rule-based, fully built from config.js */
   const initChatbot = () => {
     const chatbot = document.getElementById("chatbot");
     const toggle = document.getElementById("chatbotToggle");
@@ -728,7 +713,7 @@
         .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
         .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1">$1</a>');
 
-    /* ---------- 6a. Knowledge, built from config ---------- */
+    /* 6a. Knowledge, built from config */
     const skillsText = () => {
       const cats = arr(cfg.skills && cfg.skills.categories);
       if (!cats.length) return "My tech stack isn't configured yet.";
@@ -837,7 +822,7 @@
       if (d && d.key) brain[d.key] = d.answer || "";
     });
 
-    /* ---------- 6b. Intent matching ---------- */
+    /* 6b. Intent matching */
     const coreRules = [
       { key: "templateGuide", words: ["template", "how does this work", "how to use", "how to edit", "config.js", "customize", "how to launch", "how to deploy", "clone", "fork"] },
       { key: "resume", words: ["resume", "cv", "curriculum vitae", "download resume", "view resume"] },
@@ -879,7 +864,7 @@
 
     const getAnswer = (key) => (brain[key] !== undefined ? brain[key] : brain.fallback);
 
-    /* ---------- 6c. In-chat action buttons ---------- */
+    /* 6c. In-chat action buttons */
     const projectButtons = () =>
       projects.slice(0, 3).filter((pr) => pr.liveUrl || pr.githubUrl).map((pr) =>
         pr.liveUrl
@@ -946,7 +931,7 @@
       }
     };
 
-    /* ---------- 6d. Quick-reply chips ---------- */
+    /* 6d. Quick-reply chips */
     const chip = (key, label) => ({ key, label });
 
     const baseChips = () => {
@@ -977,7 +962,7 @@
         .join("");
     };
 
-    /* ---------- 6e. Answer renderer ---------- */
+    /* 6e. Answer renderer */
     const scrollToBottom = () => { messages.scrollTop = messages.scrollHeight; };
 
     const addBubble = (sender) => {
@@ -1019,7 +1004,7 @@
       });
     };
 
-    /* ---------- 6f. Open / close & wiring ---------- */
+    /* 6f. Open / close & wiring */
     const openChat = () => {
       chatbot.classList.add("open");
       toggle.setAttribute("aria-expanded", "true");
@@ -1074,9 +1059,7 @@
     updateQuickChips(null);
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     7. BOOT
-     ══════════════════════════════════════════════════════════════ */
+  /* 7. Boot */
   const boot = () => {
     hydrate();
     setupChrome();

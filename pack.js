@@ -18,7 +18,7 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
-  /* ── CRC-32 ──────────────────────────────────────────────────────────── */
+  /* CRC-32 */
 
   const CRC_TABLE = (() => {
     const table = new Uint32Array(256);
@@ -38,7 +38,7 @@
     return (c ^ 0xffffffff) >>> 0;
   };
 
-  /* ── byte helpers ────────────────────────────────────────────────────── */
+  /* Byte helpers */
 
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
@@ -60,7 +60,7 @@
     return out;
   };
 
-  /* ── ZIP writer ──────────────────────────────────────────────────────── */
+  /* ZIP writer */
 
   // ZIP stores timestamps as MS-DOS packed fields, which start in 1980.
   const dosStamp = (date) => ({
@@ -133,7 +133,7 @@
     return concat([...chunks, centralBytes, new Uint8Array(end.buffer)]);
   };
 
-  /* ── ZIP reader ──────────────────────────────────────────────────────── */
+  /* ZIP reader */
 
   // Reads back what writeZip produced. STORE only; anything else throws rather
   // than returning bytes that would be silently wrong.
@@ -178,7 +178,7 @@
     return entries;
   };
 
-  /* ── which files does a site need? ───────────────────────────────────── */
+  /* Which files does a site need? */
 
   // Always shipped, whatever the pages happen to say.
   const CORE_FILES = [
@@ -262,7 +262,7 @@
     return { include, missing };
   };
 
-  /* ── uploads ─────────────────────────────────────────────────────────── */
+  /* Uploads */
 
   const PHOTO_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
   const PHOTO_MAX = 2 * 1024 * 1024;

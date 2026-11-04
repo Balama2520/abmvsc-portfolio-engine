@@ -1,36 +1,27 @@
-/**
- * ╔══════════════════════════════════════════════════════════════════╗
- * ║          PORTFOLIO ENGINE — config.js                            ║
- * ║          Single Source of Truth · Version 3.1                    ║
- * ╠══════════════════════════════════════════════════════════════════╣
- * ║  This is the ONLY file you need to edit.                         ║
- * ║                                                                  ║
- * ║  Fill in your details below and BOTH pages — index.html          ║
- * ║  (your portfolio) and studio.html (your company) — update        ║
- * ║  automatically, including the assistant, SEO tags and social     ║
- * ║  preview cards.                                                  ║
- * ║                                                                  ║
- * ║  DO NOT edit: index.html  studio.html  style.css  script.js      ║
- * ╚══════════════════════════════════════════════════════════════════╝
- *
- *  RULES OF THE ROAD
- *  ─────────────────
- *  • Every section below is OPTIONAL. Delete a section, or leave its
- *    array empty ([]), and that part of the site disappears cleanly.
- *  • Leave any single field as "" and the related element hides itself.
- *  • Add as many entries to any array as you like — copy an existing
- *    block and edit it.
- *
- *  Portfolio Engine · MIT License
- */
+/* Portfolio Engine — config.js */
+// Single Source of Truth · Version 3.1
+//
+// This is the ONLY file you need to edit.
+//
+// Fill in your details below and BOTH pages — index.html (your portfolio)
+// and studio.html (your company) — update automatically, including the
+// assistant, SEO tags and social preview cards.
+//
+// DO NOT edit: index.html  studio.html  style.css  script.js
+//
+// RULES OF THE ROAD
+// - Every section below is OPTIONAL. Delete a section, or leave its array
+//   empty ([]), and that part of the site disappears cleanly.
+// - Leave any single field as "" and the related element hides itself.
+// - Add as many entries to any array as you like — copy an existing block
+//   and edit it.
+//
+// Portfolio Engine · MIT License
 
 window.PORTFOLIO_CONFIG = {
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 1 — YOU  (index.html)
-     ───────────────────────────────────────────────────────────────
-     Drives the navbar, hero, about, contact, footer and the chatbot.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 1. You (index.html) */
+  // Drives the navbar, hero, about, contact, footer and the chatbot.
   personal: {
 
     // Your full name. Shown in the navbar logo badge, hero and footer.
@@ -73,13 +64,10 @@ window.PORTFOLIO_CONFIG = {
     researchgate: "",
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 2 — SEO & SOCIAL PREVIEW
-     ───────────────────────────────────────────────────────────────
-     script.js writes these straight into <head> for you: page title,
-     meta description, canonical URL, Open Graph, Twitter Card and
-     JSON-LD structured data. No HTML editing required.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 2. SEO & social preview */
+  // script.js writes these straight into <head> for you: page title, meta
+  // description, canonical URL, Open Graph, Twitter Card and JSON-LD
+  // structured data. No HTML editing required.
   seo: {
 
     // The public URL where your site will live. No trailing slash.
@@ -109,12 +97,9 @@ window.PORTFOLIO_CONFIG = {
     googleVerification: "",
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 3 — HERO  (optional)
-     ───────────────────────────────────────────────────────────────
-     Leave this whole block out and the hero builds itself from
-     personal.* and skills.*. Fill it in when you want exact control.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 3. Hero (optional) */
+  // Leave this whole block out and the hero builds itself from personal.*
+  // and skills.*. Fill it in when you want exact control.
   hero: {
 
     // Small line above your name. Falls back to personal.availability.
@@ -143,11 +128,8 @@ window.PORTFOLIO_CONFIG = {
     marquee: [],
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 4 — ABOUT  (optional)
-     ───────────────────────────────────────────────────────────────
-     The "Why work with me" section on index.html.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 4. About (optional) */
+  // The "Why work with me" section on index.html.
   about: {
 
     // Body paragraphs. Each string becomes its own paragraph.
@@ -167,11 +149,8 @@ window.PORTFOLIO_CONFIG = {
     ],
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 5 — SKILLS
-     ───────────────────────────────────────────────────────────────
-     Each category becomes a card and feeds the chatbot's skills answer.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 5. Skills */
+  // Each category becomes a card and feeds the chatbot's skills answer.
   skills: {
 
     summary: "Full-stack web engineering, distributed systems, RAG architectures and cloud deployments.",
@@ -185,13 +164,10 @@ window.PORTFOLIO_CONFIG = {
     ],
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 6 — PROJECTS
-     ───────────────────────────────────────────────────────────────
-     Each entry becomes a project card on index.html AND a product
-     card on studio.html's ecosystem section. The chatbot can answer
-     questions about each one by name.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 6. Projects */
+  // Each entry becomes a project card on index.html AND a product card on
+  // studio.html's ecosystem section. The chatbot can answer questions about
+  // each one by name.
   projects: [
     {
       name: "Project One",
@@ -218,11 +194,8 @@ window.PORTFOLIO_CONFIG = {
     // → Copy a block above to add more projects.
   ],
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 7 — EXPERIENCE
-     ───────────────────────────────────────────────────────────────
-     Most recent role first — the page renders them in this order.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 7. Experience */
+  // Most recent role first — the page renders them in this order.
   experience: [
     {
       role: "Full-Stack Developer",
@@ -239,12 +212,9 @@ window.PORTFOLIO_CONFIG = {
     // → Copy the block above to add more roles.
   ],
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 8 — EDUCATION
-     ───────────────────────────────────────────────────────────────
-     A single object. You can also use an array of objects if you have
-     more than one degree — the renderer accepts both.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 8. Education */
+  // A single object. You can also use an array of objects if you have more
+  // than one degree — the renderer accepts both.
   education: {
     degree: "B.S. in Computer Science & Engineering",
     branch: "Computer Science & Engineering",
@@ -255,11 +225,8 @@ window.PORTFOLIO_CONFIG = {
     description: "Brief note about your academic focus, thesis or honours.",
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 9 — RESEARCH & PUBLICATIONS  (optional)
-     ───────────────────────────────────────────────────────────────
-     Papers, theses and preprints. Leave [] to hide the section.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 9. Research & publications (optional) */
+  // Papers, theses and preprints. Leave [] to hide the section.
   research: [
     {
       title: "Your Research Paper Title",
@@ -276,11 +243,8 @@ window.PORTFOLIO_CONFIG = {
     // → Copy the block above to add more papers.
   ],
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 10 — ACHIEVEMENTS  (optional)
-     ───────────────────────────────────────────────────────────────
-     Awards, hackathon results and honours. Leave [] to hide.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 10. Achievements (optional) */
+  // Awards, hackathon results and honours. Leave [] to hide.
   achievements: [
     {
       title: "Hackathon / Award Name",
@@ -292,24 +256,18 @@ window.PORTFOLIO_CONFIG = {
     // → Copy the block above to add more awards.
   ],
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 11 — CERTIFICATIONS  (optional)
-     ───────────────────────────────────────────────────────────────
-     Professional certificates and course completions.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 11. Certifications (optional) */
+  // Professional certificates and course completions.
   certifications: [
     { title: "Certification Name", issuer: "Platform / Organisation", year: "2025", url: "" },
     { title: "Second Certification", issuer: "Platform / Organisation", year: "2024", url: "" },
     // → Copy a line above to add more.
   ],
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 12 — COMPANY / STUDIO  (studio.html)
-     ───────────────────────────────────────────────────────────────
-     Powers the entire studio.html page, the studio banner on the
-     portfolio page and the chatbot's studio answers.
-     Delete this whole block if you don't have a company page.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 12. Company / studio (studio.html) */
+  // Powers the entire studio.html page, the studio banner on the portfolio
+  // page and the chatbot's studio answers. Delete this whole block if you
+  // don't have a company page.
   company: {
 
     name: "Your Studio",
@@ -388,25 +346,19 @@ window.PORTFOLIO_CONFIG = {
     },
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 13 — CONTACT LINKS  (optional)
-     ───────────────────────────────────────────────────────────────
-     The stack of link cards on the contact section. Leave [] and the
-     cards build themselves from your email, LinkedIn and GitHub.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 13. Contact links (optional) */
+  // The stack of link cards on the contact section. Leave [] and the cards
+  // build themselves from your email, LinkedIn and GitHub.
   contact: {
     links: [],
     // Example — copy and edit to add your own:
     // { label: "Resume", sub: "Download the PDF", url: "resume.pdf", icon: "cv" },
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 14 — CHATBOT
-     ───────────────────────────────────────────────────────────────
-     Tune your assistant's name, greetings and custom answers.
-     Everything else it knows comes from the sections above.
-     Basic markdown is supported: **bold** · *italic* · `code`.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 14. Chatbot */
+  // Tune your assistant's name, greetings and custom answers. Everything
+  // else it knows comes from the sections above. Basic markdown is
+  // supported: **bold** · *italic* · `code`.
   chatbot: {
 
     // Shown in the chatbot window header.
@@ -418,7 +370,7 @@ window.PORTFOLIO_CONFIG = {
     // Opening message on studio.html.
     studioGreeting: "Welcome to our studio. Ask me about our products, capabilities or how we can collaborate.",
 
-    // ── Deep-dive answers (optional) ──────────────────────────────
+    // Deep-dive answers (optional)
     // Teach the chatbot to answer specialist questions. Each entry adds
     // a new topic, its trigger keywords and the answer it gives.
     // Delete the array and the chatbot simply won't know these topics.
@@ -446,11 +398,8 @@ window.PORTFOLIO_CONFIG = {
     },
   },
 
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 15 — THEME  (optional)
-     ───────────────────────────────────────────────────────────────
-     Colours and fonts, applied at runtime — no CSS editing needed.
-     ═══════════════════════════════════════════════════════════════ */
+  /* 15. Theme (optional) */
+  // Colours and fonts, applied at runtime — no CSS editing needed.
   theme: {
     // "light", "dark" or "minimal". Minimal keeps the light palette but drops
     // the shadows and softens the accent, for a flatter, quieter page.
@@ -462,9 +411,9 @@ window.PORTFOLIO_CONFIG = {
     fontBody:     "'Inter', sans-serif",
     fontMono:     "'IBM Plex Mono', monospace",
 
-    // Opt-in footer credit: "Made with Portfolio Engine", linked back to
-    // the project. Off by default so a generated site carries no credit
-    // the owner did not ask for. Turn it on to support the project.
+    // Opt-in footer credit: a plain "Made with the Portfolio Engine" line.
+    // Off by default, so a generated site carries no credit the owner did
+    // not ask for.
     showBuiltBy: false,
 
     // Floating "this is the demo" notice. The config you generate in

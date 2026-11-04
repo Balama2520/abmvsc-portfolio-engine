@@ -1,14 +1,12 @@
-/* ==========================================================================
-   Portfolio Engine — Generator UI (setup.html)
-   Loads after style.css so it can reuse the design tokens defined there.
-   Everything is scoped under .gen-* so it can never leak into the site.
-   ========================================================================== */
+/* Portfolio Engine — Generator UI (setup.html) */
+/* Loads after style.css so it can reuse the design tokens defined there. */
+/* Everything is scoped under .gen-* so it can never leak into the site. */
 
 body.gen-body {
   background: var(--bg);
 }
 
-/* ── Top bar ─────────────────────────────────────────────────────────── */
+/* Top bar */
 .gen-topbar {
   position: sticky;
   top: 0;
@@ -53,7 +51,7 @@ body.gen-body {
   flex-wrap: wrap;
 }
 
-/* ── Buttons ─────────────────────────────────────────────────────────── */
+/* Buttons */
 .gen-btn {
   font: inherit;
   font-size: 13px;
@@ -125,7 +123,7 @@ body.gen-body {
   background: var(--bg-alt);
 }
 
-/* ── Layout ──────────────────────────────────────────────────────────── */
+/* Layout */
 .gen-layout {
   max-width: 1500px;
   margin: 0 auto;
@@ -142,7 +140,7 @@ body.gen-body {
   }
 }
 
-/* ── Intro banner ────────────────────────────────────────────────────── */
+/* Intro banner */
 .gen-banner {
   background: var(--navy);
   color: #fff;
@@ -170,7 +168,7 @@ body.gen-body {
   font-size: 12px;
 }
 
-/* ── Guided wizard ───────────────────────────────────────────────────── */
+/* Guided wizard */
 .gen-wizard {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -284,7 +282,7 @@ body.gen-body {
   cursor: not-allowed;
 }
 
-/* ── Launch panel ────────────────────────────────────────────────────── */
+/* Launch panel */
 .gen-launch {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -363,7 +361,7 @@ body.gen-body {
   text-decoration: none;
 }
 
-/* ── Section cards ───────────────────────────────────────────────────── */
+/* Section cards */
 .gen-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -428,7 +426,7 @@ body.gen-body {
   line-height: 1.6;
 }
 
-/* ── Fields ──────────────────────────────────────────────────────────── */
+/* Fields */
 .gen-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -584,7 +582,7 @@ body.gen-body {
   margin-top: 6px;
 }
 
-/* ── Repeating lists ─────────────────────────────────────────────────── */
+/* Repeating lists */
 .gen-list-head {
   display: flex;
   align-items: center;
@@ -638,7 +636,7 @@ body.gen-body {
   background: var(--surface);
 }
 
-/* ── Sidebar ─────────────────────────────────────────────────────────── */
+/* Sidebar */
 .gen-side {
   position: sticky;
   top: 84px;
@@ -730,7 +728,7 @@ body.gen-body {
   margin-bottom: 12px;
 }
 
-/* ── Meter ───────────────────────────────────────────────────────────── */
+/* Meter */
 .gen-meter {
   height: 8px;
   border-radius: 999px;
@@ -752,7 +750,7 @@ body.gen-body {
   color: var(--text-soft);
 }
 
-/* ── Toast ───────────────────────────────────────────────────────────── */
+/* Toast */
 .gen-toast {
   position: fixed;
   left: 50%;
@@ -782,7 +780,7 @@ body.gen-body {
   text-decoration: underline;
 }
 
-/* ── "What now?" panel ───────────────────────────────────────────────── */
+/* "What now?" panel */
 .gen-whatnow {
   border-color: var(--accent);
 }
@@ -833,7 +831,7 @@ body.gen-body {
   color: var(--accent-text);
 }
 
-/* ── Footer note ─────────────────────────────────────────────────────── */
+/* Footer note */
 .gen-foot {
   max-width: 1500px;
   margin: 0 auto;

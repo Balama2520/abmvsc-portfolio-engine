@@ -1,22 +1,16 @@
-/**
- * ══════════════════════════════════════════════════════════════════════
- *  Portfolio Engine — regression tests
- * ══════════════════════════════════════════════════════════════════════
- *
- *  These tests lock in the engine's contract:
- *
- *    1. config.js defines all 15 sections.
- *    2. setup.html's generator renders every section.
- *    3. The generator round-trips config.js with ZERO data loss.
- *    4. index.html hydrates from config.js (Person structured data).
- *    5. studio.html hydrates from config.js (Organization structured data).
- *
- *  DEVELOPMENT ONLY. The template that ships to users has no dependencies
- *  and no build step — jsdom is used purely to run the pages headlessly.
- *
- *    npm install && npm test
- * ══════════════════════════════════════════════════════════════════════
- */
+/* Portfolio Engine — regression tests */
+// These tests lock in the engine's contract:
+//
+//   1. config.js defines all 15 sections.
+//   2. setup.html's generator renders every section.
+//   3. The generator round-trips config.js with ZERO data loss.
+//   4. index.html hydrates from config.js (Person structured data).
+//   5. studio.html hydrates from config.js (Organization structured data).
+//
+// DEVELOPMENT ONLY. The template that ships to users has no dependencies
+// and no build step — jsdom is used purely to run the pages headlessly.
+//
+//   npm install && npm test
 
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
@@ -49,7 +43,7 @@ const SECTIONS = [
   "contact", "chatbot", "theme",
 ];
 
-/* ── A tiny static server so the pages load exactly as they would live ── */
+/* A tiny static server so the pages load exactly as they would live */
 
 let server;
 let base;
@@ -72,7 +66,7 @@ before(async () => {
 
 after(() => server.close());
 
-/* ── Load a page headlessly and collect anything it complains about ── */
+/* Load a page headlessly and collect anything it complains about */
 
 // Keep the suite hermetic: never reach out to Google Fonts or anywhere else.
 class LocalOnly extends ResourceLoader {
@@ -126,9 +120,7 @@ function leafPaths(obj, prefix = "", out = new Set()) {
   return out;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   1. Contract
-   ══════════════════════════════════════════════════════════════════════ */
+/* 1. Contract */
 
 test("config.js defines all 15 documented sections", () => {
   const cfg = readConfig();
@@ -145,9 +137,7 @@ test("browsing pages are content-free (content lives in config.js)", () => {
   }
 });
 
-/* ══════════════════════════════════════════════════════════════════════
-   2. The generator
-   ══════════════════════════════════════════════════════════════════════ */
+/* 2. The generator */
 
 test("setup.html is excluded from search engines", () => {
   const html = fs.readFileSync(path.join(ROOT, "setup.html"), "utf8");
@@ -202,9 +192,7 @@ test("array-shaped sections keep their shape through the generator", async () =>
   assert.ok(!Array.isArray(genCfg.contact), "contact is an object with a links list");
 });
 
-/* ══════════════════════════════════════════════════════════════════════
-   3. Hydration
-   ══════════════════════════════════════════════════════════════════════ */
+/* 3. Hydration */
 
 test("index.html hydrates from config.js", async () => {
   const { doc, errors } = await loadPage("index.html");
@@ -243,9 +231,7 @@ test("both pages inject SEO tags from config, not from HTML", async () => {
   assert.equal(desc.getAttribute("content"), cfg.seo.description);
 });
 
-/* ══════════════════════════════════════════════════════════════════════
-   4. Graceful degradation
-   ══════════════════════════════════════════════════════════════════════ */
+/* 4. Graceful degradation */
 
 test("every data-list in the HTML is registered in the engine", () => {
   const script = fs.readFileSync(path.join(ROOT, "script.js"), "utf8");
