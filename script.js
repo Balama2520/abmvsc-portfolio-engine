@@ -669,25 +669,32 @@
       });
     });
 
-    // Reveal-on-scroll — collected AFTER hydration so dynamic cards animate too
-    const revealEls = qa(
-      ".experience-card, .project-card, .achievement-card, .cert-card, .reason-card, .pillar-box, .skill-card"
-    );
-    if (revealEls.length && "IntersectionObserver" in window) {
-      const reveal = new IntersectionObserver(
-        (entries, observer) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          });
-        },
-        { threshold: 0.12 }
+    // Reveal-on-scroll — collected AFTER hydration so dynamic cards animate too.
+    // Cards are visible by default; the entrance animation is a progressive
+    // enhancement that only runs when the browser can observe scroll position
+    // and the visitor has not asked for reduced motion. Nothing is ever hidden
+    // while waiting, so a card keeps its content even if it is never scrolled
+    // to (and a screenshot taken without scrolling is never blank).
+    const reduceMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if ("IntersectionObserver" in window && !reduceMotion) {
+      const revealEls = qa(
+        ".experience-card, .project-card, .achievement-card, .cert-card, .reason-card, .pillar-box, .skill-card"
       );
-      revealEls.forEach((el) => {
-        el.classList.add("hidden");
-        reveal.observe(el);
-      });
+      if (revealEls.length) {
+        const reveal = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("reveal");
+              observer.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.12 }
+        );
+        revealEls.forEach((el) => reveal.observe(el));
+      }
     }
   };
 

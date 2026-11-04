@@ -61,6 +61,82 @@ const measure = (page) =>
     return { width, viewport: document.documentElement.clientWidth };
   });
 
+// Regression: sections used to start at opacity 0 and only fade in when an
+// IntersectionObserver fired. A full-page screenshot taken without scrolling
+// then captured blank sections. Content must be visible by default; the
+// entrance animation is an enhancement, never a prerequisite.
+test("layout: section content is visible without scrolling", async () => {
+  const SELECTOR = [
+    "[data-list]",
+    "[data-list-host]",
+    ".project-card",
+    ".skill-card",
+    ".experience-card",
+    ".achievement-card",
+    ".cert-card",
+    ".reason-card",
+    ".pillar-box",
+  ].join(", ");
+
+  for (const file of ["index.html", "studio.html"]) {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(`${repo.base}/${file}`, { waitUntil: "load" });
+    // Let hydration settle. Never scroll: the point is what is on screen now.
+    await page.waitForTimeout(1200);
+
+    const faded = await page.evaluate((selector) => {
+      const out = [];
+      document.querySelectorAll(selector).forEach((el) => {
+        if (el.closest("[hidden]")) return;
+        const opacity = Number(getComputedStyle(el).opacity);
+        if (opacity < 1) out.push({ el: el.className || el.tagName, opacity });
+      });
+      return out;
+    }, SELECTOR);
+
+    assert.deepEqual(
+      faded,
+      [],
+      `${file} has section content below full opacity without scrolling:\n${JSON.stringify(faded)}`
+    );
+    await page.close();
+  }
+});
+
+test("layout: the demo notice, chat bubble and skills ticker do not overlap at 375px", async () => {
+  const page = await browser.newPage({ viewport: { width: 375, height: 812 } });
+  await page.goto(`${repo.base}/index.html`, { waitUntil: "load" });
+  await page.waitForTimeout(600);
+
+  const boxes = await page.evaluate(() => {
+    const pick = (sel) => {
+      const el = document.querySelector(sel);
+      if (!el || el.closest("[hidden]") || getComputedStyle(el).display === "none") return null;
+      const r = el.getBoundingClientRect();
+      return { top: r.top, right: r.right, bottom: r.bottom, left: r.left };
+    };
+    return {
+      demo: pick("[data-demo-notice]"),
+      chat: pick("#chatbotToggle"),
+      ticker: pick(".skills-bar"),
+    };
+  });
+
+  const hits = (a, b) =>
+    a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+
+  if (boxes.demo && boxes.chat) {
+    assert.ok(!hits(boxes.demo, boxes.chat), `demo notice overlaps the chat bubble: ${JSON.stringify(boxes)}`);
+  }
+  if (boxes.demo && boxes.ticker) {
+    assert.ok(!hits(boxes.demo, boxes.ticker), `demo notice overlaps the skills ticker: ${JSON.stringify(boxes)}`);
+  }
+  if (boxes.chat && boxes.ticker) {
+    assert.ok(!hits(boxes.chat, boxes.ticker), `chat bubble overlaps the skills ticker: ${JSON.stringify(boxes)}`);
+  }
+  await page.close();
+});
+
 for (const view of VIEWPORTS) {
   test(`layout: nothing overflows at ${view.width}px`, async () => {
     for (const file of PAGES) {

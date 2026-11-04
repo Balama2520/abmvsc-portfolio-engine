@@ -1546,15 +1546,30 @@ footer {
 }
 
 /* REVEAL ON SCROLL */
-.hidden {
-  opacity: 0;
-  transform: translateY(16px);
+/* Content is fully visible by default. When the browser has the observer and
+   the visitor has not asked for reduced motion, a card plays a short entrance
+   animation the first time it reaches the viewport. Nothing is ever hidden
+   while waiting — a card that is never scrolled to is simply already shown. */
+@keyframes pf-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+.reveal {
+  animation: pf-reveal 0.5s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
 }
 
 section:focus {
