@@ -180,6 +180,21 @@ test("the generator round-trips config.js with zero data loss", async () => {
   );
 });
 
+test("the generated config.js opens with the config, not a comment banner", async () => {
+  const { doc } = await loadPage("setup.html");
+  const generated = doc.querySelector("#genOutput").value;
+
+  assert.ok(
+    !/^\s*(\/\*|\/\/|<!--)/.test(generated),
+    `generated config.js starts with a comment:\n  ${generated.slice(0, 120)}`
+  );
+  assert.match(
+    generated,
+    /^window\.PORTFOLIO_CONFIG\s*=/,
+    "generated config.js must begin with the config assignment"
+  );
+});
+
 test("array-shaped sections keep their shape through the generator", async () => {
   const { doc } = await loadPage("setup.html");
   const generated = doc.querySelector("#genOutput").value;

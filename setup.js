@@ -801,26 +801,11 @@
   };
 
   /* 6. Output — config.js source */
-  const OUTPUT_HEADER = `/**
- * Portfolio Engine — config.js
- *
- * Generated with the Portfolio Engine config generator. This is the ONLY
- * file your website reads: drop it into your project folder (replacing the
- * existing config.js) and both index.html and studio.html rebuild
- * themselves from it.
- *
- * - Empty any field ("") and that element hides itself.
- * - Empty any array ([]) and that whole section disappears.
- * - Nothing here is required; the site degrades gracefully.
- *
- * Portfolio Engine — MIT License
- */
-
-`;
-
+  // The file starts with the assignment. No header banner: the first thing a
+  // reader sees should be the config, and a test locks that in.
   const buildConfigSource = () => {
     const json = JSON.stringify(buildConfig(), null, 2).replace(/</g, "\\u003c");
-    return `${OUTPUT_HEADER}window.PORTFOLIO_CONFIG = ${json};\n`;
+    return `window.PORTFOLIO_CONFIG = ${json};\n`;
   };
 
   const updateOutput = () => {
