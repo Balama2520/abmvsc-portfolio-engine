@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and setup help
+    url: https://github.com/Balama2520/abmvsc-portfolio-template/discussions
+    about: Ask how to fill in config.js, deploy, or customise the theme.
+  - name: Read the setup guide first
+    url: https://github.com/Balama2520/abmvsc-portfolio-template/blob/main/SETUP.md
+    about: Most "it looks empty" reports are answered in the Troubleshooting table.
+  - name: Report a security issue privately
+    url: https://github.com/Balama2520/abmvsc-portfolio-template/security/advisories/new
+    about: Please do not open a public issue for security problems.

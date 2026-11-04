@@ -31,9 +31,11 @@ npm-debug.log*
 .env.local
 .env.production
 
-# Node (if you ever add a build step)
+# Node — development tooling only. The template itself has zero
+# dependencies and no build step; node_modules exists only for `npm test`.
 node_modules/
-package-lock.json
+# NOTE: package-lock.json is intentionally committed so CI installs are
+# reproducible.
 
 # Temporary files
 *.tmp

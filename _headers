@@ -1,0 +1,33 @@
+# ──────────────────────────────────────────────────────────────────────
+#  Host-agnostic security + caching headers.
+#  Used by Cloudflare Pages, Netlify (as a fallback), and GitHub Pages
+#  does not read this file — see netlify.toml for the Netlify version.
+# ──────────────────────────────────────────────────────────────────────
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Never cache the file users edit, or they will not see their changes.
+/config.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/studio.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+/setup.html
+  X-Robots-Tag: noindex, nofollow

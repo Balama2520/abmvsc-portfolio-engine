@@ -1,0 +1,30 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Engine contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dev dependencies
+        run: npm ci
+
+      # Covers both the hydration contract (test/hydration.test.mjs) and the
+      # zero-dependency / no-build-step guardrails (test/guardrails.test.mjs).
+      - name: Run the full test suite
+        run: npm test

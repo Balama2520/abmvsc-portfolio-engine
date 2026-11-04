@@ -1,0 +1,81 @@
+name: Bug report
+description: Something on the site, the engine, or the generator is broken.
+title: "[Bug]: "
+labels: ["bug", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. The more precisely you can
+        describe it, the faster it gets fixed.
+
+        **Before you start:** if the page looks empty or a section vanished,
+        that is usually the engine working as designed — an empty array or a
+        blank field hides that section on purpose. Check the Troubleshooting
+        table in [SETUP.md](../../blob/main/SETUP.md) first.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part is affected?
+      options:
+        - Portfolio page (index.html)
+        - Studio / company page (studio.html)
+        - Config generator (setup.html)
+        - The hydration engine (script.js)
+        - Styling / responsive layout (style.css)
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe what you saw, and what you expected instead.
+      placeholder: |
+        I set `personal.phone` to "" and the contact card still shows a blank line.
+        I expected the card to disappear.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open studio.html
+        2. Scroll to the contact section
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 131 on Windows 11
+    validations:
+      required: true
+
+  - type: dropdown
+    id: how-opened
+    attributes:
+      label: How are you viewing the site?
+      description: Several features behave differently over `file://`.
+      options:
+        - Local server (npx serve / python -m http.server)
+        - Opened the .html file directly from disk
+        - Deployed (Netlify / GitHub Pages / other)
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser console output
+      description: Open DevTools → Console and paste any errors. Leave blank if clean.
+      render: shell
+    validations:
+      required: false

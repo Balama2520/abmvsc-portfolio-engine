@@ -1,523 +1,468 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════╗
- * ║          ABMVSC PORTFOLIO ENGINE — config.js                    ║
- * ║          Single Source of Truth · Version 2.0                   ║
+ * ║          ABMVSC PORTFOLIO ENGINE — config.js                     ║
+ * ║          Single Source of Truth · Version 3.0                    ║
  * ╠══════════════════════════════════════════════════════════════════╣
- * ║  👋  HEY THERE! This is the ONLY file you need to edit.         ║
+ * ║  👋  HEY THERE! This is the ONLY file you need to edit.          ║
  * ║                                                                  ║
- * ║  Fill in your own details below and your entire portfolio —      ║
- * ║  including the AI chatbot — updates automatically.               ║
+ * ║  Fill in your details below and BOTH websites — index.html       ║
+ * ║  (your portfolio) and studio.html (your company) — update        ║
+ * ║  automatically, including the AI chatbot, SEO tags and social    ║
+ * ║  preview cards.                                                  ║
  * ║                                                                  ║
- * ║  DO NOT edit: index.html  studio.html  style.css  script.js     ║
+ * ║  DO NOT edit: index.html  studio.html  style.css  script.js      ║
  * ╚══════════════════════════════════════════════════════════════════╝
  *
- * ABMVSC Portfolio Engine  ·  MIT License
- * Built by ABMVSC Technology & Innovation Studio
- * https://github.com/abmvsc
+ *  RULES OF THE ROAD
+ *  ─────────────────
+ *  • Every section below is OPTIONAL. Delete a section, or leave its
+ *    array empty ([]), and that part of the site disappears cleanly.
+ *  • Leave any single field as "" and the related element hides itself.
+ *  • Add as many entries to any array as you like — copy an existing
+ *    block and edit it.
+ *
+ *  ABMVSC Portfolio Engine · MIT License
+ *  Built by ABMVSC Technology & Innovation Studio
  */
 
 window.PORTFOLIO_CONFIG = {
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 1 — PERSONAL IDENTITY
+     SECTION 1 — YOU  (index.html)
      ───────────────────────────────────────────────────────────────
-     These values drive your hero section, navbar, about card,
-     footer, and the chatbot's "who is this person?" responses.
-     Fill every field that applies to you; leave optional ones "".
+     Drives the navbar, hero, about, contact, footer and the chatbot.
      ═══════════════════════════════════════════════════════════════ */
   personal: {
 
-    // Your legal or preferred full name — shown in the hero heading.
+    // Your full name. Shown in the navbar logo badge, hero and footer.
     name: "Alex Rivera",
 
-    // Two or three capital letters used as the navbar logo badge.
-    // Example: "AR" for Alex Rivera, "JDS" for John D. Smith.
+    // 1–3 capitals used as the navbar logo badge. Example: "AR".
     initials: "AR",
 
-    // Your primary professional title. Keep it punchy.
-    // Example: "Full-Stack Developer & AI Engineer"
+    // Your professional title. Keep it punchy.
     role: "Full-Stack Developer & AI Engineer",
 
-    // One sentence that captures your professional brand.
-    // Shown under your name in the hero. Make it memorable.
+    // One memorable sentence that captures your professional brand.
     tagline: "Engineering Ideas Into Real-World Impact.",
 
-    // 2–3 sentences about you for the About section.
-    // Talk about what you build, your mission, and what makes you tick.
-    bio: "Full-Stack Developer and AI Engineer building production-ready web applications with React, Node.js, and LangChain. Passionate about performant systems, RAG architectures, and clean software craftsmanship.",
+    // 2–3 sentences about you. Used in the About section and chatbot.
+    bio: "Full-Stack Developer and AI Engineer building production-ready web applications with React, Node.js and LangChain. I care about performant systems, clean architecture and shipping things real people actually use.",
 
-    // Your profile photo filename. Drop the file into the project root
-    // (same folder as index.html) and write just the filename here.
-    // Example: "photo.jpg"  or  "assets/images/me.png"
+    // Profile photo — drop the file in the project root and use its name.
     photo: "assets/engineer-avatar.svg",
 
-    // Your resume PDF filename. Same rule as photo above.
-    // Example: "resume.pdf"
+    // Your resume PDF. Same rule as the photo above.
     resume: "resume.pdf",
 
-    // City and country where you are based.
-    // Example: "Bangalore, India"  |  "San Francisco, CA"
+    // City and country, plus remote/relocation notes.
     location: "San Francisco, CA · Open to Remote",
 
-    // One line about your job-search status. Shown in About and chatbot.
-    // Example: "Open to full-time roles — immediate start"
-    //          "Available for freelance projects"
-    //          "Not currently looking"
-    availability: "Open to opportunities",
+    // One line on your job-search status.
+    availability: "Open to full-time roles — immediate start",
 
-    // Your primary professional email address.
+    // Contact details. Leave phone/linkedin/github as "" to hide them.
     email: "hello@alexrivera.dev",
-
-    // Your phone number in international format (with country code).
-    // Leave "" to hide the phone chip entirely.
     phone: "+1 (555) 019-2834",
-
-    // Full URL to your LinkedIn profile.
-    // Leave "" to hide the LinkedIn button.
     linkedin: "https://linkedin.com",
-
-    // Full URL to your GitHub profile.
-    // Leave "" to hide the GitHub button.
     github: "https://github.com",
 
-    // Optional: Full URL to your Twitter / X profile.
-    // Leave "" and the button won't appear.
+    // Optional extras — leave "" if you don't use them.
     twitter: "",
-
-    // Optional: Your personal website or company URL.
     website: "",
-
-    // Optional: Your Hugging Face profile (great for AI/ML engineers).
-    // Example: "https://huggingface.co/yourusername"
     huggingface: "",
-
-    // Optional: Your ResearchGate profile (for researchers & academics).
-    // Example: "https://www.researchgate.net/profile/Your-Name"
     researchgate: "",
   },
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 2 — SEO & META
+     SECTION 2 — SEO & SOCIAL PREVIEW
      ───────────────────────────────────────────────────────────────
-     These values improve your search ranking and link previews.
-     Replace them with your own deployed URL after you go live.
+     script.js writes these straight into <head> for you: page title,
+     meta description, canonical URL, Open Graph, Twitter Card and
+     JSON-LD structured data. No HTML editing required.
      ═══════════════════════════════════════════════════════════════ */
   seo: {
 
-    // The public URL where your portfolio will be hosted.
-    // Used for canonical links and Open Graph URLs.
-    // Example: "https://yourname.netlify.app"  |  "https://yourname.dev"
+    // The public URL where your site will live. No trailing slash.
+    // Example: "https://yourname.netlify.app"
     siteUrl: "https://your-site.netlify.app",
 
-    // The image shown when your link is shared on Twitter, Slack, LinkedIn, etc.
-    // Drop the file into the project root and write its filename here.
-    // Ideal size: 1200 × 630 px. Example: "og-image.png"
+    // Browser tab title on index.html. The studio page builds its own
+    // title from company.name + company.descriptor.
+    title: "Developer Portfolio | Full-Stack & AI Engineer",
+
+    // The description search engines and link previews will show.
+    description: "Full-Stack Developer and AI Engineer building production-ready web apps with React, Node.js and cloud architectures.",
+
+    // Social preview image — 1200 × 630 px works best.
     ogImage: "og-image.png",
 
-    // Locale for Open Graph. Use "en_US", "en_IN", "fr_FR", etc.
+    // Locale for Open Graph. Examples: "en_US", "en_IN", "fr_FR".
     locale: "en_US",
 
-    // Optional: Your Google Search Console verification token.
-    // Found in GSC → Settings → Ownership Verification → HTML meta tag.
-    // Leave "" if you haven't set up GSC yet.
+    // Optional Twitter/X handle for the card (with the @).
+    twitterHandle: "",
+
+    // Browser UI colour on mobile. Match your theme.primaryColor.
+    themeColor: "#10264b",
+
+    // Optional Google Search Console verification token.
     googleVerification: "",
   },
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 3 — COMPANY / STUDIO IDENTITY
+     SECTION 3 — HERO  (optional)
      ───────────────────────────────────────────────────────────────
-     If you have a studio, agency, or company brand, fill this in.
-     It powers the dedicated studio.html page and the chatbot's
-     studio-related responses.
+     Leave this whole block out and the hero builds itself from
+     personal.* and skills.*. Fill it in when you want exact control.
+     ═══════════════════════════════════════════════════════════════ */
+  hero: {
+
+    // Small line above your name. Falls back to personal.availability.
+    eyebrow: "",
+
+    // A pill badge linking to your studio/company page. Falls back to
+    // "Founder @ <company name>" when company.name is set.
+    badge: "",
+
+    // The two lines of your big hero heading. Falls back to splitting
+    // personal.role on the "&" character.
+    titleLine1: "",
+    titleLine2: "",
+
+    // The four headline numbers in the hero. Delete the array to hide
+    // the whole row.
+    stats: [
+      { value: "5+",      label: "Production Apps" },
+      { value: "99.9%",   label: "Uptime Reliability" },
+      { value: "95+",     label: "Lighthouse Score" },
+      { value: "<100ms",  label: "API Latency Target" },
+    ],
+
+    // The scrolling technology strip. Leave [] to auto-build it from
+    // the skills.categories below.
+    marquee: [],
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 4 — ABOUT  (optional)
+     ───────────────────────────────────────────────────────────────
+     The "Why work with me" section on index.html.
+     ═══════════════════════════════════════════════════════════════ */
+  about: {
+
+    // Body paragraphs. Each string becomes its own paragraph.
+    paragraphs: [
+      "I am a full-stack engineer and AI developer focused on shipping production-quality software, clean architectures and measurable real-world outcomes. Every project featured here includes a live demo and an open-source codebase.",
+    ],
+
+    // A short, highlighted call-out. Leave "" to hide it.
+    vision: "What I'm looking for: a Full-Stack or AI-integrated engineering role where I can keep shipping real, measurable products on a team that values ownership and fast iteration.",
+
+    // The four reason cards. Delete the array to hide the grid.
+    reasons: [
+      { title: "Delivery",        text: "Every project ships with a live link and a public repo — verifiable, not just claimed." },
+      { title: "Full-stack + AI", text: "Equally comfortable in React/Node.js and PyTorch/LangChain — fewer handoffs, faster iteration." },
+      { title: "Performance First", text: "Obsessed with sub-100ms response times, 95+ Lighthouse audits and resilient architectures." },
+      { title: "Fast Ramp-up",    text: "A quick, self-directed learner with a track record of shipping complex software into production." },
+    ],
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 5 — SKILLS
+     ───────────────────────────────────────────────────────────────
+     Each category becomes a card and feeds the chatbot's skills answer.
+     ═══════════════════════════════════════════════════════════════ */
+  skills: {
+
+    summary: "Full-stack web engineering, distributed systems, RAG architectures and cloud deployments.",
+
+    categories: [
+      { name: "Frontend",       items: ["React.js", "TypeScript", "HTML5", "CSS3", "Tailwind CSS"] },
+      { name: "Backend & APIs", items: ["Node.js", "Express.js", "FastAPI", "REST APIs", "Python"] },
+      { name: "Databases",      items: ["MongoDB", "PostgreSQL", "Redis", "Vector Databases"] },
+      { name: "AI & ML",        items: ["PyTorch", "LangChain", "OpenCV", "RAG Pipelines"] },
+      { name: "Cloud & DevOps", items: ["Docker", "AWS EC2", "GitHub Actions", "Netlify"] },
+    ],
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 6 — PROJECTS
+     ───────────────────────────────────────────────────────────────
+     Each entry becomes a project card on index.html AND a product
+     card on studio.html's ecosystem section. The chatbot can answer
+     questions about each one by name.
+     ═══════════════════════════════════════════════════════════════ */
+  projects: [
+    {
+      name: "Project One",
+      category: "Web Application",
+      description: "A production web application with a modern frontend, scalable APIs and robust data persistence. Explain the problem it solves and who it is for.",
+      tech: ["React", "Node.js", "PostgreSQL", "Docker"],
+      liveUrl: "https://your-project.netlify.app",
+      githubUrl: "https://github.com/yourusername/project-one",
+      result: "Describe a measurable outcome — a number, a percentage or a milestone.",
+      // Optional small status chip shown instead of the Live/GitHub links.
+      // Example: "In Development"  |  "Concept"
+      status: "",
+    },
+    {
+      name: "Project Two",
+      category: "AI Platform",
+      description: "A retrieval-augmented AI platform that turns documents into an answerable knowledge base with vector search.",
+      tech: ["Python", "FastAPI", "ChromaDB", "LangChain"],
+      liveUrl: "",
+      githubUrl: "https://github.com/yourusername/project-two",
+      result: "",
+      status: "",
+    },
+    // → Copy a block above to add more projects.
+  ],
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 7 — EXPERIENCE
+     ───────────────────────────────────────────────────────────────
+     Most recent role first — the page renders them in this order.
+     ═══════════════════════════════════════════════════════════════ */
+  experience: [
+    {
+      role: "Full-Stack Developer",
+      company: "Company Name",
+      type: "Full-Time",              // Full-Time | Internship | Contract | Freelance | Research
+      duration: "Jan 2025 – Present",
+      location: "Remote",
+      description: "One or two sentences on what you built, shipped or achieved in this role.",
+      highlights: [
+        "Key achievement with a number if you have one",
+        "Second key achievement",
+      ],
+    },
+    // → Copy the block above to add more roles.
+  ],
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 8 — EDUCATION
+     ───────────────────────────────────────────────────────────────
+     A single object. You can also use an array of objects if you have
+     more than one degree — the renderer accepts both.
+     ═══════════════════════════════════════════════════════════════ */
+  education: {
+    degree: "B.S. in Computer Science & Engineering",
+    branch: "Computer Science & Engineering",
+    university: "University of Technology",
+    location: "San Francisco, CA",
+    duration: "2020 – 2024",
+    gpa: "First Class with Distinction",
+    description: "Brief note about your academic focus, thesis or honours.",
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 9 — RESEARCH & PUBLICATIONS  (optional)
+     ───────────────────────────────────────────────────────────────
+     Papers, theses and preprints. Leave [] to hide the section.
+     ═══════════════════════════════════════════════════════════════ */
+  research: [
+    {
+      title: "Your Research Paper Title",
+      publisher: "IEEE Xplore",       // IEEE Xplore | ACM | Springer | Other
+      docId: "",
+      url: "",
+      year: "2025",
+      summary: "One sentence on what the paper proved or contributed.",
+      metrics: [
+        "Key metric (e.g. 92% accuracy)",
+        "Second metric (e.g. 5,000+ images evaluated)",
+      ],
+    },
+    // → Copy the block above to add more papers.
+  ],
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 10 — ACHIEVEMENTS  (optional)
+     ───────────────────────────────────────────────────────────────
+     Awards, hackathon results and honours. Leave [] to hide.
+     ═══════════════════════════════════════════════════════════════ */
+  achievements: [
+    {
+      title: "Hackathon / Award Name",
+      issuer: "Organisation or Platform",
+      year: "2024",
+      detail: "One line on the result or rank. Example: National Finalist — Top 5% of 10,000+ teams.",
+      url: "",                        // Optional link to proof.
+    },
+    // → Copy the block above to add more awards.
+  ],
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 11 — CERTIFICATIONS  (optional)
+     ───────────────────────────────────────────────────────────────
+     Professional certificates and course completions.
+     ═══════════════════════════════════════════════════════════════ */
+  certifications: [
+    { title: "Certification Name", issuer: "Platform / Organisation", year: "2025", url: "" },
+    { title: "Second Certification", issuer: "Platform / Organisation", year: "2024", url: "" },
+    // → Copy a line above to add more.
+  ],
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 12 — COMPANY / STUDIO  (studio.html)
+     ───────────────────────────────────────────────────────────────
+     Powers the entire studio.html page, the studio banner on the
+     portfolio page and the chatbot's studio answers.
+     Delete this whole block if you don't have a company page.
      ═══════════════════════════════════════════════════════════════ */
   company: {
 
-    // The name of your studio, agency, or company.
-    // Example: "ABMVSC"  |  "Pixel & Co."  |  "NullPointer Labs"
     name: "ABMVSC Studio",
-
-    // A short descriptor that appears alongside the name.
-    // Example: "Technology & Innovation Studio"
     descriptor: "Technology & Innovation Studio",
-
-    // A one-line tagline for your studio — the slogan that sticks.
-    // Example: "Engineering Ideas. Empowering Tomorrow."
     tagline: "Engineering Ideas. Empowering Tomorrow.",
+    philosophy: "Build • Research • Innovate • Scale • Impact",
 
-    // Your studio's core philosophy, often shown in the hero block.
-    // Example: "Build. Research. Innovate. Scale. Impact."
-    philosophy: "Build. Research. Innovate. Scale. Impact.",
+    // 2–3 sentences describing what the studio does and who it serves.
+    description: "An independent, founder-led technology studio building intelligent software, AI-powered products, data-driven systems and research-led solutions.",
 
-    // 2–3 sentences describing what your studio does and who it serves.
-    description: "2–3 sentence description of your studio or company.",
+    // A longer intro paragraph for the studio hero. Falls back to description.
+    heroParagraph: "",
+
+    // Year the studio was founded — shown in the studio hero eyebrow.
+    founded: "2025",
 
     // Your role within the studio.
-    // Example: "Founder & Principal Engineer"  |  "CEO & Lead Developer"
     founderRole: "Founder & Principal Engineer",
 
-    // Path to the studio page (keep as "studio.html" unless you rename it).
-    studioUrl: "studio.html",
+    // Public studio contact details.
+    email: "contact@yourstudio.com",
+    phone: "",
 
-    // Studio logo file paths. If you don't have SVG variants,
-    // just point them all to your single logo file.
-    // Leave as-is if you are using the default ABMVSC branding.
+    // One line shown in the studio contact section.
+    contactDescription: "We welcome discussions about software product engineering, AI integrations, research collaborations and technical partnerships.",
+
+    // The headline numbers in the studio hero. Delete to hide the row.
+    heroStats: [
+      { value: "5",     label: "Core Pillars" },
+      { value: "10+",   label: "Production Deployments" },
+      { value: "99.9%", label: "Uptime SLA" },
+      { value: "100%",  label: "Open Source Engine" },
+    ],
+
+    // The studio purpose section — each string is its own paragraph.
+    purposeParagraphs: [
+      "We are built around a simple belief: technology should solve meaningful problems and create measurable real-world value.",
+      "We work at the intersection of production software engineering and applied research — designing systems from first principles rather than separating theory from implementation.",
+    ],
+
+    // A highlighted philosophy call-out under the purpose paragraphs.
+    purposeVision: "Build tools that work in real human workflows — reliable, fast and genuinely useful.",
+
+    // The four studio value cards.
+    values: [
+      { title: "Engineering Excellence", text: "Type-safe architectures, modular components and optimal data design — zero fluff." },
+      { title: "Research-Driven",        text: "Implementations validated through benchmarked, reproducible methodology." },
+      { title: "Human-Centred",          text: "Built for real user needs, with offline capability, accessibility and intuitive design." },
+      { title: "Founder Accountable",    text: "Direct architectural oversight and hands-on engineering by the founder." },
+    ],
+
+    // The engineering pillars grid. Add or remove freely.
+    pillars: [
+      { icon: "</>", title: "Software Engineering",  text: "React, TypeScript, Node.js, FastAPI and cloud microservices." },
+      { icon: "🥞",  title: "AI & Automation",       text: "LangChain, RAG pipelines, vector indexing and workflow automation." },
+      { icon: "📊",  title: "Data & Analytics",      text: "Python, statistical modelling, dashboards and telemetry." },
+      { icon: "☁️",  title: "Cloud & Distributed Systems", text: "Containerised microservices, Docker, AWS and automated CI/CD." },
+      { icon: "🧪",  title: "Research & Innovation", text: "Benchmarked models, algorithm design and open-source science." },
+    ],
+
+    // The studio research cards. Leave [] to reuse top-level `research`.
+    research: [],
+
+    // The studio ecosystem grid. Leave [] to reuse the `projects`
+    // array above (recommended — one place for all products).
+    products: [],
+
+    // Studio logo files. If you only have one logo, point them all at it.
     logo: {
       primary: "assets/logo/abmvsc-logo-primary.svg",
       white:   "assets/logo/abmvsc-logo-white.svg",
       mono:    "assets/logo/abmvsc-logo-mono.svg",
       symbol:  "assets/logo/abmvsc-symbol.svg",
       avatar:  "assets/logo/abmvsc-avatar.svg",
+      card:    "assets/abmvsc-logo-card.jpg",
     },
   },
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 4 — SKILLS
+     SECTION 13 — CONTACT LINKS  (optional)
      ───────────────────────────────────────────────────────────────
-     Organise your skills into named categories.
-     Each category appears as a card in the Skills section and
-     the chatbot reads these when someone asks "what's your stack?".
-     Add or remove categories and items freely.
+     The stack of link cards on the contact section. Leave [] and the
+     cards build themselves from your email, LinkedIn and GitHub.
      ═══════════════════════════════════════════════════════════════ */
-  skills: {
-
-    // One sentence summarising your overall tech profile.
-    // Shown in the chatbot summary and About section.
-    summary: "One sentence summary of your tech stack.",
-
-    // Each object below becomes a skill category card.
-    // "name"  →  The category heading (shown in bold).
-    // "items" →  Array of individual technology names.
-    categories: [
-      {
-        name: "Frontend",
-        // List your client-side technologies here.
-        items: ["React.js", "TypeScript", "HTML5", "CSS3", "Tailwind CSS"],
-      },
-      {
-        name: "Backend & APIs",
-        // Server-side frameworks, runtime environments, API paradigms.
-        items: ["Node.js", "Express.js", "FastAPI", "REST APIs"],
-      },
-      {
-        name: "Databases",
-        // Relational, NoSQL, vector — whatever you work with.
-        items: ["MongoDB", "PostgreSQL"],
-      },
-      {
-        name: "AI & ML",
-        // ML frameworks, model libraries, AI toolkits.
-        items: ["PyTorch", "LangChain", "OpenCV"],
-      },
-      {
-        name: "Cloud & DevOps",
-        // Infrastructure, CI/CD pipelines, hosting platforms.
-        items: ["Docker", "AWS EC2", "GitHub Actions", "Netlify"],
-      },
-      // ─── Add more categories by copying the block above ───────
-      // {
-      //   name: "Mobile",
-      //   items: ["React Native", "Expo", "Android SDK"],
-      // },
-    ],
+  contact: {
+    links: [],
+    // Example — copy and edit to add your own:
+    // { label: "Resume", sub: "Download the PDF", url: "resume.pdf", icon: "cv" },
   },
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 5 — PROJECTS
+     SECTION 14 — CHATBOT
      ───────────────────────────────────────────────────────────────
-     Each object below becomes a project card AND a chatbot entry.
-     The chatbot can answer detailed questions about each project
-     when the visitor mentions its name.
-
-     Required:  name, description, tech
-     Optional:  category, liveUrl, githubUrl, result
-     Leave liveUrl or githubUrl as "" to hide that button.
-     ═══════════════════════════════════════════════════════════════ */
-  projects: [
-    {
-      // The short display name shown on the project card.
-      name: "Project One",
-
-      // A category label used for filtering (optional but recommended).
-      // Example: "Web Application" | "AI Platform" | "Mobile App" | "Open Source"
-      category: "Web Application",
-
-      // 1–3 sentences: what it does, the problem it solves, who it's for.
-      description: "Brief description of what this project does and the problem it solves.",
-
-      // Technology tags shown on the card and read by the chatbot.
-      tech: ["React", "Node.js", "MongoDB"],
-
-      // Full URL to the deployed, live version of the project.
-      // Leave "" if there is no public demo.
-      liveUrl: "https://your-project.netlify.app",
-
-      // Full URL to the GitHub repository.
-      // Leave "" if the repo is private.
-      githubUrl: "https://github.com/yourusername/project-one",
-
-      // A measurable outcome — a number, a percentage, a user milestone.
-      // Example: "Reduced API latency by 40%"  |  "500+ daily active users"
-      // Leave "" if you prefer not to include metrics.
-      result: "Describe a measurable outcome (optional).",
-    },
-    {
-      name: "Project Two",
-      category: "AI Platform",
-      description: "Brief description of what this project does.",
-      tech: ["Python", "FastAPI", "PostgreSQL"],
-      liveUrl: "",       // No public demo yet — leave empty
-      githubUrl: "https://github.com/yourusername/project-two",
-      result: "",
-    },
-    // ─── Add more projects by copying a block above ──────────────
-    // {
-    //   name: "Project Three",
-    //   category: "Mobile App",
-    //   description: "...",
-    //   tech: ["React Native", "Firebase"],
-    //   liveUrl: "",
-    //   githubUrl: "",
-    //   result: "",
-    // },
-  ],
-
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 6 — EXPERIENCE
-     ───────────────────────────────────────────────────────────────
-     Each object becomes a timeline card in the Experience section.
-     List your most recent role first — the template renders them
-     top-to-bottom in the order you define here.
-     ═══════════════════════════════════════════════════════════════ */
-  experience: [
-    {
-      // Your job title at this position.
-      role: "Full-Stack Developer & AI Engineer",
-
-      // Name of the company or organisation.
-      company: "Company Name",
-
-      // Employment type. Common values:
-      // "Full-Time" | "Internship" | "Contract" | "Freelance" | "Research"
-      type: "Full-Time",
-
-      // When you were there. Use "Present" if you still work there.
-      // Example: "Aug 2025 – Present"  |  "Jan 2024 – Jun 2024"
-      duration: "Jan 2025 – Present",
-
-      // City or "Remote" or "Hybrid – City".
-      location: "Remote / Your City",
-
-      // 1–3 sentences: what you built, shipped, or achieved in this role.
-      description: "What you built, shipped, or achieved in this role.",
-
-      // Bullet-point highlights — specific achievements, numbers, tools.
-      // The chatbot and cards may render these as a bulleted list.
-      highlights: [
-        "Key achievement 1 — add a metric if you have one",
-        "Key achievement 2",
-      ],
-    },
-    // ─── Add more roles by copying the block above ───────────────
-  ],
-
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 7 — EDUCATION
-     ───────────────────────────────────────────────────────────────
-     A single object covering your highest / most relevant degree.
-     The chatbot references this when asked about your university,
-     degree, or academic background.
-     ═══════════════════════════════════════════════════════════════ */
-  education: {
-
-    // Degree type. Example: "B.Tech" | "B.E." | "M.Sc." | "B.S." | "MBA"
-    degree: "B.Tech / B.E. / M.Tech / Other",
-
-    // Your major, specialisation, or branch.
-    // Example: "Computer Science & Engineering"  |  "Electronics & Communication"
-    branch: "Your Branch / Specialization",
-
-    // Full official name of your institution.
-    university: "Your University Name",
-
-    // City and country of the institution.
-    location: "City, Country",
-
-    // Academic years. Example: "2021 – 2025"
-    duration: "2021 – 2025",
-
-    // GPA, CGPA, or grade — shown in the education card.
-    // Leave "" to omit it.
-    gpa: "Your GPA / CGPA (optional)",
-
-    // A brief note about academic focus, thesis, or honours.
-    description: "Brief note about your academic focus or dissertation (optional).",
-  },
-
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 8 — RESEARCH  (optional)
-     ───────────────────────────────────────────────────────────────
-     Papers, theses, conference talks, or preprints.
-     Leave this as an empty array [] to hide the Research section.
-     ═══════════════════════════════════════════════════════════════ */
-  research: [
-    {
-      // Full title of the paper or publication.
-      title: "Your Research Paper Title",
-
-      // Publisher or venue short name.
-      // Example: "IEEE Xplore" | "ACM SIGKDD" | "NeurIPS" | "Springer LNCS"
-      publisher: "IEEE / ACM / Springer / Other",
-
-      // The document or DOI identifier issued by the publisher (optional).
-      // Example: "11042387" for IEEE  |  "10.1145/XXXXXXX" for ACM
-      docId: "",
-
-      // Full URL to the paper's public landing page.
-      // Leave "" if not yet published or behind a paywall with no link.
-      url: "",
-
-      // Year of publication or submission.
-      year: "2025",
-
-      // One sentence on what the paper proved or contributed.
-      summary: "One sentence on what the research proved or contributed.",
-
-      // Key numbers to highlight — accuracy, dataset size, speedup, etc.
-      // Leave [] to omit this list.
-      metrics: [
-        "Key metric (e.g. 92% mAP accuracy)",
-        "Second metric (e.g. trained on 5,000+ images)",
-      ],
-    },
-    // ─── Add more papers by copying the block above ──────────────
-  ],
-
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 9 — ACHIEVEMENTS & CERTIFICATIONS
-     ───────────────────────────────────────────────────────────────
-     Hackathon wins, awards, professional certificates — all live here.
-     Each item becomes a card in the Achievements section.
-     Leave as an empty array [] to hide the section entirely.
-     ═══════════════════════════════════════════════════════════════ */
-  achievements: [
-    {
-      // Name of the award, hackathon win, or certification.
-      title: "Hackathon / Award Name",
-
-      // Organisation or platform that issued it.
-      // Example: "Ministry of Education, India" | "Coursera" | "AWS" | "Google"
-      issuer: "Organisation",
-
-      // Year received (4-digit string).
-      year: "2024",
-
-      // One-line description or rank. Leave "" to omit.
-      // Example: "National Finalist — Top 5% of 10,000+ teams"
-      //          "Credential ID: ABC123"
-      detail: "One-line description or credential ID.",
-    },
-    {
-      title: "Certification Name",
-      issuer: "Platform / Organisation",
-      year: "2025",
-      detail: "",    // Leave empty if no extra detail needed
-    },
-    // ─── Add more achievements by copying a block above ──────────
-  ],
-
-  /* ═══════════════════════════════════════════════════════════════
-     SECTION 10 — CHATBOT CONFIGURATION
-     ───────────────────────────────────────────────────────────────
-     Tune your AI assistant's personality, greeting messages, and
-     custom response text.
-
-     • assistantName / greeting / studioGreeting  →  Opening messages
-     • customResponses  →  Overrides for specific chatbot answers
-
-     All fields support basic markdown:
-       **bold text**   *italic text*   `inline code`
+     Tune your AI assistant's name, greetings and custom answers.
+     Everything else it knows comes from the sections above.
+     Basic markdown is supported: **bold** · *italic* · `code`.
      ═══════════════════════════════════════════════════════════════ */
   chatbot: {
 
-    // The display name shown in the chatbot window header.
-    // Example: "Alex's AI Assistant"  |  "Alex's Portfolio Bot"
-    assistantName: "Your Name's AI Assistant",
+    // Shown in the chatbot window header.
+    assistantName: "Alex's AI Assistant",
 
-    // The very first message the bot sends when the chat window opens
-    // on your personal portfolio (index.html).
-    // Keep it warm, brief, and action-oriented.
-    greeting: "Hi! I am [Your Name]'s AI assistant. Ask me anything about their projects, skills, or how to get in touch.",
+    // Opening message on index.html.
+    greeting: "Hi! I'm Alex's AI assistant. Ask me anything about his projects, skills, experience or how to get in touch.",
 
-    // The opening message on the studio page (studio.html).
-    // Tailor it to your company/studio brand.
-    studioGreeting: "Welcome to [Studio Name]! Ask me about our products, capabilities, or how we can collaborate.",
+    // Opening message on studio.html.
+    studioGreeting: "Welcome to ABMVSC Studio! Ask me about our products, capabilities or how we can collaborate.",
 
-    // ── Custom Response Overrides ─────────────────────────────────
-    // These let you write your own answers for common questions.
-    // The chatbot uses these instead of the auto-generated text.
-    // If you leave a field as "", the engine builds a sensible default
-    // from the other sections you've filled in above.
+    // ── Deep-dive answers (optional) ──────────────────────────────
+    // Teach the chatbot to answer specialist questions. Each entry adds
+    // a new topic, its trigger keywords and the answer it gives.
+    // Delete the array and the chatbot simply won't know these topics.
+    deepDives: [
+      {
+        key: "systemDesign",
+        label: "System Design",
+        words: ["system design", "architecture", "scalability", "how do you design", "hld", "lld"],
+        answer: "I approach **System Design** with a production-first mindset:\n\n• **Layered Architecture:** Decoupled presentation, stateless business logic and clean data access layers.\n• **Right Database for the Job:** Relational storage for transactional data, document storage for flexible schemas, vector storage for embeddings.\n• **Performance Engineering:** Query projection, composite indexes, caching and connection pooling to keep APIs fast.\n• **Cloud & CI/CD:** Containerised services with automated build, test and deploy pipelines.\n• **Resilience:** Graceful degradation, retries and offline-first caching where it matters.",
+      },
+      {
+        key: "devops",
+        label: "DevOps & Cloud",
+        words: ["devops", "docker", "aws", "ci/cd", "ci cd", "github actions", "deployment", "cloud"],
+        answer: "My **Cloud & DevOps** workflow:\n\n• **Docker:** Multi-stage builds for small, reproducible images.\n• **Cloud Hosting:** Managed compute with reverse proxying, TLS and least-privilege access.\n• **CI/CD:** Automated pipelines that lint, test and deploy on every push.\n• **Edge Hosting:** Static and frontend assets served from a global CDN.",
+      },
+    ],
+
+    // Response overrides. Leave "" to auto-generate from your data.
     customResponses: {
-
-      // Why should someone hire or work with you?
-      // Use **bold** to highlight your top selling points.
-      // Leave "" to auto-generate from your projects & experience data.
-      whyHire: "Write why someone should hire or work with you. Use **bold** for emphasis.",
-
-      // Freelance rates, engagement models, or hiring terms.
-      // Example: "I work on fixed-scope MVPs and engineering sprints.
-      //           Reach out for a quote."
-      pricing: "Describe your rates, availability, or engagement model.",
-
-      // A personal touch — what do you enjoy outside of work?
-      // Humanises your profile and makes the chatbot more engaging.
-      hobbies: "What do you enjoy outside of work?",
-
-      // Shown when the chatbot cannot understand a question.
-      // Suggest the topics your bot knows about.
-      fallback: "Write a short message for when the bot doesn't understand a question.",
+      whyHire: "",                    // Leave "" for an auto-built answer
+      pricing: "I take on fixed-scope MVPs and engineering sprints. Reach out for a quote.",
+      hobbies: "Outside work I tinker with side projects, read about systems design and go hiking.",
+      fallback: "",                   // Leave "" for the default fallback
     },
   },
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 11 — THEME  (optional overrides)
+     SECTION 15 — THEME  (optional)
      ───────────────────────────────────────────────────────────────
-     These CSS custom property values are read by script.js and
-     injected into :root at runtime, so you can adjust your colour
-     scheme here without touching style.css.
-
-     Leave as-is to keep the default ABMVSC navy + orange palette.
+     Colours and fonts, applied at runtime — no CSS editing needed.
      ═══════════════════════════════════════════════════════════════ */
   theme: {
+    primaryColor: "#10264B",   // Navbar, headings, dark sections
+    accentColor:  "#FF7900",   // Highlights, call-to-action accents
+    blueColor:    "#2563EB",   // Links, tags, active states
+    fontHeading:  "'Space Grotesk', sans-serif",
+    fontBody:     "'Inter', sans-serif",
+    fontMono:     "'IBM Plex Mono', monospace",
 
-    // Primary brand colour — navbar background, section headings.
-    // Default: deep navy  #10264B
-    primaryColor: "#10264B",
-
-    // Accent colour — call-to-action buttons, highlights, underlines.
-    // Default: vibrant orange  #FF7900
-    accentColor: "#FF7900",
-
-    // Interactive blue — links, tags, active states.
-    // Default: Tailwind blue-600  #2563EB
-    blueColor: "#2563EB",
-
-    // Heading font — loaded from Google Fonts in index.html.
-    // Swap to any font you've already imported.
-    fontHeading: "'Space Grotesk', sans-serif",
-
-    // Body / paragraph font.
-    fontBody: "'Inter', sans-serif",
-
-    // Monospace font — used for code snippets and tech tags.
-    fontMono: "'IBM Plex Mono', monospace",
+    // Footer credit: "Built with the ABMVSC Portfolio Engine".
+    // Set to false for a completely clean footer with no third-party credit.
+    showBuiltBy: true,
   },
 
 };
-
-/* ──────────────────────────────────────────────────────────────────
-   ✅  Done! Save this file and open index.html in your browser.
-   The chatbot and portfolio sections will update automatically.
-   When you're ready to go live, push everything to GitHub and
-   deploy with Netlify or GitHub Pages (see README.md for steps).
-────────────────────────────────────────────────────────────────── */

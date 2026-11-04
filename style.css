@@ -12,7 +12,8 @@
   --text-soft: #64748b;
   --primary: #0f172a;
   --navy: #10264b;
-  --accent: #2563eb;
+  --blue: #2563eb;
+  --accent: var(--blue);
   --accent-soft: #dbeafe;
   --accent-dark: #1d4ed8;
   --orange: #ff7900;
@@ -24,6 +25,16 @@
   --max-width: 1100px;
   --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.10);
+
+  /* Fonts — overwritten at runtime by config.theme.font* */
+  --font-heading: "Space Grotesk", "Inter", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+/* The [hidden] attribute must always win over component display rules */
+[hidden] {
+  display: none !important;
 }
 
 * {
@@ -38,12 +49,21 @@ html {
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   line-height: 1.7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
 }
 
 a {
@@ -1527,6 +1547,28 @@ footer {
   background: var(--surface);
 }
 
+/* "Built with the ABMVSC Portfolio Engine" credit — removable via
+   theme.showBuiltBy in config.js */
+.built-by {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.built-by a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.built-by a:hover {
+  text-decoration: underline;
+}
+
+.built-by-sep {
+  margin: 0 8px;
+  opacity: 0.5;
+}
+
 /* REVEAL ON SCROLL */
 .hidden {
   opacity: 0;
@@ -1627,193 +1669,72 @@ section:focus {
 
 
 /* ==========================================================================
-   PORTFOLIO CONFIGURATOR & LEAD GENERATOR — ABMVSC STUDIO
+   SKILLS GRID — rendered by script.js from config.skills.categories
    ========================================================================== */
-.generator-nav-btn {
-  background: linear-gradient(135deg, var(--orange), #ff9800);
-  color: #ffffff;
-  border: none;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 700;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  box-shadow: 0 2px 8px rgba(255, 121, 0, 0.3);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.generator-nav-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 121, 0, 0.45);
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
 }
 
-.generator-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.generator-modal.open {
-  display: flex;
-}
-.generator-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(11, 18, 32, 0.75);
-  backdrop-filter: blur(6px);
-}
-.generator-dialog {
-  position: relative;
-  background: #ffffff;
-  width: 100%;
-  max-width: 620px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg), 0 20px 40px rgba(11, 18, 32, 0.25);
+.skill-card {
+  background: var(--surface);
   border: 1px solid var(--border);
-  padding: 32px;
-  z-index: 10;
-  max-height: 90vh;
-  overflow-y: auto;
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
 }
-.generator-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.generator-badge {
-  display: inline-block;
-  background: rgba(37, 99, 235, 0.1);
-  color: var(--blue);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.generator-close-btn {
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-soft);
-  font-size: 14px;
-  transition: all var(--transition-fast);
-}
-.generator-close-btn:hover {
-  background: var(--navy);
-  color: #ffffff;
-}
-.generator-sub {
-  color: var(--text-soft);
-  font-size: 14px;
-  line-height: 1.5;
-  margin-bottom: 24px;
-}
-.generator-form .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.generator-form .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-.generator-form label {
-  font-size: 12px;
+
+.skill-card h3 {
+  font-size: 16px;
   font-weight: 700;
   color: var(--navy);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.generator-form input {
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--text);
-  background: #ffffff;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-.generator-form input:focus {
-  outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-.generator-success {
-  text-align: center;
-  padding: 10px 0;
-}
-.success-icon {
-  font-size: 48px;
   margin-bottom: 12px;
 }
-.success-steps {
+
+.skill-tags {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  text-align: left;
-  margin: 20px 0;
-}
-.step-card {
-  display: flex;
-  gap: 14px;
-  background: var(--bg-alt);
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-}
-.step-num {
-  background: var(--navy);
-  color: #ffffff;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 800;
-  flex-shrink: 0;
-}
-.btn-star-gh {
-  display: inline-flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
-  background: #24292e;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  margin-top: 8px;
 }
-.btn-star-gh:hover {
-  background: #000000;
-  color: #ffffff;
+
+.skill-tags span {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* Small status chip on in-development / concept product cards */
+.project-status {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+/* Bulleted metrics inside research cards */
+.metric-list {
+  margin: 10px 0 0 18px;
+  padding: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.metric-list li {
+  margin-bottom: 4px;
+}
+
+@media (max-width: 992px) {
+  .skill-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 600px) {
-  .generator-form .form-row {
+  .skill-grid {
     grid-template-columns: 1fr;
-    gap: 0;
   }
 }

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-page="setup">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Set Up Your Portfolio — ABMVSC Portfolio Engine</title>
+  <meta name="description"
+    content="Fill in your details, preview both sites live, and download a ready-to-use config.js for the ABMVSC Portfolio Engine." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="icon" href="favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="setup.css" />
+</head>
+
+<body class="gen-body">
+  <a href="#genForm" class="skip-link">Skip to the form</a>
+
+  <!-- TOP BAR -->
+  <header class="gen-topbar">
+    <div class="gen-topbar-inner">
+      <div class="gen-brand">
+        <strong>ABMVSC</strong> Portfolio Engine
+        <span>· config generator</span>
+      </div>
+
+      <div class="gen-actions">
+        <button type="button" class="gen-btn gen-btn-ghost" id="genLoadCurrent" hidden>Load current config.js</button>
+        <button type="button" class="gen-btn" id="genImportBtn">Import config.js</button>
+        <button type="button" class="gen-btn" id="genResetBtn">Start from scratch</button>
+        <button type="button" class="gen-btn gen-btn-dark" id="genCopyBtn">Copy</button>
+        <button type="button" class="gen-btn gen-btn-primary" id="genDownloadBtn">Download config.js</button>
+        <input type="file" id="genImportInput" accept=".js,text/javascript" hidden />
+      </div>
+    </div>
+  </header>
+
+  <div class="gen-layout">
+    <!-- LEFT: THE FORM -->
+    <main id="genForm">
+      <div class="gen-banner">
+        <h1>Build your portfolio in one pass</h1>
+        <p>
+          Fill in what you have, skip the rest. This page writes a <code>config.js</code> for the
+          <strong>ABMVSC Portfolio Engine</strong> — drop it into your project folder and both
+          <code>index.html</code> and <code>studio.html</code> rebuild themselves from it.
+        </p>
+      </div>
+
+      <div class="gen-steps">
+        <div class="gen-step"><b>Step 1</b><span>Fill in your details below. Everything is optional.</span></div>
+        <div class="gen-step"><b>Step 2</b><span>Watch both sites update in the live preview.</span></div>
+        <div class="gen-step"><b>Step 3</b><span>Download <code>config.js</code> and replace the one in your folder.</span></div>
+        <div class="gen-step"><b>Step 4</b><span>Deploy the folder — Netlify, GitHub Pages, anywhere.</span></div>
+      </div>
+
+      <div id="genSections"></div>
+    </main>
+
+    <!-- RIGHT: PREVIEW + EXPORT -->
+    <aside class="gen-side">
+      <section class="gen-panel">
+        <div class="gen-panel-head">
+          <h2>Live preview</h2>
+          <div class="gen-tabs">
+            <button type="button" class="gen-tab is-active" id="genTabPortfolio">Portfolio</button>
+            <button type="button" class="gen-tab" id="genTabStudio">Studio</button>
+          </div>
+        </div>
+        <div class="gen-panel-body">
+          <div class="gen-preview-empty" id="genPreviewNotice" hidden></div>
+          <iframe class="gen-preview-frame" id="genPreview" title="Live preview of your site"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-modals"></iframe>
+          <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+            <button type="button" class="gen-btn gen-btn-sm" id="genRefreshPreview">Refresh preview</button>
+            <button type="button" class="gen-btn gen-btn-sm" id="genOpenTab">Open in a new tab ↗</button>
+            <button type="button" class="gen-btn gen-btn-sm" id="genFitBtn">Toggle mobile width</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="gen-panel">
+        <div class="gen-panel-head">
+          <h2>Completeness</h2>
+        </div>
+        <div class="gen-panel-body">
+          <div class="gen-meter"><i id="genMeterBar"></i></div>
+          <p class="gen-meter-text" id="genMeterText">Nothing filled in yet.</p>
+          <p class="gen-help" style="margin-top:10px;">
+            Empty sections disappear from your site automatically — nothing breaks.
+          </p>
+        </div>
+      </section>
+
+      <section class="gen-panel">
+        <div class="gen-panel-head">
+          <h2>Paste-ready output</h2>
+          <button type="button" class="gen-btn gen-btn-sm" id="genRefreshCode">Refresh</button>
+        </div>
+        <div class="gen-panel-body">
+          <textarea class="gen-textarea" id="genOutput" readonly spellcheck="false"
+            style="min-height:180px; font-family: var(--font-mono); font-size:11.5px;"
+            aria-label="Generated config.js"></textarea>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <p class="gen-foot">
+    Your draft is saved in this browser only — nothing is uploaded anywhere.
+    Built by <a href="https://abms-portfolio.netlify.app/studio.html" target="_blank"
+      rel="noopener noreferrer">ABMVSC Technology &amp; Innovation Studio</a> · MIT licensed.
+  </p>
+
+  <div class="gen-toast" id="genToast" role="status" aria-live="polite"></div>
+
+  <script src="setup.js"></script>
+</body>
+
+</html>

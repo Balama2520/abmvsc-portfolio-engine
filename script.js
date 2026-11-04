@@ -1,1214 +1,1072 @@
 /**
- * Clean, High-Performance Script
- * - Navigation Scroll-Spy & Sticky Navbar
- * - Smooth Anchor Scrolling
- * - Scroll Reveal Animations
- * - Resume Preview Modal
- * - Alive AI Conversational Assistant with Streaming Output & Memory
+ * ABMVSC Portfolio Engine
+ * ------------------------------------------------------------------
+ * A single, dependency-free script that renders BOTH websites —
+ * index.html (your portfolio) and studio.html (your company) —
+ * entirely from window.PORTFOLIO_CONFIG (config.js).
+ *
+ *   • Hydration engine  — text, links, images, lists, sections, SEO
+ *   • Site chrome       — sticky nav, scroll-spy, smooth scroll, reveal
+ *   • Resume modal      — zero-dependency PDF preview
+ *   • AI assistant      — streaming rule-based chatbot built from config
+ *
+ * You should never need to edit this file. Edit config.js instead.
  */
 
-
-/* ==========================================================================
-   PORTFOLIO HYDRATION ENGINE — Powered by config.js
-   Automatically updates DOM elements from window.PORTFOLIO_CONFIG
-   ========================================================================== */
-const hydratePortfolio = () => {
-  const cfg = window.PORTFOLIO_CONFIG;
-  if (!cfg) return;
-  const p = cfg.personal || {};
-  const co = cfg.company || {};
-
-  // Update Page Title
-  if (p.name) {
-    const isStudio = window.location.pathname.includes("studio.html");
-    if (!isStudio) {
-      document.title = `${p.name} | ${p.role || "Developer & AI Engineer"}`;
-    } else if (co.name) {
-      document.title = `${co.name} — ${co.descriptor || "Technology & Innovation Studio"}`;
-    }
-  }
-
-  // Update Elements with data-bind attribute
-  document.querySelectorAll("[data-bind]").forEach((el) => {
-    const bindKey = el.getAttribute("data-bind");
-    const val = bindKey.split(".").reduce((acc, part) => acc && acc[part], cfg);
-    if (val === undefined || val === null || val === "") return;
-
-    if (el.tagName === "A") {
-      if (bindKey.includes("email")) {
-        el.href = `mailto:${val}`;
-        el.textContent = val;
-      } else if (bindKey.includes("phone")) {
-        el.href = `tel:${val.replace(/\s/g, "")}`;
-        el.textContent = val;
-      } else {
-        el.href = val;
-      }
-    } else if (el.tagName === "IMG") {
-      el.src = val;
-      if (p.name) el.alt = p.name;
-    } else {
-      el.textContent = val;
-    }
-  });
-
-  // Dynamic Project Cards Hydration
-  const projectGrid = document.querySelector(".project-grid");
-  if (projectGrid && cfg.projects && cfg.projects.length) {
-    projectGrid.innerHTML = cfg.projects.map((pr, idx) => `
-      <article class="project-card ${idx === 0 ? "project-featured" : ""}">
-        <div class="project-card-top">
-          <p class="project-tag">${pr.category || "Web App"}</p>
-          <div class="project-links">
-            ${pr.liveUrl ? `<a href="${pr.liveUrl}" target="_blank" rel="noopener noreferrer">Live ↗</a>` : ""}
-            ${pr.githubUrl ? `<a href="${pr.githubUrl}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : ""}
-          </div>
-        </div>
-        <h3>${pr.name || "Project Title"}</h3>
-        <p>${pr.description || ""}</p>
-        ${pr.result ? `<div class="project-metric">✦ ${pr.result}</div>` : ""}
-        <p class="tech-stack">${(pr.tech || []).join(" · ")}</p>
-      </article>
-    `).join("");
-  }
-
-  // Dynamic Experience Cards Hydration
-  const expLists = document.querySelectorAll(".experience-list");
-  if (expLists.length > 0 && cfg.experience && cfg.experience.length) {
-    const expList = expLists[0];
-    expList.innerHTML = cfg.experience.map(exp => `
-      <article class="experience-card">
-        <div class="exp-header">
-          <div>
-            <h3>${exp.role || "Role"}</h3>
-            <p class="exp-company">${exp.company || "Company"}</p>
-          </div>
-          <span class="exp-date">${exp.duration || ""} · ${exp.location || "Remote"}</span>
-        </div>
-        ${exp.highlights && exp.highlights.length ? `
-          <ul>
-            ${exp.highlights.map(h => `<li>${h}</li>`).join("")}
-          </ul>
-        ` : `<p>${exp.description || ""}</p>`}
-        ${exp.description && exp.highlights && exp.highlights.length ? `<p class="exp-desc" style="margin-top:8px; font-size:14px; color:var(--text-soft);">${exp.description}</p>` : ""}
-      </article>
-    `).join("");
-  }
-
-  // Dynamic Education Card Hydration
-  if (expLists.length > 1 && cfg.education) {
-    const eduList = expLists[1];
-    const edu = cfg.education;
-    eduList.innerHTML = `
-      <article class="experience-card">
-        <div class="exp-header">
-          <div>
-            <h3>${edu.degree || "Degree"}</h3>
-            <p class="exp-company">${edu.university || "University"} · ${edu.location || ""}</p>
-          </div>
-          <span class="exp-date">${edu.duration || ""}</span>
-        </div>
-        ${edu.description ? `<p style="margin-top:8px; font-size:14px; color:var(--text-soft);">${edu.description}</p>` : ""}
-        ${edu.gpa ? `<div class="project-metric" style="margin-top:12px;">✦ ${edu.gpa}</div>` : ""}
-      </article>
-    `;
-  }
-
-  // Dynamic Achievements Cards Hydration
-  const achieveGrid = document.querySelector(".achievement-grid");
-  if (achieveGrid && cfg.achievements && cfg.achievements.length > 0 && !window.location.pathname.includes("studio.html")) {
-    achieveGrid.innerHTML = cfg.achievements.map((ach, idx) => `
-      <article class="achievement-card ${idx === 0 ? "achievement-highlight" : ""}">
-        <p class="achievement-tag">${ach.issuer ? `🏆 ${ach.issuer}` : "Recognition"}</p>
-        <h3>${ach.title || "Achievement"}</h3>
-        <p>${ach.detail || "Honored for technical excellence and software engineering contribution."}</p>
-        ${ach.year ? `<span class="exp-date" style="display:inline-block; margin-top:8px;">${ach.year}</span>` : ""}
-      </article>
-    `).join("");
-  }
-
-  // Apply Theme Custom Properties if provided
-  if (cfg.theme) {
-    const root = document.documentElement;
-    if (cfg.theme.primaryColor) root.style.setProperty("--navy", cfg.theme.primaryColor);
-    if (cfg.theme.accentColor)  root.style.setProperty("--orange", cfg.theme.accentColor);
-    if (cfg.theme.blueColor)    root.style.setProperty("--blue", cfg.theme.blueColor);
-  }
-};
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", hydratePortfolio);
-} else {
-  hydratePortfolio();
-}
-
-const sections = document.querySelectorAll("section[id]");
-const navLinks = document.querySelectorAll("nav a");
-const navbar = document.querySelector(".navbar");
-const revealElements = document.querySelectorAll(
-  ".experience-card, .project-card, .achievement-card, .cert-card, .reason-card, .pillar-box"
-);
-
-/* Active navigation scroll-spy */
-if (sections.length && navLinks.length && "IntersectionObserver" in window) {
-  const sectionObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const id = entry.target.getAttribute("id");
-        navLinks.forEach((link) => {
-          link.classList.toggle(
-            "active",
-            link.getAttribute("href") === `#${id}`
-          );
-        });
-      });
-    },
-    {
-      threshold: 0.35,
-      rootMargin: "-10% 0px -45% 0px"
-    }
-  );
-  sections.forEach((section) => sectionObserver.observe(section));
-}
-
-/* Navbar shadow on scroll */
-if (navbar) {
-  const toggleNavbarState = () => {
-    navbar.classList.toggle("scrolled", window.scrollY > 24);
-  };
-  toggleNavbarState();
-  window.addEventListener("scroll", toggleNavbarState, { passive: true });
-}
-
-/* Smooth scrolling with focus management */
-document.querySelectorAll('a[href^="#"]').forEach((link) => {
-  link.addEventListener("click", (e) => {
-    const targetId = link.getAttribute("href");
-    if (!targetId || targetId === "#") return;
-    const target = document.querySelector(targetId);
-    if (!target) return;
-
-    e.preventDefault();
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-    target.setAttribute("tabindex", "-1");
-    target.focus({ preventScroll: true });
-
-    setTimeout(() => {
-      target.removeAttribute("tabindex");
-    }, 1000);
-  });
-});
-
-/* Reveal on scroll */
-if (revealElements.length && "IntersectionObserver" in window) {
-  const revealObserver = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("visible");
-        observer.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.12 }
-  );
-
-  revealElements.forEach((el) => {
-    el.classList.add("hidden");
-    revealObserver.observe(el);
-  });
-}
-
-/* Resume preview modal */
-const resumeModal = document.getElementById("resumeModal");
-const resumeFrame = document.getElementById("resumeFrame");
-const resumeTriggers = document.querySelectorAll("[data-resume-trigger]");
-const resumeClosers = document.querySelectorAll("[data-resume-close]");
-
-const openResumeModal = () => {
-  if (!resumeModal) return;
-  if (resumeFrame) resumeFrame.src = "resume.pdf";
-  resumeModal.classList.add("open");
-  resumeModal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-};
-
-const closeResumeModal = () => {
-  if (!resumeModal) return;
-  resumeModal.classList.remove("open");
-  resumeModal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-  if (resumeFrame) resumeFrame.src = "";
-};
-
-resumeTriggers.forEach((btn) => btn.addEventListener("click", openResumeModal));
-resumeClosers.forEach((el) => el.addEventListener("click", closeResumeModal));
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && resumeModal?.classList.contains("open")) {
-    closeResumeModal();
-  }
-});
-
-/* ==========================================================================
-   ALIVE AI CHATBOT ENGINE (Works on both Personal & Studio pages)
-   Features:
-   - Dynamic Page Context (Personal vs Studio)
-   - Real-Time AI Streaming with Blinking Cursor
-   - Natural Markdown to HTML Renderer (Bold, Lists, Links, Code)
-   - Interactive In-Chat Action Buttons (Open Resume, Live Demos, Direct Contact)
-   - Dynamic Follow-Up Quick Reply Chips
-   - Multi-Turn Intent & Topic Context Memory
-   - Comprehensive Knowledge Base (Dummy Data & Verified Portfolio Facts)
-   ========================================================================== */
 (() => {
-  const chatbot = document.getElementById("chatbot");
-  const toggle = document.getElementById("chatbotToggle");
-  const closeBtn = document.getElementById("chatbotClose");
-  const win = document.getElementById("chatbotWindow");
-  const messages = document.getElementById("chatbotMessages");
-  const quickReplies = document.getElementById("chatbotQuickReplies");
-  const form = document.getElementById("chatbotForm");
-  const input = document.getElementById("chatbotInput");
+  "use strict";
 
-  if (!chatbot || !toggle || !win || !messages || !form || !input) return;
+  /* ══════════════════════════════════════════════════════════════
+     0. CONTEXT & HELPERS
+     ══════════════════════════════════════════════════════════════ */
+  const cfg = window.PORTFOLIO_CONFIG || {};
 
-  const isStudioPage = window.location.pathname.includes("studio.html");
-  let isGenerating = false;
-  let lastTopic = null;
+  const co   = cfg.company  || {};
+  const p    = cfg.personal || {};
+  const hero = cfg.hero     || {};
+  const about = cfg.about   || {};
+  const chat = cfg.chatbot  || {};
+  const custom = chat.customResponses || {};
+  const seo  = cfg.seo || {};
+  const theme = cfg.theme || {};
 
-  // Markdown Formatter for Natural AI Text Rendering
-  const formatMarkdown = (text) => {
-    if (!text) return "";
-    let html = text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      .replace(/`([^`]+)`/g, "<code>$1</code>")
-      .replace(/\n\n/g, "<br><br>")
-      .replace(/\n/g, "<br>")
-      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
-      .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1">$1</a>')
-      .replace(/(\+91\s?[0-9]{5}\s?[0-9]{5})/g, '<a href="tel:$1">$1</a>');
-    return html;
+  const page = document.documentElement.getAttribute("data-page") || "portfolio";
+  const isStudio = page === "studio";
+
+  const q  = (sel, root = document) => root.querySelector(sel);
+  const qa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  const arr = (v) => (Array.isArray(v) ? v : v ? [v] : []);
+
+  const esc = (v) =>
+    String(v ?? "").replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+
+  // Read a dotted path out of the config: get("personal.email")
+  const get = (path, fallback = "") => {
+    const val = String(path).split(".").reduce((acc, key) => (acc == null ? acc : acc[key]), cfg);
+    return val === undefined || val === null ? fallback : val;
   };
 
-  // ── Build brain from window.PORTFOLIO_CONFIG ────────────────────
-  // All chatbot knowledge is now driven by config.js.
-  // To change any response, edit config.js — never touch this file.
-  const cfg    = window.PORTFOLIO_CONFIG || {};
-  const p      = cfg.personal            || {};
-  const co     = cfg.company             || {};
-  const chat   = cfg.chatbot             || {};
-  const custom = chat.customResponses    || {};
+  const setHidden = (el, hidden) => {
+    if (!el) return;
+    if (hidden) el.setAttribute("hidden", "");
+    else el.removeAttribute("hidden");
+  };
 
-  // Helper: build a formatted skills block from the categories array
-  const buildSkillsText = () => {
-    if (!cfg.skills || !cfg.skills.categories || !cfg.skills.categories.length) {
-      return "Tech stack not configured — update the `skills` section in config.js.";
+  /* ══════════════════════════════════════════════════════════════
+     1. DATA SOURCES  (handles both new + legacy config shapes)
+     ══════════════════════════════════════════════════════════════ */
+  const projects       = arr(cfg.projects);
+  const experience     = arr(cfg.experience);
+  const education      = cfg.education ? arr(cfg.education) : [];
+  const achievements   = arr(cfg.achievements);
+  const certifications = arr(cfg.certifications);
+  const pillars        = arr(co.pillars);
+  const values         = arr(co.values);
+  const products       = arr(co.products).length ? arr(co.products) : projects;
+
+  const research = isStudio && arr(co.research).length ? arr(co.research) : arr(cfg.research);
+  const stats    = isStudio ? arr(co.heroStats) : arr(hero.stats);
+  const marquee  = arr(hero.marquee).length
+    ? arr(hero.marquee)
+    : arr(cfg.skills && cfg.skills.categories).flatMap((c) => arr(c.items));
+
+  const aboutParagraphs   = arr(about.paragraphs);
+  const aboutReasons      = arr(about.reasons);
+  const purposeParagraphs = arr(co.purposeParagraphs);
+
+  // Values that are derived (with sensible fallbacks) rather than literal.
+  // Anything in here can still be overridden from config.js.
+  const taglineBits = String(co.tagline || "").split(".").map((s) => s.trim()).filter(Boolean);
+  const VIRTUAL = {
+    "hero.eyebrow": hero.eyebrow || p.availability || "",
+    "hero.badge": hero.badge || (co.name ? `Founder @ ${co.name}` : ""),
+    "hero.titleLine1": hero.titleLine1 || String(p.role || "").split("&")[0].trim(),
+    "hero.titleLine2": hero.titleLine2 || (String(p.role || "").split("&")[1] || "").trim(),
+    "company.eyebrow": [co.descriptor, co.founded ? `Founded ${co.founded}` : ""].filter(Boolean).join(" · "),
+    "company.titleLine1": taglineBits[0] ? `${taglineBits[0]}.` : "",
+    "company.titleLine2": taglineBits.length > 1 ? `${taglineBits.slice(1).join(". ")}.` : "",
+    "company.heroParagraph": co.heroParagraph || co.description || "",
+  };
+
+  // Contact link cards — explicit config first, otherwise auto-built
+  const contactLinks = () => {
+    const explicit = arr(cfg.contact && cfg.contact.links);
+    if (explicit.length) {
+      return explicit.map((l) => ({
+        icon: l.icon || "↗",
+        label: l.label,
+        sub: l.sub || "",
+        url: l.url || "#",
+        external: /^https?:/i.test(l.url || ""),
+      }));
     }
-    return cfg.skills.categories
-      .map(cat => `• **${cat.name || "Other"}:** ${(cat.items || []).join(", ")}`)
-      .join("\n");
-  };
 
-  // Helper: build a numbered list of projects for the chatbot
-  const buildProjectsText = () => {
-    if (!cfg.projects || !cfg.projects.length) {
-      return "No projects configured — add entries to the `projects` array in config.js.";
+    const out = [];
+    if (!isStudio && co.name) {
+      out.push({
+        icon: "🏢",
+        label: co.name,
+        sub: co.descriptor || "Company",
+        url: co.studioUrl || "studio.html",
+        external: false,
+      });
     }
-    return cfg.projects
-      .map((proj, i) => {
-        let line = `${i + 1}. **${proj.name || "Untitled"}** (${proj.category || "Project"}): ${proj.description || ""}`;
-        if (proj.result) line += ` — *${proj.result}*`;
-        return line;
-      })
-      .join("\n");
-  };
-
-  // Helper: build experience text from the experience array
-  const buildExperienceText = () => {
-    if (!cfg.experience || !cfg.experience.length) {
-      return "No experience configured — add entries to the `experience` array in config.js.";
+    if (isStudio && p.name) {
+      out.push({
+        icon: "👤",
+        label: `${p.name.split(" ")[0]}'s Portfolio`.replace("'s's", "'s"),
+        sub: "Personal Portfolio",
+        url: "index.html",
+        external: false,
+      });
     }
-    return cfg.experience
-      .map(exp => `• **${exp.role || "Role"} @ ${exp.company || "Company"}** (${exp.duration || ""}, ${exp.type || ""}): ${exp.description || ""}`)
-      .join("\n\n");
+    if (p.linkedin) out.push({ icon: "in", label: "LinkedIn", sub: "Professional Profile", url: p.linkedin, external: true });
+    if (p.github)   out.push({ icon: "gh", label: "GitHub",   sub: "Code Repositories",    url: p.github,   external: true });
+    if (p.twitter)  out.push({ icon: "𝕏",  label: "Twitter / X", sub: "Updates",           url: p.twitter,  external: true });
+    if (p.website)  out.push({ icon: "🌐", label: "Website",  sub: "Personal site",        url: p.website,  external: true });
+    if (p.huggingface)  out.push({ icon: "🤗", label: "Hugging Face", sub: "Models & datasets", url: p.huggingface, external: true });
+    if (p.researchgate) out.push({ icon: "🔬", label: "ResearchGate", sub: "Publications",      url: p.researchgate, external: true });
+    if (p.resume)   out.push({ icon: "cv", label: "Resume",   sub: "Download the PDF",     url: p.resume,   external: false });
+    return out;
   };
 
-  // Helper: build research text from the research array
-  const buildResearchText = () => {
-    if (!cfg.research || !cfg.research.length) {
-      return "No research configured — add entries to the `research` array in config.js.";
-    }
-    return cfg.research
-      .map(r => {
-        let line = `• **${r.title || "Paper"}** — ${r.publisher || ""} (${r.year || ""}).`;
-        if (r.summary) line += ` ${r.summary}`;
-        if (r.metrics && r.metrics.length) line += ` Metrics: ${r.metrics.join(", ")}.`;
-        return line;
-      })
-      .join("\n");
+  /* ══════════════════════════════════════════════════════════════
+     2. LIST RENDERERS  (one per [data-list="…"] container)
+     ══════════════════════════════════════════════════════════════ */
+  const statRow = (items, navy) => items
+    .map((s, i) => `
+      ${i ? '<div class="stat-divider"></div>' : ""}
+      <div class="stat">
+        <span class="stat-num"${navy ? ' style="color:var(--navy);"' : ""}>${esc(s.value)}</span>
+        <span class="stat-label">${esc(s.label)}</span>
+      </div>`)
+    .join("");
+
+  const marqueeRow = (items) => {
+    const spans = items.map((t) => `<span>${esc(t)}</span>`).join("");
+    return `<div class="skills-scroll">${spans}${spans}</div>`;
   };
 
-  // Helper: build achievements text from the achievements array
-  const buildAchievementsText = () => {
-    if (!cfg.achievements || !cfg.achievements.length) {
-      return "No achievements configured — add entries to the `achievements` array in config.js.";
-    }
-    return cfg.achievements
-      .map(a => {
-        let line = `• **${a.title || "Award"}** — ${a.issuer || ""} (${a.year || ""})`;
-        if (a.detail) line += `: ${a.detail}`;
-        return line;
-      })
-      .join("\n");
+  const skillCards = (cats) => cats
+    .map((c) => `
+      <article class="skill-card">
+        <h3>${esc(c.name || "Skills")}</h3>
+        <div class="skill-tags">${arr(c.items).map((i) => `<span>${esc(i)}</span>`).join("")}</div>
+      </article>`)
+    .join("");
+
+  const projectCards = (items) => items
+    .map((pr, i) => {
+      const links = [
+        pr.liveUrl   ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer">Live ↗</a>` : "",
+        pr.githubUrl ? `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : "",
+      ].filter(Boolean).join("");
+
+      const topRight = links
+        ? `<div class="project-links">${links}</div>`
+        : pr.status ? `<span class="project-status">${esc(pr.status)}</span>` : "";
+
+      return `
+      <article class="project-card ${i === 0 ? "project-featured" : ""}">
+        <div class="project-card-top">
+          <p class="project-tag">${esc(pr.category || "Project")}</p>
+          ${topRight}
+        </div>
+        <h3>${esc(pr.name || "Untitled Project")}</h3>
+        <p>${esc(pr.description || "")}</p>
+        ${pr.result ? `<div class="project-metric">✦ ${esc(pr.result)}</div>` : ""}
+        <p class="tech-stack">${arr(pr.tech).map(esc).join(" · ")}</p>
+      </article>`;
+    })
+    .join("");
+
+  const experienceCards = (items) => items
+    .map((exp) => {
+      const highlights = arr(exp.highlights);
+      const meta = [exp.company, exp.type].filter(Boolean).map(esc).join(" · ");
+      const right = [exp.duration, exp.location].filter(Boolean).map(esc).join(" · ");
+      return `
+      <article class="experience-card">
+        <div class="exp-header">
+          <div>
+            <h3>${esc(exp.role || exp.degree || "Role")}</h3>
+            <p class="exp-company">${meta || esc(exp.university || "")}</p>
+          </div>
+          <span class="exp-date">${right}</span>
+        </div>
+        ${highlights.length
+          ? `<ul>${highlights.map((hl) => `<li>${esc(hl)}</li>`).join("")}</ul>`
+          : `<p>${esc(exp.description || "")}</p>`}
+        ${highlights.length && exp.description
+          ? `<p style="margin-top:10px; font-size:14px; color:var(--text-soft);">${esc(exp.description)}</p>`
+          : ""}
+      </article>`;
+    })
+    .join("");
+
+  const researchCards = (items) => items
+    .map((r, i) => {
+      const metrics = arr(r.metrics);
+      const tag = [r.publisher, r.year].filter(Boolean).map(esc).join(" · ");
+      const link = r.url
+        ? `<a class="achievement-link" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">Read the paper ↗</a>`
+        : r.docId ? `<span class="achievement-tag">Doc #${esc(r.docId)}</span>` : "";
+      return `
+      <article class="achievement-card ${i === 0 ? "achievement-highlight" : ""}">
+        <p class="achievement-tag">${tag || "Publication"}</p>
+        <h3>${esc(r.title || "Publication")}</h3>
+        ${r.summary ? `<p>${esc(r.summary)}</p>` : ""}
+        ${metrics.length ? `<ul class="metric-list">${metrics.map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
+        ${link}
+      </article>`;
+    })
+    .join("");
+
+  const achievementCards = (items) => items
+    .map((a) => `
+      <article class="achievement-card">
+        <p class="achievement-tag">🏆 ${esc(a.issuer || "Recognition")}</p>
+        <h3>${esc(a.title || "Achievement")}</h3>
+        ${a.detail ? `<p>${esc(a.detail)}</p>` : ""}
+        ${a.year ? `<span class="exp-date" style="display:inline-block; margin-top:8px;">${esc(a.year)}</span>` : ""}
+        ${a.url ? `<a class="achievement-link" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">View proof ↗</a>` : ""}
+      </article>`)
+    .join("");
+
+  const certCards = (items) => items
+    .map((c) => `
+      <article class="cert-card">
+        <p class="cert-issuer">${esc(c.issuer || "Certification")}</p>
+        <h3>${esc(c.title || "Certification")}</h3>
+        ${c.year ? `<p class="cert-date">${esc(c.year)}</p>` : ""}
+        ${c.url ? `<a class="achievement-link" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">Verify ↗</a>` : ""}
+      </article>`)
+    .join("");
+
+  const pillarCards = (items) => items
+    .map((b) => `
+      <article class="pillar-box">
+        <div class="pillar-box-icon">${esc(b.icon || "◆")}</div>
+        <h4>${esc(b.title || "Pillar")}</h4>
+        ${b.text ? `<p style="font-size:13px; color:var(--text-muted); margin-top:8px;">${esc(b.text)}</p>` : ""}
+      </article>`)
+    .join("");
+
+  const valueCards = (items) => items
+    .map((v) => `
+      <div class="reason-card">
+        <p class="reason-title">${esc(v.title || "Value")}</p>
+        <p>${esc(v.text || "")}</p>
+      </div>`)
+    .join("");
+
+  const linkCards = (items) => items
+    .map((l) => `
+      <a class="contact-link-card" href="${esc(l.url)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>
+        <span class="contact-link-icon">${esc(l.icon)}</span>
+        <div>
+          <p class="contact-link-label">${esc(l.label)}</p>
+          <p class="contact-link-sub">${esc(l.sub)}</p>
+        </div>
+        <span class="contact-link-arrow">↗</span>
+      </a>`)
+    .join("");
+
+  const paragraphBlock = (items) => items
+    .map((t) => `<p>${esc(t)}</p>`)
+    .join("");
+
+  const RENDERERS = {
+    stats:            (el) => statRow(stats, isStudio),
+    marquee:          () => marqueeRow(marquee),
+    skills:           () => skillCards(arr(cfg.skills && cfg.skills.categories)),
+    projects:         () => projectCards(projects),
+    products:         () => projectCards(products),
+    experience:       () => experienceCards(experience),
+    education:        () => experienceCards(education),
+    research:         () => researchCards(research),
+    achievements:     () => achievementCards(achievements),
+    certifications:   () => certCards(certifications),
+    pillars:          () => pillarCards(pillars),
+    values:           () => valueCards(values),
+    "about-paragraphs":   () => paragraphBlock(aboutParagraphs),
+    "about-reasons":      () => valueCards(aboutReasons),
+    "purpose-paragraphs": () => paragraphBlock(purposeParagraphs),
+    "contact-links":  () => linkCards(contactLinks()),
   };
 
-  // Helper: build a project-links block for getActions "projects" case
-  const buildProjectActionButtons = () => {
-    if (!cfg.projects || !cfg.projects.length) return "";
-    return cfg.projects
-      .slice(0, 3)
-      .filter(pr => pr.liveUrl || pr.githubUrl)
-      .map(pr => {
-        if (pr.liveUrl) {
-          return `<a href="${pr.liveUrl}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🚀 ${pr.name}</a>`;
-        }
-        return `<a href="${pr.githubUrl}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 ${pr.name}</a>`;
-      })
-      .join("\n            ");
+  const LIST_COUNTS = {
+    stats: stats.length,
+    marquee: marquee.length,
+    skills: arr(cfg.skills && cfg.skills.categories).length,
+    projects: projects.length,
+    products: products.length,
+    experience: experience.length,
+    education: education.length,
+    research: research.length,
+    achievements: achievements.length,
+    certifications: certifications.length,
+    pillars: pillars.length,
+    values: values.length,
+    "about-paragraphs": aboutParagraphs.length,
+    "about-reasons": aboutReasons.length,
+    "purpose-paragraphs": purposeParagraphs.length,
+    "contact-links": contactLinks().length,
   };
 
-  // ── The Brain ────────────────────────────────────────────────────
-  // Core responses built from config sections above.
-  // Specific deep-dive entries (systemDesign, ragArchitecture, etc.)
-  // are retained as static strings so existing chatbot depth is
-  // preserved; they can be overridden via customResponses in config.js.
-  const brain = {
+  /* ══════════════════════════════════════════════════════════════
+     3. HYDRATION PASSES
+     ══════════════════════════════════════════════════════════════ */
 
-    templateGuide: "**How the ABMVSC Dual-Platform System Works:**\n\n1. **Single Source of Truth (\`config.js\`):** Edit your name, contact info, projects, skills, and studio branding in \`config.js\`. Both \`index.html\` and \`studio.html\` update automatically!\n2. **Zero Build Dependencies:** Pure, high-performance HTML5, modern CSS3, and vanilla JS — no npm install, no bundler lag.\n3. **Context-Aware AI Assistant:** I read directly from your \`config.js\` data in real time, answering questions about your skills, projects, and contact info without requiring an external AI backend!\n4. **Instant Global Deployment:** Drag and drop this folder to Netlify, or push to GitHub Pages for instant global edge deployment.\n\nType **projects**, **skills**, or **system design** to explore further!",
-
-    // ── Greetings ─────────────────────────────────────────────────
-    greetings: [
-      chat.greeting ||
-        `Hello! I am ${p.name || "the portfolio owner"}'s AI assistant. Ask me about their projects, skills, experience, or how to get in touch.`,
-    ],
-    studioGreetings: [
-      chat.studioGreeting ||
-        `Welcome to ${co.name || "the Studio"}! Ask me about our products, capabilities, or how to collaborate.`,
-    ],
-
-    // ── Summary / Overview ────────────────────────────────────────
-    summary: `**${p.name || "Portfolio Owner"}** — ${p.role || "Developer"}.\n\n${p.bio || ""}\n\n**Location:** ${p.location || "—"} | **Availability:** ${p.availability || "—"}`,
-
-    // ── Skills ────────────────────────────────────────────────────
-    skills: buildSkillsText(),
-
-    // ── Deep-dive technical entries (preserved from original) ─────
-    // These stay as rich static answers; they are NOT auto-generated
-    // from config because they contain architecture-level detail that
-    // belongs in the chatbot, not a simple data file.
-    systemDesign: "Our engineering methodology approaches **System Design** with a production-first, benchmark-driven methodology:\n\n• **Layered Architecture:** Decoupled presentation (React), stateless business logic (FastAPI / Express.js), and polyglot persistence.\n• **Polyglot Persistence:** ACID transactions & relational models in **PostgreSQL**; dynamic content & flexible schemas in **MongoDB**; high-dimensional embeddings in **ChromaDB**.\n• **Performance Engineering:** Query projection, composite indexes, connection pooling, and sub-100ms API response targets.\n• **Infrastructure & CI/CD:** Containerized services on **Docker**, hosted on **AWS EC2**, with automated GitHub Actions testing and edge CDN caching on Netlify/Vercel.\n• **Resilience:** Offline-first caching with Service Workers and graceful degradation for AI models.",
-
-    latencyOptimization: "Here is how the **40% API Latency Reduction** was engineered in Giakaa CMS:\n\n1. **Composite Database Indexing:** Analyzed query execution plans (`EXPLAIN ANALYZE`), creating compound indexes on frequent multi-tenant filter fields.\n2. **Selective Projections:** Stripped heavy document over-fetching in MongoDB and relational joins in PostgreSQL by returning only essential payload attributes.\n3. **Connection Pooling & Caching:** Configured persistent connection pools and in-memory TTL caching on high-frequency read endpoints.\n4. **Payload Compression:** Gzip compression and server-side cursor pagination reduced average API roundtrips from ~280ms to under 160ms.",
-
-    ragArchitecture: "The **Retrieval-Augmented Generation (RAG)** pipeline in **Saarthi Link** works in 4 stages:\n\n1. **Document Chunking:** Resumes and job syllabi are split into semantically coherent 500-token chunks with 50-token overlap.\n2. **Vector Embeddings:** Embedded into dense high-dimensional vectors and indexed inside **ChromaDB**.\n3. **Cosine Similarity Search:** Top-K relevant context nodes are retrieved in real-time based on the candidate query.\n4. **Guardrailed Prompt Synthesis:** The retrieved context is formatted into structured LLM prompts with strict safety guardrails, generating hallucination-free 30/90-day learning roadmaps.",
-
-    offlineArchitecture: "The **Offline-First System Design** in **Smart Task Manager** (95+ Lighthouse Score):\n\n1. **Service Worker Cache-First Strategy:** Core app shell (HTML, CSS, JS, audio) is precached on install, rendering instantly without network connectivity.\n2. **Local Persistence:** Task state mutations, priority queues, and Pomodoro focus timers write directly to `localStorage`.\n3. **Web Speech API Engine:** Speech-to-text processing occurs directly within browser client runtime, enabling voice task creation even completely offline.",
-
-    cvPipeline: "The **Computer Vision & Signal Processing Pipeline**:\n\n1. **Neural Despeckling via Autoencoders:** A custom **Denoising Autoencoder (DAE)** in PyTorch removes multiplicative noise while preserving structural micro-features and crisp boundaries.\n2. **Detection & Classification:** Processed imagery feeds into modern detection backbones with optimized anchor boxes for high-accuracy bounding-box regression.\n3. **Benchmark Validation:** Outperformed classical Gaussian, Median, and Wavelet filters with superior PSNR and edge preservation across 5,000+ images.",
-
-    devops: "Our **Cloud & DevOps Architecture**:\n\n• **Docker:** Multi-stage container builds creating lightweight, reproducible environments.\n• **AWS EC2:** Cloud compute hosting with configured Nginx reverse proxies, SSL/TLS, and security groups.\n• **CI/CD:** Automated GitHub Actions pipelines running linting, build verification, and deployment on git push.\n• **Edge Hosting:** Instant global distribution via Netlify and Vercel edge networks.",
-
-    pillars: `The **5 Engineering Pillars of ${co.name || "the Studio"}**:\n\n1. \`</>\` **Software Engineering:** High-performance web applications with type-safe APIs.\n2. 🥞 **AI & Automation:** Custom RAG pipelines, vector indexing, and workflow automation.\n3. 📊 **Data & Analytics:** Deep telemetry, SQL/NoSQL pipelines, and decision dashboards.\n4. ☁️ **Cloud & Distributed Systems:** Containerized microservices, Docker, AWS infrastructure, and CI/CD.\n5. 🧪 **Research & Innovation:** Peer-reviewed publications, benchmarked ML models, and open science.\n\nPhilosophy: **${co.philosophy || "Build • Research • Innovate • Scale • Impact"}**.`,
-
-    // ── Projects (auto-built + specific deep-dive entries) ─────────
-    projects: buildProjectsText(),
-
-    // Specific project deep-dives — kept from original, still accessible
-    // when visitors ask about them by name.
-    saarthi: "**Saarthi Link** is an AI career copilot designed for Indian students and freshers. Built with FastAPI, React, PostgreSQL, and ChromaDB, it offers automated ATS resume scoring, personalized skill learning roadmaps, and interview simulation.",
-    giakaa: "**Giakaa CMS** is a dual-database content management system engineered with React, Node.js, PostgreSQL, and MongoDB. By optimizing query joins and caching, it achieved a verified 40% reduction in API response latency.",
-    taskManager: "**Smart Task Manager** is a privacy-first, offline-capable Progressive Web App with voice input. It features voice task input via Web Speech API, Pomodoro focus timer, and zero-cloud local persistence with a 95+ Lighthouse score.",
-    avrShop: "**AVR Shop** is an agricultural commerce platform for farmers. It combines an agricultural supplies catalog with an AI assistant that diagnoses crop issues and provides farming guidance in real time.",
-    tokensaver: "**TokenSaver** is an ABMVSC Studio R&D initiative exploring LLM context optimization, semantic caching, and prompt compression techniques to cut generative AI inference cost by up to 60%.",
-    vedasphere: "**VedaSphere** is an experimental studio project exploring connected knowledge graphs, semantic reasoning, and multi-modal digital knowledge synthesis.",
-
-    // ── Experience ────────────────────────────────────────────────
-    experience: buildExperienceText(),
-
-    // ── Education ────────────────────────────────────────────────
-    education: cfg.education
-      ? `**${cfg.education.degree || "Degree"}** in ${cfg.education.branch || "—"} from ${cfg.education.university || "—"} (${cfg.education.duration || ""}).${cfg.education.description ? " " + cfg.education.description : ""}`
-      : "Education not configured — fill in the `education` section in config.js.",
-
-    // ── Research ──────────────────────────────────────────────────
-    research: buildResearchText(),
-
-    // ── Achievements ──────────────────────────────────────────────
-    achievements: buildAchievementsText(),
-
-    // ── Hackathon (specific, preserved from original) ─────────────
-    hackathon: "Recognized as an engineering finalist across competitive hackathons and open-source challenges for designing and shipping high-performance software architectures.",
-
-    // ── Architecture philosophy (preserved from original) ─────────
-    architecture: "Our engineering philosophy is centered on **offline-first reliability, verified benchmarks, and zero unnecessary bloat**. We emphasize 95+ Lighthouse performance, clean RESTful APIs, and efficient query execution.",
-
-    // ── Contact ───────────────────────────────────────────────────
-    contact: `**Email:** ${p.email || "—"}\n**Phone:** ${p.phone || "—"}\n**LinkedIn:** ${p.linkedin || "—"}\n**GitHub:** ${p.github || "—"}`,
-
-    // ── Hiring / Availability ─────────────────────────────────────
-    hiring: `${p.name || "The portfolio owner"} is **${p.availability || "open to opportunities"}**. Location: ${p.location || "—"}.`,
-
-    // ── Location ──────────────────────────────────────────────────
-    location: `Based in **${p.location || "—"}**. ${p.availability || ""}`,
-
-    // ── Studio ────────────────────────────────────────────────────
-    studio: `**${co.name || "The Studio"}** — ${co.descriptor || ""}. ${co.description || ""}\n\nPhilosophy: **${co.philosophy || "—"}**`,
-
-    // ── Why Hire ──────────────────────────────────────────────────
-    whyHire: custom.whyHire ||
-      `${p.name || "This developer"} brings strong engineering skills and a proven track record of shipped products. Review their projects and reach out to discuss opportunities!`,
-
-    // ── Pricing / Rates ───────────────────────────────────────────
-    pricing: custom.pricing ||
-      `For engagement details and rates, reach out directly at ${p.email || "the email listed in the contact section"}.`,
-
-    // ── Hobbies / Personal ────────────────────────────────────────
-    hobbies: custom.hobbies ||
-      `${p.name || "The portfolio owner"} is passionate about engineering, research, and building useful things.`,
-
-    // ── Resume ────────────────────────────────────────────────────
-    resume: `Opening ${p.name || "the"} resume now. You can preview or download the PDF directly.`,
-
-    // ── Smalltalk ────────────────────────────────────────────────
-    botInfo: {
-      bot:    `I am ${p.name || "the portfolio owner"}'s AI assistant, powered by the ABMVSC Portfolio Engine.`,
-      joke:   "Why do programmers prefer dark mode? Because light attracts bugs!",
-      thanks: "You're welcome! Ask anything else about the portfolio.",
-    },
-
-    // Backward-compat alias (used by getAnswer switch below)
-    smalltalk: {
-      bot:    `I am ${p.name || "the portfolio owner"}'s AI assistant, powered by the ABMVSC Portfolio Engine.`,
-      joke:   "Why do programmers prefer dark mode? Because light attracts bugs!",
-      weather:"I specialise in software architecture rather than meteorology — but the forecast for collaborating looks great!",
-      thanks: "You're welcome! Let me know if you'd like to explore projects, research, or get in touch.",
-    },
-
-    // ── Fallback ──────────────────────────────────────────────────
-    fallback: custom.fallback ||
-      `I am trained on ${p.name || "this"}'s portfolio. Ask about **skills**, **projects**, **experience**, **research**, or **how to get in touch**.`,
+  // 3a. Theme colours + fonts
+  const hydrateTheme = () => {
+    const root = document.documentElement;
+    if (theme.primaryColor) root.style.setProperty("--navy", theme.primaryColor);
+    if (theme.accentColor)  root.style.setProperty("--orange", theme.accentColor);
+    if (theme.blueColor)    root.style.setProperty("--blue", theme.blueColor);
+    if (theme.fontHeading)  root.style.setProperty("--font-heading", theme.fontHeading);
+    if (theme.fontBody)     root.style.setProperty("--font-body", theme.fontBody);
+    if (theme.fontMono)     root.style.setProperty("--font-mono", theme.fontMono);
   };
 
-  // Actions generator per intent
-  // Contact details are read from window.PORTFOLIO_CONFIG.personal
-  const getActions = (intentKey) => {
-    // Pull live values from config (with safe fallbacks)
-    const email    = p.email    || "";
-    const phone    = p.phone    || "";
-    const linkedin = p.linkedin || "";
-    const github   = p.github   || "";
-    const resumeFile = p.resume || "resume.pdf";
+  // 3b. <head> — title, meta, social cards, structured data
+  const hydrateHead = () => {
+    const base = String(seo.siteUrl || "").replace(/\/+$/, "");
+    const canonical = base ? (isStudio ? `${base}/studio.html` : `${base}/`) : "";
 
-    // Build dynamic project action buttons from config
-    const projectButtons = buildProjectActionButtons();
+    const title = isStudio
+      ? `${co.name || "Studio"} — ${co.descriptor || "Company"}`
+      : (seo.title || `${p.name || "Portfolio"} | ${p.role || "Developer"}`);
 
-    switch (intentKey) {
-      case "templateGuide":
-        return `
-          <div class="chat-actions">
-            <a href="https://github.com/Balama2520/abms-portfolio" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">⭐ Fork on GitHub</a>
-            <a href="studio.html" class="chat-action-btn">🏢 Visit ABMVSC Studio</a>
-            <button type="button" class="chat-action-btn" data-q="projects">🚀 See Live Projects</button>
-          </div>`;
-      case "resume":
-        return `
-          <div class="chat-actions">
-            <button type="button" class="chat-action-btn primary" data-action="resume">📄 Open Resume Modal</button>
-            <a href="${resumeFile}" download class="chat-action-btn">⬇️ Download PDF</a>
-            ${email ? `<a href="mailto:${email}" class="chat-action-btn">✉️ Get in Touch</a>` : ""}
-          </div>`;
-      case "hiring":
-      case "contact":
-        return `
-          <div class="chat-actions">
-            ${email    ? `<a href="mailto:${email}" class="chat-action-btn primary">✉️ Send Email</a>` : ""}
-            ${phone    ? `<a href="tel:${phone.replace(/\s/g,"")}" class="chat-action-btn">📞 ${phone}</a>` : ""}
-            <button type="button" class="chat-action-btn" data-action="resume">📄 View Resume</button>
-            ${linkedin ? `<a href="${linkedin}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🔗 LinkedIn</a>` : ""}
-          </div>`;
-      case "projects":
-        return `
-          <div class="chat-actions">
-            ${projectButtons}
-            ${github ? `<a href="${github}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub Profile</a>` : ""}
-          </div>`;
-      case "saarthi":
-        return `
-          <div class="chat-actions">
-            <a href="https://saarthi-link.netlify.app/" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">🚀 Live Demo</a>
-            <a href="${(cfg.projects && cfg.projects[0] && cfg.projects[0].githubUrl) || github}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub Repo</a>
-            <button type="button" class="chat-action-btn" data-q="projects">📂 All Projects</button>
-          </div>`;
-      case "giakaa":
-        return `
-          <div class="chat-actions">
-            <a href="https://o8m-giakaa-cms.vercel.app/" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">⚡ Live App</a>
-            <a href="${(cfg.projects && cfg.projects[1] && cfg.projects[1].githubUrl) || github}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub Repo</a>
-          </div>`;
-      case "taskManager":
-        return `
-          <div class="chat-actions">
-            <a href="${(cfg.projects && cfg.projects[2] && cfg.projects[2].liveUrl) || '#'}" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">📱 Open PWA</a>
-            <a href="${(cfg.projects && cfg.projects[2] && cfg.projects[2].githubUrl) || github}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub Repo</a>
-          </div>`;
-      case "research":
-      case "cvPipeline": {
-        // Build research action links from config if available, else fallback to static
-        const researchLinks = (cfg.research || []).filter(r => r.url).slice(0, 2);
-        const researchHtml = researchLinks.length
-          ? researchLinks.map((r, i) =>
-              `<a href="${r.url}" target="_blank" rel="noopener noreferrer" class="chat-action-btn ${i === 0 ? "primary" : ""}">📚 ${r.publisher || "View Paper"}</a>`
-            ).join("\n            ")
-          : `<a href="https://github.com/Balama2520/abms-portfolio" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">📚 Studio Research Repos</a>
-            <a href="studio.html#research" class="chat-action-btn">🔬 Research Lab</a>`;
-        return `
-          <div class="chat-actions">
-            ${researchHtml}
-          </div>`;
+    const description = isStudio
+      ? (co.description || "")
+      : (seo.description || p.bio || "");
+
+    document.title = title;
+
+    const setMeta = (attr, key, content) => {
+      if (!content) return;
+      let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
       }
-      case "systemDesign":
-      case "latencyOptimization":
-        return `
-          <div class="chat-actions">
-            <a href="https://o8m-giakaa-cms.vercel.app/" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">⚡ Giakaa CMS Live</a>
-            <a href="https://saarthi-link.netlify.app/" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🚀 Saarthi Link</a>
-            <button type="button" class="chat-action-btn" data-action="resume">📄 View Resume</button>
-          </div>`;
-      case "ragArchitecture":
-        return `
-          <div class="chat-actions">
-            <a href="https://saarthi-link.netlify.app/" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">🚀 Try Saarthi Link</a>
-            <a href="${(cfg.projects && cfg.projects[0] && cfg.projects[0].githubUrl) || github}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub Repo</a>
-            <button type="button" class="chat-action-btn" data-q="systemDesign">🏛️ System Design</button>
-          </div>`;
-      case "offlineArchitecture":
-        return `
-          <div class="chat-actions">
-            <a href="${(cfg.projects && cfg.projects[2] && cfg.projects[2].liveUrl) || '#'}" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">📱 Open Task Manager</a>
-            <a href="${(cfg.projects && cfg.projects[2] && cfg.projects[2].githubUrl) || github}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub Repo</a>
-          </div>`;
-      case "devops":
-        return `
-          <div class="chat-actions">
-            <a href="${github}" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">🐙 GitHub Actions &amp; Repos</a>
-            <button type="button" class="chat-action-btn" data-q="systemDesign">🏛️ System Design</button>
-            <button type="button" class="chat-action-btn" data-action="resume">📄 Resume</button>
-          </div>`;
-      case "pillars":
-      case "studio":
-        return `
-          <div class="chat-actions">
-            ${isStudioPage 
-              ? '<button type="button" class="chat-action-btn primary" data-q="skills">🏛️ 5 Pillars</button><a href="index.html" class="chat-action-btn">👤 Founder Profile</a>' 
-              : '<a href="studio.html" class="chat-action-btn primary">🏢 Open ABMVSC Studio</a><button type="button" class="chat-action-btn" data-q="whyHire">⭐ Why Hire Me?</button>'}
-          </div>`;
-      case "skills":
-      case "whyHire":
-      case "summary":
-        return `
-          <div class="chat-actions">
-            <button type="button" class="chat-action-btn primary" data-q="projects">🚀 See Live Projects</button>
-            <button type="button" class="chat-action-btn" data-action="resume">📄 View Resume</button>
-            ${email ? `<a href="mailto:${email}" class="chat-action-btn">✉️ Contact ${p.name || "Me"}</a>` : ""}
-          </div>`;
-      case "location":
-        return `
-          <div class="chat-actions">
-            ${email ? `<a href="mailto:${email}" class="chat-action-btn primary">✉️ Discuss Opportunities</a>` : ""}
-            <button type="button" class="chat-action-btn" data-action="resume">📄 Open Resume</button>
-            ${phone ? `<a href="tel:${phone.replace(/\s/g, "")}" class="chat-action-btn">📞 Call Directly</a>` : ""}
-          </div>`;
-      default:
-        return "";
-    }
-  };
-
-  // Dynamic quick-replies updater
-  const updateQuickChips = (intentKey) => {
-    if (!quickReplies) return;
-    const chipSets = {
-      projects: [
-        { q: "saarthi", label: "Saarthi Link" },
-        { q: "giakaa", label: "Giakaa CMS" },
-        { q: "taskManager", label: "Task Manager" },
-        { q: "systemDesign", label: "System Design" },
-        { q: "resume", label: "Resume" }
-      ],
-      systemDesign: [
-        { q: "latencyOptimization", label: "40% Latency Cut" },
-        { q: "ragArchitecture", label: "RAG Pipeline" },
-        { q: "offlineArchitecture", label: "Offline PWA" },
-        { q: "cvPipeline", label: "Computer Vision" },
-        { q: "devops", label: "DevOps & Cloud" }
-      ],
-      skills: [
-        { q: "systemDesign", label: "System Design" },
-        { q: "projects", label: "View Projects" },
-        { q: "experience", label: "Work Experience" },
-        { q: "whyHire", label: "Why Hire Me" },
-        { q: "resume", label: "Resume" }
-      ],
-      research: [
-        { q: "cvPipeline", label: "Vision Pipeline" },
-        { q: "projects", label: "Projects" },
-        { q: "education", label: "Education & Degree" },
-        { q: "resume", label: "Resume" }
-      ],
-      hiring: [
-        { q: "resume", label: "Open Resume" },
-        { q: "contact", label: "Contact Info" },
-        { q: "skills", label: "Tech Stack" },
-        { q: "systemDesign", label: "System Design" }
-      ],
-      studio: [
-        { q: "pillars", label: "5 Pillars" },
-        { q: "projects", label: "Product Ecosystem" },
-        { q: "research", label: "Satellite AI" },
-        { q: "contact", label: "Collaborate" }
-      ]
+      el.setAttribute("content", content);
     };
 
-    const selected = chipSets[intentKey] || (isStudioPage ? [
-      { q: "studio", label: "About Studio" },
-      { q: "pillars", label: "5 Pillars" },
-      { q: "projects", label: "Product Ecosystem" },
-      { q: "systemDesign", label: "System Design" },
-      { q: "research", label: "Satellite AI" },
-      { q: "whyHire", label: "Founder Profile" },
-      { q: "resume", label: "Resume" }
-    ] : [
-      { q: "whyHire", label: "Why Hire Me" },
-      { q: "systemDesign", label: "System Design" },
-      { q: "skills", label: "Skills" },
-      { q: "projects", label: "Projects" },
-      { q: "studio", label: "ABMVSC Studio" },
-      { q: "howItWorks", label: "⚡ How It Works" },
-      { q: "resume", label: "Resume" }
-    ]);
-
-    quickReplies.innerHTML = selected
-      .map((c) => `<button type="button" data-q="${c.q}">${c.label}</button>`)
-      .join("");
-  };
-
-  const intentRules = [
-    { key: "templateGuide", words: ["template", "how does this work", "how to use", "how to edit", "config.js", "customize", "how to launch", "how to deploy", "how this system works", "clone", "fork"] },
-    { key: "resume", words: ["resume", "cv", "pdf", "curriculum vitae", "download resume", "view resume"] },
-    { key: "botInfo", words: ["who are you", "are you ai", "are you a bot", "are you real", "what is this bot", "which ai"] },
-    { key: "summary", words: ["summary", "overview", "tell me about yourself", "introduction", "bio", "profile", "background"] },
-    { key: "location", words: ["location", "where are you", "where do you live", "relocate", "relocation", "city", "onsite"] },
-    { key: "whyHire", words: ["why hire", "why should we hire", "why should", "why you", "value", "strengths", "unique", "differentiate", "stand out"] },
-    { key: "pricing", words: ["salary", "pricing", "rate", "cost", "fee", "freelance", "contract", "compensation", "package", "ctc"] },
-    { key: "latencyOptimization", words: ["latency", "40%", "query optimization", "speed up", "response time", "optimize api", "database indexing"] },
-    { key: "ragArchitecture", words: ["rag", "retrieval augmented", "chromadb", "embeddings", "vector search", "similarity search", "how does saarthi work"] },
-    { key: "offlineArchitecture", words: ["offline", "service worker", "pwa", "lighthouse", "indexeddb", "smart task manager architecture"] },
-    { key: "cvPipeline", words: ["cv pipeline", "computer vision", "speckle", "denoising pipeline", "yolov8", "radar vision", "map accuracy"] },
-    { key: "systemDesign", words: ["system design", "architecture", "scalability", "how do you design", "backend design", "software architecture", "hld", "lld", "polyglot"] },
-    { key: "hiring", words: ["hiring", "open for work", "available", "job", "opportunity", "join", "notice period", "bangalore", "hyderabad", "remote", "immediate", "start date", "hire"] },
-    { key: "devops", words: ["devops", "docker", "aws", "ec2", "ci/cd", "ci cd", "github actions", "pipeline", "cloud deployment"] },
-    { key: "pillars", words: ["5 pillars", "pillars", "competencies", "core pillars", "studio pillars"] },
-    { key: "studio", words: ["studio", "abmvsc", "company", "firm", "philosophy", "abm vsc"] },
-    { key: "tokensaver", words: ["tokensaver", "token saver", "prompt compression", "caching", "token cost"] },
-    { key: "vedasphere", words: ["vedasphere", "veda sphere", "knowledge graph"] },
-    { key: "saarthi", words: ["saarthi", "career copilot", "ats", "roadmap", "saarthilink"] },
-    { key: "giakaa", words: ["giakaa", "cms", "dual database"] },
-    { key: "taskManager", words: ["task manager", "smart task", "pomodoro"] },
-    { key: "avrShop", words: ["avr", "avr shop", "farmer", "agriculture", "agritech"] },
-    { key: "projects", words: ["project", "projects", "built", "shipped", "portfolio", "app", "apps", "code", "work"] },
-    { key: "skills", words: ["skill", "skills", "tech stack", "technology", "stack", "react", "node", "python", "fastapi", "languages", "frameworks", "tools"] },
-    { key: "experience", words: ["experience", "work history", "roles", "background", "job", "career", "employment", "internship"] },
-    { key: "education", words: ["education", "degree", "college", "b.tech", "btech", "university", "graduate", "gpa"] },
-    { key: "research", words: ["research", "paper", "publication", "lab", "study", "scientific", "investigation"] },
-    { key: "achievements", words: ["achievement", "achievements", "award", "awards", "certificate", "certifications"] },
-    { key: "hackathon", words: ["hackathon", "finalist", "competition", "challenge"] },
-    { key: "architecture", words: ["engineering philosophy", "clean code"] },
-    { key: "hobbies", words: ["hobby", "hobbies", "free time", "interests", "outside work"] },
-    { key: "contact", words: ["contact", "email", "phone", "call", "reach", "linkedin", "github", "talk", "message", "address"] },
-    { key: "joke", words: ["joke", "funny", "humor", "make me laugh"] },
-    { key: "thanks", words: ["thank", "thanks", "appreciate", "helpful", "good bot", "great"] },
-    { key: "greeting", words: ["hi", "hello", "hey", "good morning", "good evening", "good afternoon", "greetings"] }
-  ];
-
-  const matchQuery = (text) => {
-    const q = text.toLowerCase().trim();
-    for (const rule of intentRules) {
-      if (rule.words.some((w) => q.includes(w))) {
-        return rule.key;
+    const setLink = (rel, href) => {
+      if (!href) return;
+      let el = document.head.querySelector(`link[rel="${rel}"]`);
+      if (!el) {
+        el = document.createElement("link");
+        el.setAttribute("rel", rel);
+        document.head.appendChild(el);
       }
+      el.setAttribute("href", href);
+    };
+
+    setMeta("name", "description", description);
+    setMeta("name", "theme-color", seo.themeColor || theme.primaryColor || "");
+    setMeta("name", "google-site-verification", seo.googleVerification);
+
+    if (canonical) setLink("canonical", canonical);
+
+    const ogImage = seo.ogImage
+      ? (base ? `${base}/${String(seo.ogImage).replace(/^\/+/, "")}` : seo.ogImage)
+      : "";
+
+    setMeta("property", "og:type", "website");
+    setMeta("property", "og:title", title);
+    setMeta("property", "og:description", description);
+    setMeta("property", "og:url", canonical);
+    setMeta("property", "og:site_name", isStudio ? (co.name || "") : (p.name || ""));
+    setMeta("property", "og:locale", seo.locale || "en_US");
+    setMeta("property", "og:image", ogImage);
+    if (ogImage) {
+      setMeta("property", "og:image:width", "1200");
+      setMeta("property", "og:image:height", "630");
+      setMeta("property", "og:image:alt", title);
     }
-    // Contextual follow-up check
-    if (q.includes("tell me more") || q.includes("details") || q.includes("explain")) {
-      if (lastTopic) return lastTopic;
-    }
-    return "fallback";
-  };
 
-  const getAnswer = (intentKey) => {
-    switch (intentKey) {
-      case "templateGuide": return brain.templateGuide;
-      case "templateGuide":
-        return `
-          <div class="chat-actions">
-            <a href="https://github.com/Balama2520/abms-portfolio" target="_blank" rel="noopener noreferrer" class="chat-action-btn primary">⭐ Fork on GitHub</a>
-            <a href="studio.html" class="chat-action-btn">🏢 Visit ABMVSC Studio</a>
-            <button type="button" class="chat-action-btn" data-q="projects">🚀 See Live Projects</button>
-          </div>`;
-      case "resume": return brain.resume;
-      case "summary": return brain.summary;
-      case "location": return brain.location;
-      case "hiring": return brain.hiring;
-      case "pricing": return brain.pricing;
-      case "systemDesign": return brain.systemDesign;
-      case "latencyOptimization": return brain.latencyOptimization;
-      case "ragArchitecture": return brain.ragArchitecture;
-      case "offlineArchitecture": return brain.offlineArchitecture;
-      case "cvPipeline": return brain.cvPipeline;
-      case "devops": return brain.devops;
-      case "pillars": return brain.pillars;
-      case "studio": return brain.studio;
-      case "tokensaver": return brain.tokensaver;
-      case "vedasphere": return brain.vedasphere;
-      case "saarthi": return brain.saarthi;
-      case "giakaa": return brain.giakaa;
-      case "taskManager": return brain.taskManager;
-      case "avrShop": return brain.avrShop;
-      case "projects": return brain.projects;
-      case "whyHire": return brain.whyHire;
-      case "skills": return brain.skills;
-      case "experience": return brain.experience;
-      case "education": return brain.education;
-      case "research": return brain.research;
-      case "achievements": return brain.achievements;
-      case "hackathon": return brain.hackathon;
-      case "architecture": return brain.architecture;
-      case "hobbies": return brain.hobbies;
-      case "contact": return brain.contact;
-      case "botInfo": return brain.smalltalk.bot;
-      case "joke": return brain.smalltalk.joke;
-      case "thanks": return brain.smalltalk.thanks;
-      case "greeting":
-        return isStudioPage
-          ? brain.studioGreetings[Math.floor(Math.random() * brain.studioGreetings.length)]
-          : brain.greetings[Math.floor(Math.random() * brain.greetings.length)];
-      default:
-        return brain.fallback;
-    }
-  };
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:title", title);
+    setMeta("name", "twitter:description", description);
+    setMeta("name", "twitter:image", ogImage);
+    setMeta("name", "twitter:site", seo.twitterHandle);
 
-  const scrollToBottom = () => {
-    messages.scrollTop = messages.scrollHeight;
-  };
-
-  const addMessageElement = (sender) => {
-    const bubble = document.createElement("div");
-    bubble.className = `chat-msg ${sender}`;
-    messages.appendChild(bubble);
-    scrollToBottom();
-    return bubble;
-  };
-
-  // Real-Time Simulated AI Streaming Typeout Effect with Latency Telemetry
-  const streamBotResponse = (fullText, intentKey, callback) => {
-    // Generate authentic low latency metrics (110ms - 175ms TTFT)
-    const latencyMs = Math.floor(Math.random() * 65) + 110;
-    const startTime = performance.now();
-
-    // Show typing dots with dynamic latency badge
-    const typingBubble = document.createElement("div");
-    typingBubble.className = "chat-msg bot typing-dots";
-    typingBubble.innerHTML = `<span class="typing-label">ABMVSC Engine</span><span class="latency-badge">${latencyMs}ms TTFT</span><span class="dot"></span><span class="dot"></span><span class="dot"></span>`;
-    messages.appendChild(typingBubble);
-    scrollToBottom();
-
-    // Dynamic natural thinking latency
-    const thinkTime = latencyMs + Math.floor(Math.random() * 120);
-
-    setTimeout(() => {
-      typingBubble.remove();
-      const botBubble = addMessageElement("bot");
-      
-      // Tokenize by words for natural streaming cadence
-      const words = fullText.split(" ");
-      let accumulated = "";
-      let i = 0;
-
-      const typeNext = () => {
-        if (i < words.length) {
-          accumulated += (i === 0 ? "" : " ") + words[i];
-          botBubble.innerHTML = formatMarkdown(accumulated) + '<span class="chat-cursor"></span>';
-          scrollToBottom();
-          i++;
-          setTimeout(typeNext, 16 + Math.random() * 18);
-        } else {
-          // Finished streaming: calculate response time and token count
-          const totalSec = ((performance.now() - startTime) / 1000).toFixed(2);
-          const tokenCount = Math.round(words.length * 1.35);
-
-          let finalHtml = formatMarkdown(fullText);
-          const actionsHtml = getActions(intentKey);
-          if (actionsHtml) {
-            finalHtml += actionsHtml;
-          }
-          finalHtml += `<div class="chat-telemetry"><span>⚡ ${totalSec}s response · ~${tokenCount} tokens</span><span>${latencyMs}ms latency · ABMVSC Engine</span></div>`;
-          botBubble.innerHTML = finalHtml;
-          scrollToBottom();
-          isGenerating = false;
-          updateQuickChips(intentKey);
-          if (callback) callback();
+    // Structured data (JSON-LD)
+    const sameAs = [p.linkedin, p.github, p.twitter, p.website, p.huggingface, p.researchgate].filter(Boolean);
+    const ld = isStudio
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: co.name || "",
+          alternateName: co.descriptor || "",
+          url: canonical,
+          slogan: co.tagline || "",
+          description: co.description || "",
+          founder: p.name ? { "@type": "Person", name: p.name, url: base || undefined } : undefined,
+          sameAs,
         }
-      };
+      : {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: p.name || "",
+          jobTitle: p.role || "",
+          description: seo.description || p.bio || "",
+          url: canonical,
+          image: ogImage || (p.photo || ""),
+          email: p.email ? `mailto:${p.email}` : undefined,
+          telephone: p.phone || undefined,
+          address: p.location ? { "@type": "PostalAddress", addressLocality: p.location } : undefined,
+          alumniOf: education[0] && education[0].university
+            ? { "@type": "CollegeOrUniversity", name: education[0].university }
+            : undefined,
+          sameAs,
+          knowsAbout: arr(cfg.skills && cfg.skills.categories).flatMap((c) => arr(c.items)),
+        };
 
-      typeNext();
-    }, thinkTime);
-  };
-
-  const handleUserMessage = (userText) => {
-    if (isGenerating) return;
-    const clean = userText.trim();
-    if (!clean) return;
-
-    // Display user message
-    const userBubble = addMessageElement("user");
-    userBubble.textContent = clean;
-
-    isGenerating = true;
-    const intent = matchQuery(clean);
-    lastTopic = intent;
-    const replyText = getAnswer(intent);
-
-    streamBotResponse(replyText, intent, () => {
-      if (intent === "resume") {
-        setTimeout(openResumeModal, 400);
-      }
-    });
-  };
-
-  const handleActionQuestion = (key, label) => {
-    if (isGenerating) return;
-    const userBubble = addMessageElement("user");
-    userBubble.textContent = label;
-
-    isGenerating = true;
-    lastTopic = key;
-    const replyText = getAnswer(key);
-
-    streamBotResponse(replyText, key, () => {
-      if (key === "resume") {
-        setTimeout(openResumeModal, 400);
-      }
-    });
-  };
-
-  // Open Chat Window
-  const openChat = () => {
-    chatbot.classList.add("open");
-    toggle.setAttribute("aria-expanded", "true");
-    win.setAttribute("aria-hidden", "false");
-
-    if (!messages.dataset.greeted) {
-      messages.dataset.greeted = "true";
-      const initialGreeting = isStudioPage
-        ? brain.studioGreetings[0]
-        : brain.greetings[0];
-      streamBotResponse(initialGreeting, "greeting");
+    let ldEl = document.getElementById("pf-ld-json");
+    if (!ldEl) {
+      ldEl = document.createElement("script");
+      ldEl.id = "pf-ld-json";
+      ldEl.type = "application/ld+json";
+      document.head.appendChild(ldEl);
     }
-    input.focus();
+    ldEl.textContent = JSON.stringify(ld, (key, val) => (val === undefined ? undefined : val));
+
+    if (p.resume) {
+      const modalDownload = q('.resume-modal-actions a[download]');
+      if (modalDownload) modalDownload.setAttribute("href", p.resume);
+    }
   };
 
-  const closeChat = () => {
-    chatbot.classList.remove("open");
-    toggle.setAttribute("aria-expanded", "false");
-    win.setAttribute("aria-hidden", "true");
-  };
-
-  toggle.addEventListener("click", () => {
-    chatbot.classList.contains("open") ? closeChat() : openChat();
-  });
-
-  closeBtn?.addEventListener("click", closeChat);
-
-  // Quick chips click
-  quickReplies?.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-q]");
-    if (!btn || isGenerating) return;
-    const key = btn.getAttribute("data-q");
-    const label = btn.textContent.trim();
-    handleActionQuestion(key, label);
-  });
-
-  // Action clicks inside messages (e.g. data-action="resume" or data-q="...")
-  messages.addEventListener("click", (e) => {
-    const actionBtn = e.target.closest("[data-action]");
-    if (actionBtn) {
-      const act = actionBtn.getAttribute("data-action");
-      if (act === "resume") {
-        openResumeModal();
+  // 3c. Single values — [data-bind="dotted.path"]
+  const hydrateText = () => {
+    qa("[data-bind]").forEach((el) => {
+      const key = el.getAttribute("data-bind");
+      const val = key in VIRTUAL ? VIRTUAL[key] : get(key, "");
+      if (val === "" || val === undefined || val === null) {
+        setHidden(el, true);
+        return;
       }
+      setHidden(el, false);
+
+      if (el.tagName === "IMG") {
+        el.setAttribute("src", val);
+        if (p.name) el.setAttribute("alt", p.name);
+        return;
+      }
+
+      if (el.tagName === "A") {
+        if (key.includes("email")) {
+          el.setAttribute("href", `mailto:${val}`);
+          el.textContent = val;
+        } else if (key.includes("phone")) {
+          el.setAttribute("href", `tel:${String(val).replace(/\s/g, "")}`);
+          el.textContent = val;
+        } else {
+          el.setAttribute("href", val);
+        }
+        return;
+      }
+
+      el.textContent = val;
+    });
+  };
+
+  // 3d. Lists — [data-list="name"]
+  const hydrateLists = () => {
+    qa("[data-list]").forEach((el) => {
+      const name = el.getAttribute("data-list");
+      const render = RENDERERS[name];
+      if (!render) return;
+
+      const count = LIST_COUNTS[name] || 0;
+      // Hide the smallest sensible unit: an explicit wrapper first, then a
+      // named section, then the list container itself.
+      const host = el.closest("[data-list-host]") || el.closest("[data-section]") || el;
+
+      if (!count) {
+        setHidden(host, true);
+        return;
+      }
+      setHidden(host, false);
+      el.innerHTML = render(el);
+    });
+  };
+
+  // 3e. Named sections that aren't lists — [data-section="key"]
+  const SECTION_TESTS = Object.assign(
+    {
+      company: () => !!co.name,
+      about: () => aboutParagraphs.length > 0 || !!about.vision || aboutReasons.length > 0,
+      "company-purpose": () => purposeParagraphs.length > 0 || !!co.purposeVision,
+      "company-founder": () => !!p.name,
+      photo: () => !!p.photo,
+      "company-logo": () => !!(co.logo && co.logo.card),
+    },
+    // Any section named after a list hides itself when that list is empty.
+    Object.fromEntries(
+      Object.keys(LIST_COUNTS).map((key) => [key, () => (LIST_COUNTS[key] || 0) > 0])
+    )
+  );
+
+  const hydrateSections = () => {
+    qa("[data-section]").forEach((el) => {
+      const key = el.getAttribute("data-section");
+      const test = SECTION_TESTS[key];
+      if (test && !test()) setHidden(el, true);
+    });
+  };
+
+  // 3f. Footer credit — [data-built-by]
+  const hydrateBuiltBy = () => {
+    const el = q("[data-built-by]");
+    if (!el) return;
+    if (theme.showBuiltBy === false) {
+      setHidden(el, true);
       return;
     }
-    const qBtn = e.target.closest("button[data-q]");
-    if (qBtn && !isGenerating) {
-      const q = qBtn.getAttribute("data-q");
-      const label = qBtn.textContent.trim();
-      handleActionQuestion(q, label);
-    }
-  });
+    setHidden(el, false);
+    el.innerHTML =
+      'Built with the <a href="setup.html">ABMVSC Portfolio Engine</a>' +
+      '<span class="built-by-sep">·</span><a href="setup.html">Make this yours →</a>';
+  };
 
-  // Form Submit
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (isGenerating) return;
-    const val = input.value;
-    input.value = "";
-    handleUserMessage(val);
-  });
+  const hydrate = () => {
+    hydrateTheme();
+    hydrateHead();
+    hydrateText();
+    hydrateLists();
+    hydrateSections();
+    hydrateBuiltBy();
+  };
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && chatbot.classList.contains("open")) {
-      closeChat();
-    }
-  });
-})();
+  /* ══════════════════════════════════════════════════════════════
+     4. RESUME MODAL
+     ══════════════════════════════════════════════════════════════ */
+  const resumeModal = document.getElementById("resumeModal");
+  const resumeFrame = document.getElementById("resumeFrame");
+  const resumeFile = p.resume || "resume.pdf";
 
-
-/* ==========================================================================
-   INTERACTIVE PORTFOLIO CONFIGURATOR & DOWNLOAD ENGINE (ABMVSC GROWTH)
-   ========================================================================== */
-(() => {
-  const modal = document.getElementById("generatorModal");
-  const form = document.getElementById("generatorForm");
-  const successBox = document.getElementById("generatorSuccess");
-  if (!modal) return;
-
-  const openGenerator = () => {
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
+  const openResumeModal = () => {
+    if (!resumeModal) return;
+    if (resumeFrame) resumeFrame.setAttribute("src", resumeFile);
+    resumeModal.classList.add("open");
+    resumeModal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
-    if (form) form.style.display = "block";
-    if (successBox) successBox.style.display = "none";
   };
 
-  const closeGenerator = () => {
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
+  const closeResumeModal = () => {
+    if (!resumeModal) return;
+    resumeModal.classList.remove("open");
+    resumeModal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
+    if (resumeFrame) resumeFrame.setAttribute("src", "");
   };
 
-  document.querySelectorAll("[data-generator-open]").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      openGenerator();
-    });
-  });
+  qa("[data-resume-trigger]").forEach((btn) => btn.addEventListener("click", openResumeModal));
+  qa("[data-resume-close]").forEach((el) => el.addEventListener("click", closeResumeModal));
 
-  document.querySelectorAll("[data-generator-close]").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      closeGenerator();
-    });
-  });
+  /* ══════════════════════════════════════════════════════════════
+     5. SITE CHROME — nav, scroll-spy, smooth scroll, reveal
+     ══════════════════════════════════════════════════════════════ */
+  const setupChrome = () => {
+    const sections = qa("section[id]");
+    const navLinks = qa("nav a");
+    const navbar = q(".navbar");
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("open")) {
-      closeGenerator();
+    if (sections.length && navLinks.length && "IntersectionObserver" in window) {
+      const spy = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const id = entry.target.getAttribute("id");
+            navLinks.forEach((link) => {
+              link.classList.toggle("active", link.getAttribute("href") === `#${id}`);
+            });
+          });
+        },
+        { threshold: 0.35, rootMargin: "-10% 0px -45% 0px" }
+      );
+      sections.forEach((s) => spy.observe(s));
     }
-  });
 
-  if (form) {
+    if (navbar) {
+      const toggle = () => navbar.classList.toggle("scrolled", window.scrollY > 24);
+      toggle();
+      window.addEventListener("scroll", toggle, { passive: true });
+    }
+
+    qa('a[href^="#"]').forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const id = link.getAttribute("href");
+        if (!id || id === "#") return;
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
+        setTimeout(() => target.removeAttribute("tabindex"), 1000);
+      });
+    });
+
+    // Reveal-on-scroll — collected AFTER hydration so dynamic cards animate too
+    const revealEls = qa(
+      ".experience-card, .project-card, .achievement-card, .cert-card, .reason-card, .pillar-box, .skill-card"
+    );
+    if (revealEls.length && "IntersectionObserver" in window) {
+      const reveal = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.12 }
+      );
+      revealEls.forEach((el) => {
+        el.classList.add("hidden");
+        reveal.observe(el);
+      });
+    }
+  };
+
+  /* ══════════════════════════════════════════════════════════════
+     6. AI ASSISTANT — rule-based, fully built from config.js
+     ══════════════════════════════════════════════════════════════ */
+  const initChatbot = () => {
+    const chatbot = document.getElementById("chatbot");
+    const toggle = document.getElementById("chatbotToggle");
+    const closeBtn = document.getElementById("chatbotClose");
+    const win = document.getElementById("chatbotWindow");
+    const messages = document.getElementById("chatbotMessages");
+    const quickReplies = document.getElementById("chatbotQuickReplies");
+    const form = document.getElementById("chatbotForm");
+    const input = document.getElementById("chatbotInput");
+
+    if (!chatbot || !toggle || !win || !messages || !form || !input) return;
+
+    const engineLabel = chat.assistantName || "AI Engine";
+    let isGenerating = false;
+    let lastTopic = null;
+
+    const formatMarkdown = (text) =>
+      !text ? "" : String(text)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(.*?)\*/g, "<em>$1</em>")
+        .replace(/`([^`]+)`/g, "<code>$1</code>")
+        .replace(/\n\n/g, "<br><br>")
+        .replace(/\n/g, "<br>")
+        .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+        .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1">$1</a>');
+
+    /* ---------- 6a. Knowledge, built from config ---------- */
+    const skillsText = () => {
+      const cats = arr(cfg.skills && cfg.skills.categories);
+      if (!cats.length) return "My tech stack isn't configured yet.";
+      const summary = (cfg.skills && cfg.skills.summary) ? `**Summary:** ${cfg.skills.summary}\n\n` : "";
+      return summary + cats.map((c) => `• **${c.name}:** ${arr(c.items).join(", ")}`).join("\n");
+    };
+
+    const projectsText = () => {
+      if (!projects.length) return "No projects configured yet.";
+      return projects.map((pr, i) => {
+        let line = `${i + 1}. **${pr.name}** (${pr.category || "Project"}): ${pr.description || ""}`;
+        if (pr.result) line += ` — *${pr.result}*`;
+        return line;
+      }).join("\n");
+    };
+
+    const experienceText = () => {
+      if (!experience.length) return "No work history configured yet.";
+      return experience.map((e) =>
+        `• **${e.role} @ ${e.company}** (${e.duration || ""}${e.type ? ", " + e.type : ""}): ${e.description || ""}`
+      ).join("\n\n");
+    };
+
+    const educationText = () => {
+      if (!education.length) return "Education isn't configured yet.";
+      return education.map((e) =>
+        `**${e.degree || "Degree"}**${e.branch ? " in " + e.branch : ""} — ${e.university || ""} (${e.duration || ""})${e.gpa ? `. ${e.gpa}` : ""}.${e.description ? " " + e.description : ""}`
+      ).join("\n\n");
+    };
+
+    const researchText = () => {
+      if (!research.length) return "No publications configured yet.";
+      return research.map((r) => {
+        let line = `• **${r.title}** — ${r.publisher || ""} (${r.year || ""}).`;
+        if (r.summary) line += ` ${r.summary}`;
+        if (arr(r.metrics).length) line += ` Metrics: ${arr(r.metrics).join(", ")}.`;
+        return line;
+      }).join("\n");
+    };
+
+    const achievementsText = () => {
+      const all = [
+        ...achievements.map((a) => `• **${a.title}** — ${a.issuer || ""} (${a.year || ""})${a.detail ? ": " + a.detail : ""}`),
+        ...certifications.map((c) => `• **${c.title}** — ${c.issuer || ""} (${c.year || ""})`),
+      ];
+      return all.length ? all.join("\n") : "No achievements or certifications configured yet.";
+    };
+
+    const contactText = () =>
+      [
+        `**Email:** ${p.email || "—"}`,
+        `**Phone:** ${p.phone || "—"}`,
+        `**LinkedIn:** ${p.linkedin || "—"}`,
+        `**GitHub:** ${p.github || "—"}`,
+        `**Location:** ${p.location || "—"}`,
+      ].join("\n");
+
+    const deepDives = arr(chat.deepDives);
+
+    const brain = {
+      templateGuide:
+        "**How this site works — one config, two websites:**\n\n" +
+        "1. **Edit `config.js`** — your name, projects, skills, contact details and company identity all live in one file.\n" +
+        "2. **`index.html`** renders your personal portfolio and **`studio.html`** renders your company page. Both read the same config.\n" +
+        "3. **Zero dependencies** — no build step, no npm install, no framework.\n" +
+        "4. **I'm config-aware** — I answer questions using the data in `config.js`, with no external AI service.\n\n" +
+        "Try asking about **skills**, **projects** or **experience**.",
+
+      greeting: chat.greeting || `Hello! I'm ${p.name || "the portfolio owner"}'s AI assistant. Ask me about their projects, skills or experience.`,
+      studioGreeting: chat.studioGreeting || `Welcome to ${co.name || "the studio"}! Ask me about our products, capabilities or how to collaborate.`,
+
+      summary: `**${p.name || "Portfolio Owner"}** — ${p.role || "Developer"}.\n\n${p.bio || ""}\n\n**Location:** ${p.location || "—"} | **Availability:** ${p.availability || "—"}`,
+      skills: skillsText(),
+      projects: projectsText(),
+      experience: experienceText(),
+      education: educationText(),
+      research: researchText(),
+      achievements: achievementsText(),
+      contact: contactText(),
+      location: `Based in **${p.location || "—"}**. ${p.availability || ""}`,
+      hiring: `${p.name || "The portfolio owner"} is **${p.availability || "open to opportunities"}**. Location: ${p.location || "—"}.`,
+      resume: `Opening ${p.name || "the"} resume now. You can preview or download the PDF directly.`,
+      studio: co.name
+        ? `**${co.name}** — ${co.descriptor || ""}. ${co.description || ""}\n\nPhilosophy: **${co.philosophy || "—"}**`
+        : "There's no company page configured for this site.",
+      pillars: pillars.length
+        ? `The **${pillars.length} pillars of ${co.name || "the studio"}**:\n\n` +
+          pillars.map((b, i) => `${i + 1}. **${b.title}:** ${b.text || ""}`).join("\n") +
+          `\n\nPhilosophy: **${co.philosophy || "—"}**.`
+        : "No company pillars configured yet.",
+      whyHire: custom.whyHire ||
+        `${p.name || "This developer"} builds and ships real products — review the projects above and get in touch to talk specifics.`,
+      pricing: custom.pricing ||
+        `For engagement details, reach out directly at ${p.email || "the address in the contact section"}.`,
+      hobbies: custom.hobbies ||
+        `${p.name || "The portfolio owner"} enjoys building things and learning new technology.`,
+      fallback: custom.fallback ||
+        `I'm trained on ${p.name || "this"}'s portfolio. Ask about **skills**, **projects**, **experience**, **research** or **how to get in touch**.`,
+      joke: "Why do programmers prefer dark mode? Because light attracts bugs!",
+      thanks: "You're welcome! Ask anything else about the portfolio.",
+      bot: `I'm ${p.name || "the portfolio owner"}'s AI assistant, running entirely on this site's config — no external AI service.`,
+    };
+
+    // Deep-dive answers become first-class topics
+    deepDives.forEach((d) => {
+      if (d && d.key) brain[d.key] = d.answer || "";
+    });
+
+    /* ---------- 6b. Intent matching ---------- */
+    const coreRules = [
+      { key: "templateGuide", words: ["template", "how does this work", "how to use", "how to edit", "config.js", "customize", "how to launch", "how to deploy", "clone", "fork"] },
+      { key: "resume", words: ["resume", "cv", "curriculum vitae", "download resume", "view resume"] },
+      { key: "bot", words: ["who are you", "are you ai", "are you a bot", "are you real", "what is this bot", "which ai"] },
+      { key: "summary", words: ["summary", "overview", "tell me about yourself", "introduction", "bio", "profile", "background"] },
+      { key: "location", words: ["location", "where are you", "where do you live", "relocate", "relocation", "city", "onsite"] },
+      { key: "whyHire", words: ["why hire", "why should we hire", "why you", "strengths", "unique", "stand out", "value"] },
+      { key: "pricing", words: ["salary", "pricing", "rate", "cost", "fee", "freelance", "contract", "compensation", "package", "ctc"] },
+      { key: "hiring", words: ["hiring", "open for work", "available", "job", "opportunity", "notice period", "remote", "immediate", "start date", "hire"] },
+      { key: "projects", words: ["project", "projects", "built", "shipped", "portfolio", "app", "apps", "code", "work"] },
+      { key: "skills", words: ["skill", "skills", "tech stack", "technology", "stack", "react", "node", "python", "languages", "frameworks", "tools"] },
+      { key: "experience", words: ["experience", "work history", "roles", "career", "employment", "internship"] },
+      { key: "education", words: ["education", "degree", "college", "university", "graduate", "gpa", "school"] },
+      { key: "research", words: ["research", "paper", "publication", "study", "journal", "thesis"] },
+      { key: "achievements", words: ["achievement", "achievements", "award", "awards", "certificate", "certification", "certifications"] },
+      { key: "studio", words: ["studio", "company", "firm", "agency", "philosophy"] },
+      { key: "pillars", words: ["pillars", "competencies", "services", "capabilities"] },
+      { key: "hobbies", words: ["hobby", "hobbies", "free time", "interests", "outside work"] },
+      { key: "contact", words: ["contact", "email", "phone", "call", "reach", "linkedin", "github", "message"] },
+      { key: "joke", words: ["joke", "funny", "humor", "make me laugh"] },
+      { key: "thanks", words: ["thank", "thanks", "appreciate", "helpful", "good bot", "great"] },
+      { key: "greeting", words: ["hi", "hello", "hey", "good morning", "good evening", "good afternoon", "greetings"] },
+    ];
+
+    const deepRules = deepDives
+      .filter((d) => d && d.key && arr(d.words).length)
+      .map((d) => ({ key: d.key, words: arr(d.words) }));
+
+    const intentRules = deepRules.concat(coreRules);
+
+    const matchQuery = (text) => {
+      const query = String(text).toLowerCase().trim();
+      for (const rule of intentRules) {
+        if (rule.words.some((w) => query.includes(String(w).toLowerCase()))) return rule.key;
+      }
+      if (/(tell me more|details|explain)/.test(query) && lastTopic) return lastTopic;
+      return "fallback";
+    };
+
+    const getAnswer = (key) => (brain[key] !== undefined ? brain[key] : brain.fallback);
+
+    /* ---------- 6c. In-chat action buttons ---------- */
+    const projectButtons = () =>
+      projects.slice(0, 3).filter((pr) => pr.liveUrl || pr.githubUrl).map((pr) =>
+        pr.liveUrl
+          ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🚀 ${esc(pr.name)}</a>`
+          : `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 ${esc(pr.name)}</a>`
+      ).join("\n            ");
+
+    const getActions = (key) => {
+      const email = p.email || "";
+      const phone = p.phone || "";
+      const linkedin = p.linkedin || "";
+      const github = p.github || "";
+      const phoneHref = phone ? `tel:${phone.replace(/\s/g, "")}` : "";
+      const studioHref = co.studioUrl || "studio.html";
+
+      switch (key) {
+        case "resume":
+          return `<div class="chat-actions">
+            <button type="button" class="chat-action-btn primary" data-action="resume">📄 Open Resume</button>
+            <a href="${esc(resumeFile)}" download class="chat-action-btn">⬇️ Download PDF</a>
+            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn">✉️ Get in Touch</a>` : ""}
+          </div>`;
+
+        case "hiring":
+        case "contact":
+        case "location":
+          return `<div class="chat-actions">
+            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn primary">✉️ Send Email</a>` : ""}
+            ${phone ? `<a href="${esc(phoneHref)}" class="chat-action-btn">📞 Call</a>` : ""}
+            <button type="button" class="chat-action-btn" data-action="resume">📄 View Resume</button>
+            ${linkedin ? `<a href="${esc(linkedin)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🔗 LinkedIn</a>` : ""}
+          </div>`;
+
+        case "projects":
+        case "skills":
+        case "summary":
+        case "whyHire":
+          return `<div class="chat-actions">
+            ${projectButtons()}
+            ${github ? `<a href="${esc(github)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub</a>` : ""}
+            <button type="button" class="chat-action-btn" data-action="resume">📄 Resume</button>
+          </div>`;
+
+        case "research": {
+          const links = research.filter((r) => r.url).slice(0, 2).map((r, i) =>
+            `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn ${i === 0 ? "primary" : ""}">📚 ${esc(r.publisher || "Paper")}</a>`
+          ).join("\n            ");
+          return links ? `<div class="chat-actions">${links}</div>` : "";
+        }
+
+        case "studio":
+        case "pillars":
+          return co.name
+            ? `<div class="chat-actions">
+                ${isStudio
+                  ? `<a href="index.html" class="chat-action-btn primary">👤 ${esc((p.name || "Founder").split(" ")[0])}'s Portfolio</a>`
+                  : `<a href="${esc(studioHref)}" class="chat-action-btn primary">🏢 ${esc(co.name)}</a>`}
+                <button type="button" class="chat-action-btn" data-q="projects">🚀 Products</button>
+              </div>`
+            : "";
+
+        default:
+          return "";
+      }
+    };
+
+    /* ---------- 6d. Quick-reply chips ---------- */
+    const chip = (key, label) => ({ key, label });
+
+    const baseChips = () => {
+      const chips = [];
+      if (projects.length) chips.push(chip("projects", "Projects"));
+      if (arr(cfg.skills && cfg.skills.categories).length) chips.push(chip("skills", "Skills"));
+      if (experience.length) chips.push(chip("experience", "Experience"));
+      deepDives.slice(0, 2).forEach((d) => chips.push(chip(d.key, d.label || d.key)));
+      if (co.name) chips.push(chip("studio", co.name));
+      chips.push(chip("resume", "Resume"));
+      chips.push(chip("contact", "Contact"));
+      return chips.slice(0, 8);
+    };
+
+    const CHIP_SETS = {
+      projects: () => projects.slice(0, 3).map((pr) => chip("projects", pr.name)).concat([chip("skills", "Skills"), chip("resume", "Resume")]),
+      skills: () => [chip("projects", "Projects"), chip("experience", "Experience"), chip("whyHire", "Why Hire"), chip("resume", "Resume")],
+      research: () => [chip("achievements", "Achievements"), chip("projects", "Projects"), chip("education", "Education"), chip("resume", "Resume")],
+      hiring: () => [chip("resume", "Open Resume"), chip("contact", "Contact"), chip("skills", "Tech Stack"), chip("projects", "Projects")],
+      studio: () => [chip("pillars", "Capabilities"), chip("projects", "Products"), chip("contact", "Contact")],
+    };
+
+    const updateQuickChips = (key) => {
+      if (!quickReplies) return;
+      const set = (CHIP_SETS[key] && CHIP_SETS[key]()) || baseChips();
+      quickReplies.innerHTML = set
+        .map((c) => `<button type="button" data-q="${esc(c.key)}">${esc(c.label)}</button>`)
+        .join("");
+    };
+
+    /* ---------- 6e. Streaming renderer ---------- */
+    const scrollToBottom = () => { messages.scrollTop = messages.scrollHeight; };
+
+    const addBubble = (sender) => {
+      const bubble = document.createElement("div");
+      bubble.className = `chat-msg ${sender}`;
+      messages.appendChild(bubble);
+      scrollToBottom();
+      return bubble;
+    };
+
+    const streamBotResponse = (fullText, intentKey, callback) => {
+      const latencyMs = Math.floor(Math.random() * 65) + 110;
+      const startTime = performance.now();
+
+      const typing = document.createElement("div");
+      typing.className = "chat-msg bot typing-dots";
+      typing.innerHTML = `<span class="typing-label">${esc(engineLabel)}</span>` +
+        `<span class="latency-badge">${latencyMs}ms</span>` +
+        `<span class="dot"></span><span class="dot"></span><span class="dot"></span>`;
+      messages.appendChild(typing);
+      scrollToBottom();
+
+      const thinkTime = latencyMs + Math.floor(Math.random() * 120);
+
+      setTimeout(() => {
+        typing.remove();
+        const botBubble = addBubble("bot");
+        const words = String(fullText).split(" ");
+        let accumulated = "";
+        let i = 0;
+
+        const typeNext = () => {
+          if (i < words.length) {
+            accumulated += (i === 0 ? "" : " ") + words[i];
+            botBubble.innerHTML = formatMarkdown(accumulated) + '<span class="chat-cursor"></span>';
+            scrollToBottom();
+            i++;
+            setTimeout(typeNext, 12 + Math.random() * 14);
+          } else {
+            const totalSec = ((performance.now() - startTime) / 1000).toFixed(2);
+            const tokenCount = Math.round(words.length * 1.35);
+
+            let html = formatMarkdown(fullText);
+            html += getActions(intentKey);
+            html += `<div class="chat-telemetry"><span>⚡ ${totalSec}s response · ~${tokenCount} tokens</span><span>${latencyMs}ms latency</span></div>`;
+            botBubble.innerHTML = html;
+            scrollToBottom();
+            isGenerating = false;
+            updateQuickChips(intentKey);
+            if (callback) callback();
+          }
+        };
+        typeNext();
+      }, thinkTime);
+    };
+
+    const ask = (key, label) => {
+      if (isGenerating) return;
+      const userBubble = addBubble("user");
+      userBubble.textContent = label;
+      isGenerating = true;
+      lastTopic = key;
+      streamBotResponse(getAnswer(key), key, () => {
+        if (key === "resume") setTimeout(openResumeModal, 400);
+      });
+    };
+
+    const handleUserMessage = (text) => {
+      if (isGenerating) return;
+      const clean = String(text).trim();
+      if (!clean) return;
+      const userBubble = addBubble("user");
+      userBubble.textContent = clean;
+      isGenerating = true;
+      const intent = matchQuery(clean);
+      lastTopic = intent;
+      streamBotResponse(getAnswer(intent), intent, () => {
+        if (intent === "resume") setTimeout(openResumeModal, 400);
+      });
+    };
+
+    /* ---------- 6f. Open / close & wiring ---------- */
+    const openChat = () => {
+      chatbot.classList.add("open");
+      toggle.setAttribute("aria-expanded", "true");
+      win.setAttribute("aria-hidden", "false");
+      if (!messages.dataset.greeted) {
+        messages.dataset.greeted = "true";
+        updateQuickChips(null);
+        streamBotResponse(isStudio ? brain.studioGreeting : brain.greeting, "greeting");
+      }
+      input.focus();
+    };
+
+    const closeChat = () => {
+      chatbot.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+      win.setAttribute("aria-hidden", "true");
+    };
+
+    toggle.addEventListener("click", () => (chatbot.classList.contains("open") ? closeChat() : openChat()));
+    closeBtn?.addEventListener("click", closeChat);
+
+    quickReplies?.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-q]");
+      if (!btn) return;
+      ask(btn.getAttribute("data-q"), btn.textContent.trim());
+    });
+
+    messages.addEventListener("click", (e) => {
+      const action = e.target.closest("[data-action]");
+      if (action) {
+        if (action.getAttribute("data-action") === "resume") openResumeModal();
+        return;
+      }
+      const qBtn = e.target.closest("button[data-q]");
+      if (qBtn) ask(qBtn.getAttribute("data-q"), qBtn.textContent.trim());
+    });
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const name = document.getElementById("genName")?.value?.trim() || "Your Name";
-      const role = document.getElementById("genRole")?.value?.trim() || "Full-Stack Developer";
-      const email = document.getElementById("genEmail")?.value?.trim() || "contact@example.com";
-      const location = document.getElementById("genLocation")?.value?.trim() || "Remote / Global";
-      const github = document.getElementById("genGitHub")?.value?.trim() || "https://github.com";
-      const linkedin = document.getElementById("genLinkedIn")?.value?.trim() || "https://linkedin.com";
-      const project = document.getElementById("genProject")?.value?.trim() || "Flagship SaaS Platform";
-
-      // Compute Initials
-      const initials = name
-        .split(" ")
-        .map((p) => p[0])
-        .filter(Boolean)
-        .slice(0, 3)
-        .join("")
-        .toUpperCase() || "DEV";
-
-      // Save lead locally
-      try {
-        const leads = JSON.parse(localStorage.getItem("abmvsc_studio_leads") || "[]");
-        leads.push({ name, role, email, location, github, linkedin, project, date: new Date().toISOString() });
-        localStorage.setItem("abmvsc_studio_leads", JSON.stringify(leads));
-      } catch (err) {}
-
-      // Build personalized config.js text
-      const generatedConfig = `/**
- * ABMVSC PORTFOLIO CONFIG — Generated for ${name}
- * Single Source of Truth · Powered by ABMVSC Technology & Innovation Studio
- */
-window.PORTFOLIO_CONFIG = {
-  personal: {
-    name: ${JSON.stringify(name)},
-    initials: ${JSON.stringify(initials)},
-    role: ${JSON.stringify(role)},
-    tagline: "Engineering Ideas Into Real-World Impact.",
-    bio: "Full-Stack Engineer building modern web applications, distributed APIs, and intelligent AI platforms. Open to high-impact opportunities.",
-    photo: "assets/engineer-avatar.svg",
-    resume: "resume.pdf",
-    location: ${JSON.stringify(location)},
-    availability: "Available for Opportunities",
-    email: ${JSON.stringify(email)},
-    phone: "",
-    linkedin: ${JSON.stringify(linkedin)},
-    github: ${JSON.stringify(github)},
-    twitter: "",
-    website: "",
-    huggingface: "",
-    researchgate: ""
-  },
-  seo: {
-    siteUrl: "https://your-site.netlify.app",
-    ogImage: "og-image.png",
-    locale: "en_US",
-    googleVerification: ""
-  },
-  company: {
-    name: "ABMVSC Studio",
-    descriptor: "Technology & Innovation Studio",
-    tagline: "Engineering Ideas. Empowering Tomorrow.",
-    philosophy: "Build • Research • Innovate • Scale • Impact",
-    description: "An independent, founder-led technology studio building intelligent software, AI-powered products, data-driven systems, and research-led solutions.",
-    founderRole: "Founder & Lead Engineer",
-    studioUrl: "studio.html",
-    logo: {
-      primary: "assets/logo/abmvsc-official-logo.svg",
-      white: "assets/logo/abmvsc-official-logo-white.svg",
-      mono: "assets/logo/abmvsc-logo-mono.svg",
-      symbol: "assets/logo/abmvsc-symbol.svg",
-      avatar: "assets/logo/abmvsc-avatar.svg"
-    }
-  },
-  skills: {
-    summary: "Full-stack web engineering, distributed systems, RAG architectures, and cloud deployments.",
-    categories: [
-      { name: "Frontend", items: ["React.js", "TypeScript", "HTML5", "CSS3", "Tailwind CSS"] },
-      { name: "Backend & APIs", items: ["Node.js", "Express.js", "FastAPI", "REST APIs", "Python"] },
-      { name: "Databases", items: ["MongoDB", "PostgreSQL", "Redis", "Vector Databases"] },
-      { name: "AI & ML", items: ["PyTorch", "LangChain", "OpenCV", "RAG Pipelines"] },
-      { name: "Cloud & DevOps", items: ["Docker", "AWS EC2", "GitHub Actions CI/CD", "Netlify"] }
-    ]
-  },
-  projects: [
-    {
-      name: ${JSON.stringify(project)},
-      category: "Flagship Application",
-      description: "Production web application engineered with modern frontend, scalable APIs, and robust data persistence.",
-      tech: ["React", "Node.js", "PostgreSQL", "Docker"],
-      liveUrl: "https://your-site.netlify.app",
-      githubUrl: ${JSON.stringify(github)},
-      result: "High-performance architecture with sub-100ms API response targets."
-    },
-    {
-      name: "Dual-Database CMS Engine",
-      category: "CMS Architecture",
-      description: "Hybrid dual-database content management architecture combining PostgreSQL and MongoDB with containerized microservices.",
-      tech: ["React", "Node.js", "PostgreSQL", "MongoDB", "Docker"],
-      liveUrl: "https://o8m-giakaa-cms.vercel.app/",
-      githubUrl: "https://github.com",
-      result: "40% API latency cut through composite indexing and query projection."
-    },
-    {
-      name: "Smart Offline-First Task Hub",
-      category: "Productivity PWA",
-      description: "Privacy-focused progressive web app with voice task input via Web Speech API, Pomodoro focus timer, and zero-cloud local persistence.",
-      tech: ["Vanilla JavaScript", "Service Workers", "Web Speech API", "LocalStorage"],
-      liveUrl: "https://saarthi-link.netlify.app/",
-      githubUrl: "https://github.com",
-      result: "95+ Google Lighthouse audit score across Performance and PWA."
-    }
-  ],
-  experience: [
-    {
-      role: ${JSON.stringify(role)},
-      company: "Cloud Innovations Lab",
-      type: "Full-Time / Contract",
-      duration: "2024 – Present",
-      location: ${JSON.stringify(location)},
-      description: "Architected scalable frontend and backend systems. Implemented automated CI/CD testing and cloud deployment pipelines.",
-      highlights: ["Full-Stack Engineering", "CI/CD Deployment", "High Performance"]
-    }
-  ],
-  education: {
-    degree: "B.S. in Computer Science & Engineering",
-    branch: "Computer Science & Engineering",
-    university: "University of Technology",
-    location: "Global",
-    duration: "2020 – 2024",
-    gpa: "First Class with Distinction",
-    description: "Specialized in distributed systems, software architecture, and modern web application development."
-  },
-  research: [],
-  achievements: [
-    {
-      title: "Full-Stack Architecture Certified",
-      issuer: "ABMVSC Studio",
-      year: "2026",
-      detail: "Certified in building and deploying production-ready full-stack applications."
-    }
-  ],
-  chatbot: {
-    assistantName: "${name}'s AI Assistant",
-    greeting: "Hello! I am ${name}'s AI assistant. Ask me about their projects, skills, or how to get in touch.",
-    studioGreeting: "Welcome to ABMVSC! Ask me about our engineering pillars, products, or collaboration opportunities.",
-    customResponses: {
-      whyHire: "${name} brings strong engineering fundamentals, clean code practices, and a commitment to shipping reliable production software.",
-      pricing: "For engagement inquiries or full-time opportunities, reach out directly at ${email}.",
-      hobbies: "Passionate about software architecture, open-source technology, and engineering high-impact tools.",
-      fallback: "I am trained on ${name}'s portfolio. Ask about skills, projects, experience, or how to get in touch!"
-    }
-  },
-  theme: {
-    primaryColor: "#10264B",
-    accentColor: "#FF7900",
-    blueColor: "#2563EB",
-    fontHeading: "'Space Grotesk', sans-serif",
-    fontBody: "'Inter', sans-serif",
-    fontMono: "'IBM Plex Mono', monospace"
-  }
-};
-`;
-
-      // Trigger instant file download
-      const blob = new Blob([generatedConfig], { type: "application/javascript" });
-      const downloadLink = document.createElement("a");
-      downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = "config.js";
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-
-      // Transition to success state
-      form.style.display = "none";
-      if (successBox) successBox.style.display = "block";
+      const val = input.value;
+      input.value = "";
+      handleUserMessage(val);
     });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (chatbot.classList.contains("open")) closeChat();
+        if (resumeModal && resumeModal.classList.contains("open")) closeResumeModal();
+      }
+    });
+
+    updateQuickChips(null);
+  };
+
+  /* ══════════════════════════════════════════════════════════════
+     7. BOOT
+     ══════════════════════════════════════════════════════════════ */
+  const boot = () => {
+    hydrate();
+    setupChrome();
+    initChatbot();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
   }
 })();

@@ -1,0 +1,35 @@
+{
+  "name": "abmvsc-portfolio-template",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Development tooling for the ABMVSC Portfolio Engine. The template itself ships with zero dependencies and no build step — jsdom is used only to run the regression tests in CI.",
+  "license": "MIT",
+  "author": "ABMVSC Technology & Innovation Studio",
+  "homepage": "https://abms-portfolio.netlify.app/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Balama2520/abmvsc-portfolio-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Balama2520/abmvsc-portfolio-template/issues"
+  },
+  "scripts": {
+    "test": "node --test",
+    "serve": "npx --yes serve ."
+  },
+  "keywords": [
+    "portfolio",
+    "portfolio-template",
+    "company-website",
+    "static-site",
+    "vanilla-js",
+    "zero-dependency",
+    "no-build"
+  ],
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

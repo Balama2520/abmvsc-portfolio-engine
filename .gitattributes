@@ -1,0 +1,20 @@
+# Normalise line endings for every contributor on every OS.
+# This repo is authored on Windows and verified on Linux in CI, so we stop
+# relying on each person's local `core.autocrlf` setting.
+* text=auto
+
+# Never translate these — byte-for-byte files.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+*.woff  binary
+*.woff2 binary
+
+# Hand-authored SVG (the README diagram and the logo set) should stay diffable.
+*.svg   text
+
+# Collapse the lockfile in diffs and keep it out of the language bar.
+package-lock.json  linguist-generated=true -diff

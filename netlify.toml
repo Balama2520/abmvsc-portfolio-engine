@@ -1,0 +1,58 @@
+# ──────────────────────────────────────────────────────────────────────
+#  ABMVSC Portfolio Engine — Netlify configuration
+# ──────────────────────────────────────────────────────────────────────
+#  The site is 100% static. There is no build step and nothing to
+#  compile — Netlify just publishes the repository root as-is.
+# ──────────────────────────────────────────────────────────────────────
+
+[build]
+  publish = "."
+
+# ── Security headers (all routes) ─────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# ── config.js is the one file users edit ─────────────────────────────
+#  Never serve a stale copy — a cached config.js is the #1 cause of
+#  "I changed my content but the site didn't update".
+[[headers]]
+  for = "/config.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/studio.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ── Immutable assets ─────────────────────────────────────────────────
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── The generator is a tool, not a landing page ──────────────────────
+[[headers]]
+  for = "/setup.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

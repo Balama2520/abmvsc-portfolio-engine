@@ -1,0 +1,569 @@
+/* ==========================================================================
+   ABMVSC Portfolio Engine — Generator UI (setup.html)
+   Loads AFTER style.css so it can reuse the design tokens (--navy, --orange…).
+   Everything is scoped under .gen-* so it can never leak into the site.
+   ========================================================================== */
+
+body.gen-body {
+  background: var(--bg);
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+.gen-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.gen-topbar-inner {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.gen-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--navy);
+  font-size: 17px;
+  margin-right: auto;
+}
+
+.gen-brand span {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-soft);
+  letter-spacing: 0;
+}
+
+.gen-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.gen-btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.gen-btn:hover {
+  border-color: var(--text-soft);
+}
+
+.gen-btn:active {
+  transform: translateY(1px);
+}
+
+.gen-btn-primary {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+.gen-btn-primary:hover {
+  filter: brightness(0.94);
+  border-color: var(--orange);
+}
+
+.gen-btn-dark {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.gen-btn-dark:hover {
+  filter: brightness(1.15);
+  border-color: var(--navy);
+}
+
+.gen-btn-sm {
+  padding: 5px 9px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+.gen-btn-danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fff5f5;
+}
+
+.gen-btn-danger:hover {
+  border-color: #f87171;
+}
+
+.gen-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+
+.gen-btn-ghost:hover {
+  color: var(--text);
+  background: var(--bg-alt);
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.gen-layout {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 520px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1180px) {
+  .gen-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Intro banner ────────────────────────────────────────────────────── */
+.gen-banner {
+  background: var(--navy);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.gen-banner h1 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.gen-banner p {
+  font-size: 14px;
+  opacity: 0.82;
+  line-height: 1.6;
+}
+
+.gen-banner code {
+  background: rgba(255, 255, 255, 0.14);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* ── Steps strip ─────────────────────────────────────────────────────── */
+.gen-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.gen-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.gen-step b {
+  display: block;
+  font-size: 12px;
+  color: var(--orange);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.gen-step span {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Section cards ───────────────────────────────────────────────────── */
+.gen-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.gen-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+  cursor: pointer;
+  user-select: none;
+}
+
+.gen-card-head h2 {
+  font-size: 15px;
+  color: var(--navy);
+  margin-right: auto;
+}
+
+.gen-card-head .gen-icon {
+  font-size: 16px;
+  width: 22px;
+  text-align: center;
+}
+
+.gen-card-head .gen-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-soft);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 10px;
+}
+
+.gen-chevron {
+  color: var(--text-soft);
+  font-size: 12px;
+  transition: transform 0.18s;
+}
+
+.gen-card.is-collapsed .gen-chevron {
+  transform: rotate(-90deg);
+}
+
+.gen-card.is-collapsed .gen-card-body {
+  display: none;
+}
+
+.gen-card-body {
+  padding: 20px;
+}
+
+.gen-card-help {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin: -6px 0 16px;
+  line-height: 1.6;
+}
+
+/* ── Fields ──────────────────────────────────────────────────────────── */
+.gen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.gen-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gen-field.is-wide {
+  grid-column: 1 / -1;
+}
+
+.gen-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+.gen-label .gen-req {
+  color: #dc2626;
+}
+
+.gen-input,
+.gen-textarea {
+  font: inherit;
+  font-size: 14px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.gen-textarea {
+  resize: vertical;
+  min-height: 92px;
+  line-height: 1.6;
+}
+
+.gen-input:focus,
+.gen-textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.gen-help {
+  font-size: 11.5px;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+/* colour + checkbox rows */
+.gen-colour-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gen-colour-row input[type="color"] {
+  width: 44px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  flex: none;
+}
+
+.gen-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.gen-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+/* ── Repeating lists ─────────────────────────────────────────────────── */
+.gen-list-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 0 12px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--border);
+}
+
+.gen-list-head h3 {
+  font-size: 13px;
+  color: var(--navy);
+  margin-right: auto;
+}
+
+.gen-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  background: var(--bg-alt);
+}
+
+.gen-item-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gen-item-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gen-item-body {
+  padding: 14px;
+}
+
+.gen-empty {
+  font-size: 13px;
+  color: var(--text-soft);
+  padding: 11px 14px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────── */
+.gen-side {
+  position: sticky;
+  top: 84px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 1180px) {
+  .gen-side {
+    position: static;
+  }
+}
+
+.gen-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.gen-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+
+.gen-panel-head h2 {
+  font-size: 13px;
+  color: var(--navy);
+  margin-right: auto;
+}
+
+.gen-panel-body {
+  padding: 14px;
+}
+
+.gen-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.gen-tab {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.gen-tab.is-active {
+  background: var(--navy);
+  color: #fff;
+}
+
+.gen-preview-frame {
+  width: 100%;
+  height: 420px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  display: block;
+}
+
+.gen-preview-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--orange-soft);
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+/* ── Meter ───────────────────────────────────────────────────────────── */
+.gen-meter {
+  height: 8px;
+  border-radius: 20px;
+  background: var(--bg-alt);
+  overflow: hidden;
+  margin: 8px 0 6px;
+}
+
+.gen-meter > i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--blue), var(--orange));
+  transition: width 0.3s ease;
+}
+
+.gen-meter-text {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────── */
+.gen-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 20px);
+  background: var(--navy);
+  color: #fff;
+  font-size: 13.5px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 900;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.gen-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.gen-toast a {
+  color: var(--orange);
+  text-decoration: underline;
+}
+
+/* ── Footer note ─────────────────────────────────────────────────────── */
+.gen-foot {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.gen-foot a {
+  color: var(--accent);
+}

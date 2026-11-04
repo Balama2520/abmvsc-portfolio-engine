@@ -1,0 +1,48 @@
+name: Feature request
+description: Suggest a new section, binding, renderer or generator improvement.
+title: "[Feature]: "
+labels: ["enhancement", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project has one hard rule: **the shipped site stays zero-dependency
+        and has no build step.** Ideas that keep that promise are very welcome.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the need, not the implementation. Who is it for?
+      placeholder: |
+        People with two degrees have nowhere to put the second one — the
+        education section only renders one entry.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: guarding
+    attributes:
+      label: Guardrails
+      description: This project will not trade these away. Please confirm your idea respects them.
+      options:
+        - label: It requires no runtime dependencies (no React, no bundler, no Node at runtime).
+          required: true
+        - label: It still works when opened without a build step.
+          required: true
+        - label: Content still lives in `config.js` — no user content added to the HTML.
+          required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+    validations:
+      required: false
