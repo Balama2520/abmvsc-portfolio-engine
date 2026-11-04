@@ -6,6 +6,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+- **Guided wizard in the config generator.** The 15 sections are grouped into 6 chapters (You → Your work → Extras → Your company → Look & feel → Launch) and shown one at a time, with a clickable step rail, Back/Next navigation and a ✓ per completed chapter. All 15 cards stay in the DOM and **Show everything** restores the previous flat form, so power users and the test suite are unaffected.
+- **A "Launch" chapter that carries the user to a live site** — download `config.js`, take your own copy of the template, drop the file in, then deploy free on Netlify, with one-click copy buttons for the repository URL and the `git clone` command.
+- **Demo notice** — `theme.showDemoNotice` (default `true`) drives a floating notice rendered by `hydrateDemoNotice()` into `[data-demo-notice]` on both pages. Every config produced by `setup.html` sets it to `false`, so the notice vanishes the moment a user replaces the sample `config.js`.
+
+### Fixed
+- **The resume modal's Download button now follows `personal.resume`.** Both pages hardcoded `href="resume.pdf"`, so a user who pointed `personal.resume` at their own file got a preview of their CV but a download of the shipped sample. The anchor is marked `data-resume-download` and bound from config in `script.js` (with `resume.pdf` kept as the no-JS fallback).
+
+### Removed
+- **`config.bala.js`** — a reference config carrying the maintainer's real name, email, phone, social profiles and Search Console token. `SETUP.md` already told users to delete it, so it was dead weight in the repository. The "optional reference config parses too" test went with it.
+- **`photo.jpg`** — a real personal photo that shipped with the template. `assets/engineer-avatar.svg` remains the neutral placeholder.
+- **`google1813f9af1d0c0f59.html`** — a personal Search Console verification file, now redundant: the engine writes the tag from `seo.googleVerification`.
+
+### Changed
+- **`resume.pdf` is now a neutral placeholder** ("replace this file with your own"), not a real resume.
+- **`robots.txt` and `sitemap.xml`** no longer hardcode a personal domain; both ship `your-domain.com` placeholders.
+- Search Console instructions in `README.md` / `SETUP.md` now use the HTML-tag method (`seo.googleVerification`) instead of dropping a verification file in the root.
+- Added `.editorconfig` so contributions never arrive as whitespace-only diffs.
+
+---
+
 ## [3.0.0] — 2026-11-03
 
 ### Added

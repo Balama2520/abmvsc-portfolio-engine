@@ -31,6 +31,9 @@
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
 
+  <!-- Shown only while config.js is still the ABMVSC demo (theme.showDemoNotice) -->
+  <div class="demo-notice" data-demo-notice hidden></div>
+
   <!-- NAVBAR -->
   <header class="navbar">
     <div class="container">
@@ -261,7 +264,7 @@
       <div class="resume-modal-bar">
         <span>Curriculum Vitae / Resume</span>
         <div class="resume-modal-actions">
-          <a href="resume.pdf" download>Download</a>
+          <a href="resume.pdf" download data-resume-download>Download</a>
           <button type="button" data-resume-close aria-label="Close resume preview">✕</button>
         </div>
       </div>
@@ -308,7 +311,7 @@
     </div>
   </div>
 
-  <!-- ✏️ Edit config.js — this page renders itself from it -->
+  <!-- The page renders itself from config.js -->
   <script src="config.js"></script>
   <script src="script.js" defer></script>
   <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>

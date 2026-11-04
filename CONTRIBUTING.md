@@ -6,17 +6,17 @@ Thank you for your interest in contributing! This project is maintained by **ABM
 
 ## How to Contribute
 
-### 🐛 Report a Bug
+### Report a Bug
 1. Open a [GitHub Issue](https://github.com/Balama2520/abmvsc-portfolio-template/issues)
 2. Use the label `bug`
 3. Include: browser, OS, screenshot, and steps to reproduce
 
-### 💡 Suggest a Feature
+### Suggest a Feature
 1. Open a [GitHub Issue](https://github.com/Balama2520/abmvsc-portfolio-template/issues)
 2. Use the label `enhancement`
 3. Describe the use case clearly
 
-### 🔧 Submit a Pull Request
+### Submit a Pull Request
 1. Fork the repository
 2. Create a branch: `git checkout -b feature/your-feature-name`
 3. Make your changes

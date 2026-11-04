@@ -170,34 +170,227 @@ body.gen-body {
   font-size: 12px;
 }
 
-/* ── Steps strip ─────────────────────────────────────────────────────── */
-.gen-steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+/* ── Guided wizard ───────────────────────────────────────────────────── */
+.gen-wizard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
   margin-bottom: 20px;
 }
 
-.gen-step {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
+.gen-wizard-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.gen-step b {
-  display: block;
+.gen-step-label {
   font-size: 12px;
-  color: var(--orange);
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: var(--navy);
+  margin-right: auto;
+}
+
+.gen-rail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+}
+
+.gen-rail-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-alt);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.gen-rail-step:hover {
+  border-color: var(--border-strong);
+}
+
+.gen-rail-step.is-active {
+  border-color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.gen-rail-step.is-done .gen-rail-num {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #fff;
+}
+
+.gen-rail-num {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.gen-rail-step.is-active .gen-rail-num {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+.gen-rail-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gen-rail-text b {
+  font-size: 13px;
+  color: var(--navy);
+}
+
+.gen-rail-text small {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.gen-steps-nav {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.gen-steps-nav #genBack {
+  margin-right: auto;
+}
+
+.gen-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Launch panel ────────────────────────────────────────────────────── */
+.gen-launch {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.gen-launch h2 {
+  font-size: 18px;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.gen-launch-lead {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+.gen-launch-steps {
+  list-style: none;
+  counter-reset: launch;
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.gen-launch-steps > li {
+  counter-increment: launch;
+  position: relative;
+  padding-left: 42px;
+}
+
+.gen-launch-steps > li::before {
+  content: counter(launch);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.gen-launch-steps b {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
   margin-bottom: 4px;
 }
 
-.gen-step span {
+.gen-launch-steps p {
   font-size: 13px;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.gen-launch-warn {
+  background: #fff7ed;
+  border-left: 3px solid var(--orange);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #9a3412 !important;
+}
+
+.gen-copy-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.gen-code {
+  flex: 1 1 260px;
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.gen-launch-foot {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.gen-launch-foot .gen-btn {
+  text-decoration: none;
 }
 
 /* ── Section cards ───────────────────────────────────────────────────── */

@@ -50,7 +50,7 @@
      ══════════════════════════════════════════════════════════════ */
   const SCHEMA = [
     {
-      id: "personal", icon: "👤", title: "You", page: "portfolio",
+      id: "personal", icon: "👤", title: "You", page: "portfolio", chapter: "you",
       help: "Drives the navbar, hero, about, contact, footer and the chatbot.",
       fields: [
         { key: "name", label: "Full name", placeholder: "Alex Rivera", required: true },
@@ -74,7 +74,7 @@
     },
 
     {
-      id: "seo", icon: "🔍", title: "SEO & social preview", page: "both",
+      id: "seo", icon: "🔍", title: "SEO & social preview", page: "both", chapter: "launch",
       help: "Written straight into <head> at runtime: title, description, canonical, Open Graph, Twitter Card and JSON-LD. No HTML editing.",
       fields: [
         { key: "siteUrl", label: "Public site URL", placeholder: "https://your-site.netlify.app", wide: true, help: "No trailing slash — the canonical URL and social tags are built from it" },
@@ -84,12 +84,12 @@
         { key: "locale", label: "Locale", placeholder: "en_US" },
         { key: "twitterHandle", label: "Twitter / X handle", placeholder: "@yourhandle" },
         { key: "themeColor", label: "Mobile browser colour", type: "color", default: "#10264b" },
-        { key: "googleVerification", label: "Google verification token", placeholder: "google1234abcd.html" },
+        { key: "googleVerification", label: "Google verification token", placeholder: "AbC-1a2b3c4d5e", help: "The HTML-tag token from Search Console — no file needed" },
       ],
     },
 
     {
-      id: "hero", icon: "🎯", title: "Hero", page: "portfolio",
+      id: "hero", icon: "🎯", title: "Hero", page: "portfolio", chapter: "look",
       help: "Leave these blank and the hero builds itself from your name, role and availability.",
       fields: [
         { key: "eyebrow", label: "Eyebrow line", placeholder: "Open to work", wide: true, help: "Falls back to personal.availability" },
@@ -104,7 +104,7 @@
     },
 
     {
-      id: "about", icon: "📝", title: "About / why work with me", page: "portfolio",
+      id: "about", icon: "📝", title: "About / why work with me", page: "portfolio", chapter: "look",
       help: "The “Why work with me” section on the portfolio page.",
       fields: [
         { key: "vision", label: "Highlighted call-out", type: "textarea", wide: true, placeholder: "What you're looking for next." },
@@ -116,7 +116,7 @@
     },
 
     {
-      id: "skills", icon: "🧰", title: "Skills", page: "portfolio",
+      id: "skills", icon: "🧰", title: "Skills", page: "portfolio", chapter: "work",
       help: "Each category becomes a card and also feeds the chatbot's skills answer.",
       fields: [
         { key: "summary", label: "Skills summary", type: "textarea", wide: true, placeholder: "One line describing your stack." },
@@ -134,13 +134,13 @@
     },
 
     {
-      id: "projects", icon: "🚀", title: "Projects", page: "portfolio",
+      id: "projects", icon: "🚀", title: "Projects", page: "portfolio", chapter: "work",
       help: "Shown on the portfolio page and reused as the studio's product ecosystem when you don't define separate products. The chatbot can answer questions about each one by name.",
       lists: [{ key: "projects", title: "Project cards", kind: "object", fields: PROJECT_FIELDS, addLabel: "project", itemTitle: (o) => o.name }],
     },
 
     {
-      id: "experience", icon: "💼", title: "Experience", page: "portfolio",
+      id: "experience", icon: "💼", title: "Experience", page: "portfolio", chapter: "work",
       help: "Most recent role first — the page renders them in this order.",
       lists: [{
         key: "experience", title: "Roles", kind: "object", addLabel: "role", itemTitle: (o) => o.role,
@@ -157,7 +157,7 @@
     },
 
     {
-      id: "education", icon: "🎓", title: "Education", page: "portfolio",
+      id: "education", icon: "🎓", title: "Education", page: "portfolio", chapter: "work",
       help: "Leave every field blank to hide the Education section entirely.",
       fields: [
         { key: "degree", label: "Degree", placeholder: "B.S. in Computer Science & Engineering", wide: true },
@@ -171,13 +171,13 @@
     },
 
     {
-      id: "research", icon: "📄", title: "Research & publications", page: "both",
+      id: "research", icon: "📄", title: "Research & publications", page: "both", chapter: "extras",
       help: "Papers, theses and preprints. Leave the list empty to hide the section.",
       lists: [{ key: "research", title: "Publications", kind: "object", fields: RESEARCH_FIELDS, addLabel: "paper", itemTitle: (o) => o.title }],
     },
 
     {
-      id: "achievements", icon: "🏆", title: "Achievements", page: "portfolio",
+      id: "achievements", icon: "🏆", title: "Achievements", page: "portfolio", chapter: "extras",
       help: "Awards, hackathon results and honours.",
       lists: [{
         key: "achievements", title: "Awards", kind: "object", addLabel: "award", itemTitle: (o) => o.title,
@@ -192,7 +192,7 @@
     },
 
     {
-      id: "certifications", icon: "📜", title: "Certifications", page: "portfolio",
+      id: "certifications", icon: "📜", title: "Certifications", page: "portfolio", chapter: "extras",
       help: "Professional certificates and course completions.",
       lists: [{
         key: "certifications", title: "Certificates", kind: "object", addLabel: "certificate", itemTitle: (o) => o.title,
@@ -206,7 +206,7 @@
     },
 
     {
-      id: "company", icon: "🏢", title: "Company / studio", page: "studio",
+      id: "company", icon: "🏢", title: "Company / studio", page: "studio", chapter: "company",
       help: "Powers the entire studio.html page, the studio banner on the portfolio page and the chatbot's studio answers. Leave the name blank to remove the studio page entirely.",
       fields: [
         { key: "name", label: "Company name", placeholder: "ABMVSC Studio" },
@@ -251,7 +251,7 @@
     },
 
     {
-      id: "contact", icon: "🔗", title: "Contact links", page: "both",
+      id: "contact", icon: "🔗", title: "Contact links", page: "both", chapter: "launch",
       help: "The stack of link cards in the contact section. Leave empty and the cards build themselves from your email, LinkedIn, GitHub and resume.",
       lists: [{
         key: "links", title: "Link cards", kind: "object", addLabel: "link", itemTitle: (o) => o.label,
@@ -265,7 +265,7 @@
     },
 
     {
-      id: "chatbot", icon: "🤖", title: "AI assistant", page: "both",
+      id: "chatbot", icon: "🤖", title: "AI assistant", page: "both", chapter: "look",
       help: "Tune the assistant's name and greetings. Everything else it knows is generated automatically from the sections above. Supports **bold**, *italic* and `code`.",
       fields: [
         { key: "assistantName", label: "Assistant name", placeholder: "Alex's AI Assistant", wide: true },
@@ -293,7 +293,7 @@
     },
 
     {
-      id: "theme", icon: "🎨", title: "Theme", page: "both",
+      id: "theme", icon: "🎨", title: "Theme", page: "both", chapter: "look",
       help: "Colours and fonts, applied at runtime as CSS custom properties. No CSS editing needed.",
       fields: [
         { key: "primaryColor", label: "Primary (navy)", type: "color", default: "#10264B" },
@@ -305,6 +305,22 @@
         { key: "showBuiltBy", label: "Show the “Built with the ABMVSC Portfolio Engine” footer credit", type: "bool", default: true, wide: true },
       ],
     },
+  ];
+
+  /* ══════════════════════════════════════════════════════════════
+     2b. CHAPTERS — the order the questions are asked in
+     ══════════════════════════════════════════════════════════════ */
+  // Every section above belongs to exactly one chapter. The wizard shows one
+  // chapter at a time, so a first-time user answers a handful of related
+  // questions instead of facing all fifteen sections at once. "Show everything"
+  // turns the wizard off for anyone who would rather see the whole form.
+  const CHAPTERS = [
+    { id: "you", title: "You", hint: "Who you are, and how people reach you." },
+    { id: "work", title: "Your work", hint: "Skills, projects, experience and education." },
+    { id: "extras", title: "Extras", hint: "Research, awards and certifications — all optional." },
+    { id: "company", title: "Your company", hint: "Only if you want the studio / agency page." },
+    { id: "look", title: "Look & feel", hint: "Hero, about copy, the assistant and your colours." },
+    { id: "launch", title: "Launch", hint: "Search settings, contact links — and going live." },
   ];
 
   /* ══════════════════════════════════════════════════════════════
@@ -441,6 +457,12 @@
 
       out[sec.id] = isArraySection(sec) ? section[sec.lists[0].key] : section;
     });
+
+    // A generated config is never the demo, so the "you are viewing the demo"
+    // notice is always off in it. (The round-trip test compares paths, so the
+    // key has to be present.)
+    if (out.theme) out.theme.showDemoNotice = false;
+
     return out;
   };
 
@@ -545,7 +567,7 @@
       (sec.lists || []).map((list) => renderList(sec, list)).join(""),
     ].join("");
 
-    return `<section class="gen-card" data-section-id="${esc(sec.id)}">
+    return `<section class="gen-card" data-section-id="${esc(sec.id)}" data-chapter="${esc(sec.chapter || "")}">
         <div class="gen-card-head" data-toggle="${esc(sec.id)}">
           <span class="gen-icon">${esc(sec.icon)}</span>
           <h2>${esc(sec.title)}</h2>
@@ -559,6 +581,97 @@
   const renderAll = () => {
     $("#genSections").innerHTML = SCHEMA.map(renderSection).join("");
     updateCounts();
+    applyChapter();
+  };
+
+  /* ══════════════════════════════════════════════════════════════
+     5b. WIZARD — ask one chapter at a time
+     ══════════════════════════════════════════════════════════════ */
+  const LAST_CHAPTER = CHAPTERS.length - 1;
+  let chapterIndex = 0;
+  let showEverything = false;
+
+  // How much of one chapter is filled in — drives the ✓ in the step rail.
+  const chapterProgress = (chapterId) => {
+    let filled = 0;
+    SCHEMA.filter((s) => s.chapter === chapterId).forEach((sec) => {
+      const s = state[sec.id] || {};
+      (sec.fields || []).forEach((f) => {
+        if (f.type !== "bool" && str(s[f.key]).trim()) filled++;
+      });
+      (sec.subs || []).forEach((sub) => {
+        sub.fields.forEach((f) => {
+          if (str((s[sub.key] || {})[f.key]).trim()) filled++;
+        });
+      });
+      (sec.lists || []).forEach((l) => {
+        if ((s[l.key] || []).length) filled++;
+      });
+    });
+    return filled;
+  };
+
+  const renderRail = () => {
+    const rail = $("#genRail");
+    if (!rail) return;
+    rail.innerHTML = CHAPTERS.map((c, i) => {
+      const done = chapterProgress(c.id) > 0;
+      const active = !showEverything && i === chapterIndex;
+      return `<button type="button" class="gen-rail-step${active ? " is-active" : ""}${done ? " is-done" : ""}"
+          data-goto="${i}" aria-current="${active ? "step" : "false"}">
+          <span class="gen-rail-num">${done ? "✓" : i + 1}</span>
+          <span class="gen-rail-text"><b>${esc(c.title)}</b><small>${esc(c.hint)}</small></span>
+        </button>`;
+    }).join("");
+  };
+
+  const applyChapter = () => {
+    const active = CHAPTERS[chapterIndex];
+    const isLaunch = chapterIndex === LAST_CHAPTER;
+
+    // Every card stays in the DOM — the wizard only toggles visibility, so the
+    // form, its values and the generated output are unaffected by the step rail.
+    document.querySelectorAll("#genSections > .gen-card").forEach((card) => {
+      card.hidden = !showEverything && card.dataset.chapter !== active.id;
+    });
+
+    const launch = $("#genLaunch");
+    if (launch) launch.hidden = !(showEverything || isLaunch);
+
+    const label = $("#genStepLabel");
+    if (label) {
+      label.textContent = showEverything
+        ? "All 15 sections shown"
+        : `Step ${chapterIndex + 1} of ${CHAPTERS.length} · ${active.title}`;
+    }
+
+    const back = $("#genBack");
+    const next = $("#genNext");
+    if (back) back.disabled = showEverything || chapterIndex === 0;
+    if (next) {
+      next.disabled = showEverything || isLaunch;
+      next.textContent = chapterIndex === LAST_CHAPTER - 1 ? "Next: Launch →" : "Next →";
+    }
+
+    renderRail();
+  };
+
+  const goToChapter = (i) => {
+    chapterIndex = Math.max(0, Math.min(LAST_CHAPTER, i));
+    showEverything = false;
+    const toggle = $("#genShowAll");
+    if (toggle) toggle.textContent = "Show everything";
+    applyChapter();
+    // Plain property write — jsdom has no window.scrollTo, and this page is
+    // loaded headlessly by the test suite.
+    document.documentElement.scrollTop = 0;
+  };
+
+  const setShowEverything = () => {
+    showEverything = !showEverything;
+    const toggle = $("#genShowAll");
+    if (toggle) toggle.textContent = showEverything ? "Use the guided steps" : "Show everything";
+    applyChapter();
   };
 
   // Re-render only one list so typing focus and scroll position survive.
@@ -860,6 +973,27 @@
     }
   };
 
+  // Copy any string (used by the launch snippets) and flash the button.
+  const copyText = async (text, btn) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    if (btn) {
+      const original = btn.textContent;
+      btn.textContent = "Copied ✓";
+      setTimeout(() => { btn.textContent = original; }, 1600);
+    }
+  };
+
   const applyImported = (raw, message) => {
     state = normalize(raw);
     renderAll();
@@ -934,6 +1068,36 @@
       frame.style.margin = mobile ? "" : "0 auto";
       e.target.textContent = mobile ? "Toggle mobile width" : "Toggle full width";
     });
+
+    // ── wizard: step rail, Back/Next and the "show everything" escape hatch
+    const rail = $("#genRail");
+    if (rail) {
+      rail.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-goto]");
+        if (btn) goToChapter(Number(btn.dataset.goto));
+      });
+    }
+
+    const back = $("#genBack");
+    if (back) back.addEventListener("click", () => goToChapter(chapterIndex - 1));
+
+    const next = $("#genNext");
+    if (next) next.addEventListener("click", () => goToChapter(chapterIndex + 1));
+
+    const showAll = $("#genShowAll");
+    if (showAll) showAll.addEventListener("click", setShowEverything);
+
+    // ── launch panel: extra download button and the copyable snippets
+    const launchDownload = $("#genLaunchDownload");
+    if (launchDownload) launchDownload.addEventListener("click", download);
+
+    const launch = $("#genLaunch");
+    if (launch) {
+      launch.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-copy]");
+        if (btn) copyText(btn.dataset.copy, btn);
+      });
+    }
   };
 
   /* ══════════════════════════════════════════════════════════════

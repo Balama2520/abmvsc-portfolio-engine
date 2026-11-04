@@ -24,7 +24,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (f) => fs.readFileSync(path.join(ROOT, f), "utf8");
 const pkg = JSON.parse(read("package.json"));
 
-const JS_FILES = ["script.js", "config.js", "config.bala.js", "setup.js"];
+const JS_FILES = ["script.js", "config.js", "setup.js"];
 const PAGES = ["index.html", "studio.html", "setup.html"];
 
 test("guardrail: the template has no runtime dependencies", () => {

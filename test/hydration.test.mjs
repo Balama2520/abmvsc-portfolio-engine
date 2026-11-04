@@ -133,10 +133,6 @@ test("config.js defines all 15 documented sections", () => {
   }
 });
 
-test("the optional reference config parses too", () => {
-  assert.doesNotThrow(() => readConfig("config.bala.js"));
-});
-
 test("browsing pages are content-free (content lives in config.js)", () => {
   for (const file of ["index.html", "studio.html"]) {
     const html = fs.readFileSync(path.join(ROOT, file), "utf8");

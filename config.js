@@ -3,7 +3,7 @@
  * ║          ABMVSC PORTFOLIO ENGINE — config.js                     ║
  * ║          Single Source of Truth · Version 3.0                    ║
  * ╠══════════════════════════════════════════════════════════════════╣
- * ║  👋  HEY THERE! This is the ONLY file you need to edit.          ║
+ * ║  This is the ONLY file you need to edit.                         ║
  * ║                                                                  ║
  * ║  Fill in your details below and BOTH websites — index.html       ║
  * ║  (your portfolio) and studio.html (your company) — update        ║
@@ -463,6 +463,11 @@ window.PORTFOLIO_CONFIG = {
     // Footer credit: "Built with the ABMVSC Portfolio Engine".
     // Set to false for a completely clean footer with no third-party credit.
     showBuiltBy: true,
+
+    // Floating "this is the demo" notice. The config you generate in
+    // setup.html always sets this to false, so the notice disappears as soon
+    // as you replace this file with your own. Flip it to false manually too.
+    showDemoNotice: true,
   },
 
 };

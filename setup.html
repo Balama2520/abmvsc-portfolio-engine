@@ -58,14 +58,63 @@
         </p>
       </div>
 
-      <div class="gen-steps">
-        <div class="gen-step"><b>Step 1</b><span>Fill in your details below. Everything is optional.</span></div>
-        <div class="gen-step"><b>Step 2</b><span>Watch both sites update in the live preview.</span></div>
-        <div class="gen-step"><b>Step 3</b><span>Download <code>config.js</code> and replace the one in your folder.</span></div>
-        <div class="gen-step"><b>Step 4</b><span>Deploy the folder — Netlify, GitHub Pages, anywhere.</span></div>
-      </div>
+      <!-- GUIDED WIZARD: one chapter of questions at a time -->
+      <nav class="gen-wizard" aria-label="Guided setup">
+        <div class="gen-wizard-top">
+          <p class="gen-step-label" id="genStepLabel">Step 1 of 6 · You</p>
+          <button type="button" class="gen-btn gen-btn-sm gen-btn-ghost" id="genShowAll">Show everything</button>
+        </div>
+        <div class="gen-rail" id="genRail"></div>
+        <div class="gen-steps-nav">
+          <button type="button" class="gen-btn" id="genBack">← Back</button>
+          <button type="button" class="gen-btn gen-btn-primary" id="genNext">Next →</button>
+        </div>
+      </nav>
 
       <div id="genSections"></div>
+
+      <!-- LAUNCH: shown on the final step (or with "Show everything") -->
+      <section class="gen-launch" id="genLaunch" hidden>
+        <h2>Launch your website</h2>
+        <p class="gen-launch-lead">Four steps from here to a live site. No code, no hosting bill, no build tools.</p>
+
+        <ol class="gen-launch-steps">
+          <li>
+            <b>Download your <code>config.js</code></b>
+            <p>Everything you just typed is packed into that one file.</p>
+            <button type="button" class="gen-btn gen-btn-sm gen-btn-primary" id="genLaunchDownload">Download config.js</button>
+          </li>
+          <li>
+            <b>Take your own copy of the engine</b>
+            <p>Open the template repository and click <strong>Use this template</strong>, or clone it.</p>
+            <div class="gen-copy-row">
+              <code class="gen-code">https://github.com/Balama2520/abmvsc-portfolio-template</code>
+              <button type="button" class="gen-btn gen-btn-sm"
+                data-copy="https://github.com/Balama2520/abmvsc-portfolio-template">Copy</button>
+            </div>
+            <div class="gen-copy-row">
+              <code class="gen-code">git clone https://github.com/Balama2520/abmvsc-portfolio-template.git my-site</code>
+              <button type="button" class="gen-btn gen-btn-sm"
+                data-copy="git clone https://github.com/Balama2520/abmvsc-portfolio-template.git my-site">Copy</button>
+            </div>
+          </li>
+          <li>
+            <b>Drop in the <code>config.js</code> you downloaded</b>
+            <p>Replace the file the engine shipped with. Both <code>index.html</code> and <code>studio.html</code> now read your details.</p>
+            <p class="gen-launch-warn">The file in the repo is ABMVSC's demo data — replacing it is the step that makes the site yours.</p>
+          </li>
+          <li>
+            <b>Put it online — free</b>
+            <p>Drag your project folder onto <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Netlify Drop</a>, or push to GitHub and switch on Pages. Live in about a minute.</p>
+          </li>
+        </ol>
+
+        <div class="gen-launch-foot">
+          <a class="gen-btn gen-btn-dark" href="https://github.com/Balama2520/abmvsc-portfolio-template"
+            target="_blank" rel="noopener noreferrer">Open the template on GitHub ↗</a>
+          <a class="gen-btn" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Deploy on Netlify ↗</a>
+        </div>
+      </section>
     </main>
 
     <!-- RIGHT: PREVIEW + EXPORT -->

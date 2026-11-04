@@ -18,14 +18,20 @@ That's it. `index.html`, `studio.html`, `style.css` and `script.js` read everyth
 
 The template includes a **config generator** at `setup.html` — a form that writes `config.js` for you.
 
+The generator asks its questions in **six chapters** — You → Your work → Extras → Your company → Look & feel → Launch — and shows one at a time. Use the step rail to jump to any chapter, or click **Show everything** to see the whole form at once.
+
 1. Open `setup.html` (from your copy, or the live demo at `/setup.html`)
-2. Fill in your details — every field is optional
+2. Answer the chapters — every field is optional
 3. Watch both sites update in the live preview as you type
 4. Click **Download config.js**
 5. Drop that file into your project folder, replacing the existing `config.js`
 6. Deploy
 
+The last chapter, **Launch**, repeats steps 4–6 with the exact links and commands, so you can go from an empty form to a live URL without leaving the page.
+
 You can also **Import** an existing `config.js`, **Copy** the output to your clipboard, or **Start from scratch**. Your progress is saved in your browser only — nothing is uploaded anywhere.
+
+> The sample `config.js` ships with `theme.showDemoNotice: true`, which shows a floating "this is the demo" notice on both pages. Every config the generator produces sets it to `false`, so the notice disappears as soon as your own file is in place.
 
 > The live preview reads `index.html` and `studio.html`, so serve the folder (`npx serve .` → open `/setup.html`) rather than opening the file directly. The form, download, import and copy buttons work either way.
 
@@ -157,8 +163,11 @@ theme: {
   fontBody:     "'Inter', -apple-system, sans-serif",
   fontMono:     "'IBM Plex Mono', monospace",
   showBuiltBy:  true,           // false ⇒ remove the ABMVSC footer credit
+  showDemoNotice: true,         // false ⇒ hide the floating "this is the demo" notice
 }
 ```
+
+> `showDemoNotice` is `true` only in the sample config that ships with the template. The generator always writes `false`, so you normally never touch it — set it to `false` by hand if you are starting from the shipped file.
 
 ---
 
@@ -166,7 +175,7 @@ theme: {
 
 | File | Replace with |
 |---|---|
-| `assets/engineer-avatar.svg` (or `photo.jpg`) | Your own profile photo |
+| `assets/engineer-avatar.svg` | Your own profile photo |
 | `resume.pdf` | Your own resume PDF |
 | `og-image.png` | Your own 1200×630 social preview |
 | `favicon.*`, `apple-touch-icon.png`, `android-chrome-*` | Your own icons ([favicon.io](https://favicon.io/favicon-converter/)) |
@@ -234,7 +243,7 @@ goes live still showing the ABMVSC demo content.
 
 | File | Replace with |
 |---|---|
-| `photo.jpg` / `assets/engineer-avatar.svg` | Your profile image |
+| `assets/engineer-avatar.svg` | Your profile image |
 | `resume.pdf` | Your resume — or blank `personal.resume` to hide the button |
 | `og-image.png` | A 1200×630 social preview card |
 | `favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-192x192.png`, `android-chrome-512x512.png` | Your icons ([favicon.io](https://favicon.io/favicon-converter/)) |
@@ -242,13 +251,13 @@ goes live still showing the ABMVSC demo content.
 
 **Search engines**
 
-- [ ] `robots.txt` — point `Sitemap:` at your domain
-- [ ] `sitemap.xml` — point both `<loc>` entries at your domain
-- [ ] Replace `google1813f9af1d0c0f59.html` with your own Search Console verification file
+- [ ] `robots.txt` — point `Sitemap:` at your domain (the shipped value is a placeholder)
+- [ ] `sitemap.xml` — replace both `your-domain.com` entries with your domain
+- [ ] `seo.googleVerification` — paste your Search Console token; the engine writes the
+      verification meta tag itself, so no extra file is needed
 
 **Housekeeping**
 
-- [ ] Delete `config.bala.js` — it is a reference example, not part of your site
 - [ ] `theme.showBuiltBy` — `true` credits the engine, `false` removes the footer line
 - [ ] `phone` / `linkedin` / `github` — set them, or leave `""` to hide those elements
 

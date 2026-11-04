@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://abms-portfolio.netlify.app/sitemap.xml
-
+# Change this to your own domain before submitting to search engines.
+Sitemap: https://your-domain.com/sitemap.xml

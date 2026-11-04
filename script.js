@@ -538,6 +538,24 @@
       '<span class="built-by-sep">·</span><a href="setup.html">Make this yours →</a>';
   };
 
+  // 3g. Demo notice — [data-demo-notice]
+  // Shown only while config.js is still the shipped ABMVSC sample
+  // (theme.showDemoNotice === true). A config made in setup.html always has
+  // this off, so the notice disappears the moment the site becomes yours.
+  const hydrateDemoNotice = () => {
+    const el = q("[data-demo-notice]");
+    if (!el) return;
+    if (theme.showDemoNotice !== true) {
+      setHidden(el, true);
+      return;
+    }
+    setHidden(el, false);
+    el.innerHTML =
+      '<span class="demo-notice-tag">Demo</span>' +
+      '<span class="demo-notice-text">This is sample content — your details go in <code>config.js</code>.</span>' +
+      '<a href="setup.html">Make it yours →</a>';
+  };
+
   const hydrate = () => {
     hydrateTheme();
     hydrateHead();
@@ -545,6 +563,7 @@
     hydrateLists();
     hydrateSections();
     hydrateBuiltBy();
+    hydrateDemoNotice();
   };
 
   /* ══════════════════════════════════════════════════════════════
@@ -553,6 +572,14 @@
   const resumeModal = document.getElementById("resumeModal");
   const resumeFrame = document.getElementById("resumeFrame");
   const resumeFile = p.resume || "resume.pdf";
+
+  // Keep the Download button in step with the config value — without this the
+  // anchor would keep pointing at the shipped "resume.pdf" even when the user
+  // points personal.resume at a file of their own.
+  qa("[data-resume-download]").forEach((link) => {
+    link.setAttribute("href", resumeFile);
+    link.setAttribute("download", "");
+  });
 
   const openResumeModal = () => {
     if (!resumeModal) return;

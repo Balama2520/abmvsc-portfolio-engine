@@ -63,7 +63,6 @@ Both pages share one config, one CSS system, one JS engine and one chatbot — f
 your-portfolio/
 │
 ├── config.js                    ← THE ONLY FILE YOU EDIT (your content)
-├── config.bala.js               ← Example real-world config (reference only — some sections omitted)
 │
 ├── index.html                   ← Personal portfolio page (layout only, no content)
 ├── studio.html                  ← Company / studio page (layout only, no content)
@@ -83,12 +82,10 @@ your-portfolio/
 ├── site.webmanifest             ← PWA manifest
 │
 ├── og-image.png                 ← Social media preview card (1200×630)
-├── photo.jpg                    ← Optional profile photo
 ├── resume.pdf                   ← Your resume (opens in the modal)
 │
-├── robots.txt                   ← Search engine crawl rules
-├── sitemap.xml                  ← Sitemap for both pages
-├── google[...].html             ← Google Search Console verification
+├── robots.txt                   ← Crawl rules — set your own domain
+├── sitemap.xml                  ← Sitemap for both pages — set your own domain
 │
 ├── netlify.toml                 ← Netlify config: security headers + caching
 ├── _headers                     ← Same headers for Cloudflare Pages
@@ -108,14 +105,7 @@ your-portfolio/
     ├── engineer-avatar.svg      ← Default profile avatar used by config.js
     ├── abmvsc-hero-banner.jpg   ← Studio page hero image
     ├── abmvsc-logo-card.jpg     ← Studio logo card
-    └── logo/
-        ├── abmvsc-logo-primary.svg
-        ├── abmvsc-logo-white.svg
-        ├── abmvsc-logo-mono.svg
-        ├── abmvsc-symbol.svg
-        ├── abmvsc-avatar.svg
-        ├── abmvsc-official-logo.svg
-        └── abmvsc-official-logo-white.svg
+    └── logo/                    ← ABMVSC brand marks (swap these for your own)
 ```
 
 ---
@@ -126,7 +116,8 @@ Not comfortable editing JavaScript? The template ships with a **built-in generat
 
 Open `setup.html` (from the live demo, or from your own copy), and you get:
 
-- A **form for all 15 sections** — every field from `config.js`, grouped and collapsible, with help text.
+- A **guided wizard** — the 15 sections are grouped into six chapters (You → Your work → Extras → Your company → Look & feel → Launch) and asked one at a time, with a step rail you can click to jump anywhere. Prefer the whole form at once? Hit **Show everything**.
+- **Every field from `config.js`**, with help text and a count per section.
 - A **live preview** of both `index.html` and `studio.html` side by side, updating as you type (plus a mobile-width toggle).
 - A **completeness meter** showing how much you have filled in.
 - **Download** or **Copy** buttons that produce a finished `config.js`.
@@ -137,12 +128,16 @@ Open `setup.html` (from the live demo, or from your own copy), and you get:
 
 ```
 1. Open setup.html
-2. Fill in your details (skip anything you don't have)
+2. Answer the chapters (skip anything you don't have)
 3. Watch both sites update in the live preview
 4. Click "Download config.js"
 5. Drop that file into your project folder, replacing the existing config.js
 6. Deploy the folder — done
 ```
+
+The final **Launch** chapter walks through steps 4–6 with copy-ready buttons for the repository URL and the `git clone` command, so you can go from an empty form to a live URL without leaving the page.
+
+> The sample `config.js` ships with `theme.showDemoNotice: true`, which shows a floating "this is the demo" notice on both pages. Every config the generator produces sets it to `false`, so the notice disappears the moment your own file is in place.
 
 > The generated file is a plain `config.js`. It is byte-for-byte the same format as the hand-written one, so you can always switch to editing it by hand later.
 
@@ -210,7 +205,7 @@ Every section is optional. Leave a field as `""` and its element disappears. Lea
 
 | File | Replace with |
 |---|---|
-| `photo.jpg` / `assets/engineer-avatar.svg` | Your own profile photo (point `personal.photo` at it) |
+| `assets/engineer-avatar.svg` | Your own profile photo (point `personal.photo` at it) |
 | `resume.pdf` | Your own resume (point `personal.resume` at it) |
 | `og-image.png` | Your own 1200×630 social preview image |
 | `favicon.*` + `android-chrome-*` | Your own icons (use [favicon.io](https://favicon.io)) |
@@ -267,6 +262,8 @@ theme: {
 
   showBuiltBy: true,         // false → removes the "Built with the ABMVSC
                              //          Portfolio Engine" footer credit
+  showDemoNotice: true,      // false → hides the floating "this is the demo"
+                             //          notice (the generator always writes false)
 }
 ```
 
@@ -315,22 +312,30 @@ Then drop `<div data-list="my-things"></div>` into either page. Sections are sho
 ```
 User-agent: *
 Allow: /
+
 Sitemap: https://your-domain.com/sitemap.xml
 ```
 
+Replace `your-domain.com` with your own domain — the shipped value is a placeholder.
+
 ### sitemap.xml
+
+Replace every `https://your-domain.com` with your domain. The file lists both pages:
 
 ```xml
 <loc>https://your-domain.com/</loc>
 <loc>https://your-domain.com/studio.html</loc>
 ```
 
+`setup.html` is deliberately absent — it carries `noindex` and must never appear in a sitemap.
+
 ### Google Search Console
 
 1. Go to [search.google.com/search-console](https://search.google.com/search-console)
 2. Add your domain as a property
-3. Choose **HTML file** verification
-4. Drop the verification file in the project root
+3. Choose **HTML tag** verification
+4. Paste the token into `seo.googleVerification` in `config.js` — the engine writes the
+   `<meta name="google-site-verification">` tag for you, so no extra file is needed
 5. Submit `sitemap.xml` after verification
 
 Also set `seo.siteUrl` in `config.js` — that's what the canonical URL and social tags are built from.

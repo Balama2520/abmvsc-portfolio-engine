@@ -1569,6 +1569,69 @@ footer {
   opacity: 0.5;
 }
 
+/* "This is the demo" notice — shown only while config.js is still the ABMVSC
+   sample (theme.showDemoNotice === true in config.js). Removable via config. */
+.demo-notice {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(460px, calc(100vw - 40px));
+  padding: 10px 14px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: var(--shadow-md);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.demo-notice-tag {
+  flex: 0 0 auto;
+  background: var(--orange);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.demo-notice code {
+  background: rgba(255, 255, 255, 0.16);
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+.demo-notice a {
+  flex: 0 0 auto;
+  color: var(--orange);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.demo-notice a:hover {
+  text-decoration: underline;
+}
+
+/* Keep clear of the chatbot bubble on narrow screens. */
+@media (max-width: 620px) {
+  .demo-notice {
+    left: 12px;
+    right: 12px;
+    bottom: 84px;
+    max-width: none;
+    border-radius: 14px;
+  }
+}
+
 /* REVEAL ON SCROLL */
 .hidden {
   opacity: 0;
