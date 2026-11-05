@@ -28,7 +28,7 @@ it. The policy stays script-src 'self' with no inline allowance.
 - [x] 2.4 Add a visible "Saved on this device" autosave note. (Named local
   profiles dropped: the master plan scopes this task to the autosave note only.)
 - [x] 2.5 Resize, compress, and crop uploaded photos locally.
-- [ ] 2.6 Replace technical errors with plain recovery guidance.
+- [x] 2.6 Replace technical errors with plain recovery guidance.
 - [ ] 2.7 Complete mobile-first generator interaction work.
 - [x] 2.8 Cancelled: the master plan says English only, no strings file, no RTL.
 

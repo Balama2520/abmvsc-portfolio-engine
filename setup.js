@@ -1461,10 +1461,10 @@
       saveFile(await buildZip(), zipName(), "application/zip");
       showWhatNow();
       toast("Downloaded your website. Unzip it, then drag the folder onto Netlify Drop.");
-    } catch (err) {
+    } catch {
       toast(previewFetchable
-        ? `Could not build the ZIP — ${esc(err.message)}.`
-        : "Building the ZIP needs the page served over http(s). Run <code>npx serve .</code> and open the address it prints.");
+        ? "Could not build your website file. Refresh the page and try again."
+        : "Building your website file needs the page served over http(s). Run <code>npx serve .</code> and open the address it prints.");
     } finally {
       btn.disabled = false;
       btn.textContent = label;
@@ -1524,8 +1524,8 @@
       reader.onload = () => {
         try {
           applyImported(parseConfigSource(String(reader.result)), `Imported <strong>${esc(file.name)}</strong>.`);
-        } catch (err) {
-          toast("That file could not be read as a config.js.");
+        } catch {
+          toast("That file is not a saved website from this page. Pick the file you downloaded here, or start from scratch.");
         }
       };
       reader.readAsText(file);
@@ -1536,8 +1536,8 @@
       try {
         const src = await fetch("config.js", { cache: "no-store" }).then((r) => r.text());
         applyImported(parseConfigSource(src), "Loaded the project's current config.js.");
-      } catch (err) {
-        toast("Could not load config.js — open this page from a local server.");
+      } catch {
+        toast("Could not load the template's details. Open this page from a local server (<code>npx serve .</code>) and try again.");
       }
     });
 
