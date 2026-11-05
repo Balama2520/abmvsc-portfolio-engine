@@ -18,7 +18,19 @@
     : (u) => u;
 
   /* 0. Context & helpers */
-  const cfg = window.PORTFOLIO_CONFIG || {};
+  // config.js sets window.PORTFOLIO_CONFIG. The generator's live preview ships
+  // the same object in a JSON block instead, because a strict
+  // Content-Security-Policy blocks the inline script that would set it.
+  const inlineConfig = () => {
+    const el = document.getElementById("pf-inline-config");
+    if (!el) return null;
+    try {
+      return JSON.parse(el.textContent || "{}");
+    } catch (err) {
+      return null;
+    }
+  };
+  const cfg = window.PORTFOLIO_CONFIG || inlineConfig() || {};
 
   const co   = cfg.company  || {};
   const p    = cfg.personal || {};

@@ -69,6 +69,11 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
     const url = req.url();
     if (!url.startsWith(repo.base) && !/^(data|blob|about):/.test(url)) generatorOffenders.push(url);
   });
+  const generatorCsp = [];
+  page.on("console", (msg) => {
+    const text = msg.text();
+    if (/Content Security Policy/i.test(text)) generatorCsp.push(text);
+  });
   await page.goto(`${repo.base}/setup.html`);
 
   // The wizard shows one chapter at a time; "Show everything" reveals the
@@ -92,6 +97,11 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
     generatorOffenders,
     [],
     `the generator must not reach outside its own origin:\n  ${generatorOffenders.join("\n  ")}`
+  );
+  assert.deepEqual(
+    generatorCsp,
+    [],
+    `the generator must run clean under its Content-Security-Policy:\n  ${generatorCsp.join("\n  ")}`
   );
 
   const entries = Pack.readZip(new Uint8Array(fs.readFileSync(zipPath)));
@@ -132,7 +142,12 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   const sitePage = await browser.newPage();
   const consoleErrors = [];
   const siteOffenders = [];
+  const siteCsp = [];
   sitePage.on("pageerror", (err) => consoleErrors.push(err.message));
+  sitePage.on("console", (msg) => {
+    const text = msg.text();
+    if (/Content Security Policy/i.test(text)) siteCsp.push(text);
+  });
   sitePage.on("request", (req) => {
     const url = req.url();
     if (!url.startsWith(site.base) && !/^(data|blob|about):/.test(url)) siteOffenders.push(url);
@@ -151,6 +166,11 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
     siteOffenders,
     [],
     `the unzipped site must not reach outside its own origin:\n  ${siteOffenders.join("\n  ")}`
+  );
+  assert.deepEqual(
+    siteCsp,
+    [],
+    `the unzipped site must run clean under its Content-Security-Policy:\n  ${siteCsp.join("\n  ")}`
   );
 
   await sitePage.close();

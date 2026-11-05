@@ -8,10 +8,15 @@ one commit, and a push of `v3.1-generator`.
 Note: 1.5 was done before 1.4. The CSP check needs the third-party font request
 gone first, so the headers could be added with zero violations.
 
+Note: the generator's live preview runs inside an iframe, and an iframe inherits
+the page's policy. An inline <script> setting the preview config would be
+blocked, so the preview now ships the config as a JSON block and script.js reads
+it. The policy stays script-src 'self' with no inline allowance.
+
 - [x] 1.1 Use strict JSON config files; safe import validation; move notes to SETUP.md.
 - [x] 1.2 Add a shared URL allowlist in generator, packer, and runtime.
 - [x] 1.3 Add permanent malicious-input ZIP/browser regression coverage.
-- [ ] 1.4 Add and test CSP headers and HTML fallback.
+- [x] 1.4 Add and test CSP headers and HTML fallback.
 - [x] 1.5 Self-host fonts and block third-party requests by default.
 - [x] 1.6 Update CI for Node 22 and Chromium, Firefox, and WebKit.
 

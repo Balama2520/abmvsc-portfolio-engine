@@ -13,6 +13,10 @@
     X-Frame-Options = "SAMEORIGIN"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    # Everything this site needs is served from its own folder: no external
+    # scripts, fonts or styles. frame-ancestors only works over a header, so it
+    # lives here rather than in the in-page meta fallback.
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
 
 # config.js is the one file users edit
 #  Never serve a stale copy — a cached config.js is the #1 cause of

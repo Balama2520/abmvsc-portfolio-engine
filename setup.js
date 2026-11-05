@@ -972,12 +972,18 @@
     const html = await res.text();
 
     const base = new URL(".", location.href).href;
-    const configSrc = "window.PORTFOLIO_CONFIG = " +
-      JSON.stringify(previewConfig(), null, 2).replace(/</g, "\\u003c") + ";";
+    // A strict Content-Security-Policy blocks an inline <script>, and the
+    // preview runs under the page's policy (an iframe inherits it). A JSON
+    // block is not executable, so it is allowed; script.js reads it instead of
+    // config.js. "<" is escaped so the JSON cannot close the script tag.
+    const configJson = JSON.stringify(previewConfig(), null, 2).replace(/</g, "\\u003c");
 
     return html
       .replace(/<head>/i, `<head>\n    <base href="${base}">`)
-      .replace(/<script\s+src=["']config\.js["']\s*><\/script>/i, `<script>${configSrc}</script>`);
+      .replace(
+        /<script\s+src=["']config\.js["']\s*><\/script>/i,
+        `<script type="application/json" id="pf-inline-config">${configJson}</script>`
+      );
   };
 
   const refreshPreview = async (immediate) => {

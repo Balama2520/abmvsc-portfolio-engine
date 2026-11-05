@@ -132,3 +132,23 @@ test("guardrail: the licence is MIT and attributed", () => {
   assert.match(licence, /MIT License/);
   assert.match(licence, /Copyright \(c\) \d{4} ABMVSC/);
 });
+
+test("guardrail: every page and host sets the content policy", () => {
+  // The generated site must not load or run anything from a third party, and
+  // it must not run inline script. The meta tag is the fallback for hosts that
+  // ignore header files (GitHub Pages, a plain folder open).
+  const meta = /http-equiv="Content-Security-Policy"[\s\S]*?content="([^"]+)"/;
+  for (const page of PAGES) {
+    const m = read(page).match(meta);
+    assert.ok(m, `${page} has no Content-Security-Policy meta tag`);
+    assert.ok(m[1].startsWith("default-src 'self'"), `${page} policy must default to 'self'`);
+    assert.ok(m[1].includes("script-src 'self'"), `${page} policy must restrict scripts to 'self'`);
+    assert.ok(!/script-src[^;]*'unsafe-inline'/.test(m[1]), `${page} policy must not allow inline script`);
+    assert.ok(m[1].includes("object-src 'none'"), `${page} policy must disable plugins`);
+  }
+  for (const headerFile of ["netlify.toml", "_headers"]) {
+    const src = read(headerFile);
+    assert.match(src, /Content-Security-Policy\s*[:=]/, `${headerFile} must send the policy as a header`);
+    assert.ok(src.includes("frame-ancestors 'self'"), `${headerFile} must send frame-ancestors`);
+  }
+});
