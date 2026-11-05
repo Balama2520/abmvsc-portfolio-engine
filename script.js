@@ -37,6 +37,9 @@
     String(v ?? "").replace(/[&<>"']/g, (c) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
     );
+  const jsonForHtml = (value) => JSON.stringify(value).replace(/[<>&\u2028\u2029]/g, (c) =>
+    ({ "<": "\\u003c", ">": "\\u003e", "&": "\\u0026", "\u2028": "\\u2028", "\u2029": "\\u2029" }[c])
+  );
 
   // Read a dotted path out of the config: get("personal.email")
   const get = (path, fallback = "") => {
@@ -469,7 +472,7 @@
       ldEl.type = "application/ld+json";
       document.head.appendChild(ldEl);
     }
-    ldEl.textContent = JSON.stringify(ld, (key, val) => (val === undefined ? undefined : val));
+    ldEl.textContent = jsonForHtml(JSON.parse(JSON.stringify(ld, (key, val) => (val === undefined ? undefined : val))));
 
     if (p.resume) {
       const modalDownload = q('.resume-modal-actions a[download]');

@@ -104,6 +104,17 @@ test("prerender: running twice leaves one copy of everything", () => {
   assert.equal((twice.match(/id="pf-ld-json"/g) || []).length, 1, "structured data must appear once");
 });
 
+test("prerender: JSON-LD cannot be closed by user text", () => {
+  const config = loadConfig();
+  config.personal.name = '</script><img src=x onerror=alert(1)>';
+  config.personal.bio = '\u2028 & < >';
+  const html = Pack.prerenderPage(read("index.html"), config, "index.html");
+  const ld = html.match(/<script id="pf-ld-json"[^>]*>([\s\S]*?)<\/script>/)[1];
+  assert.doesNotMatch(html, /<img src=x onerror=/, "user text must not create markup");
+  assert.ok(ld.includes("\\u003c/script\\u003e"));
+  assert.equal(JSON.parse(ld).name, config.personal.name);
+});
+
 test("prerender: the page still names only files that exist", () => {
   const config = loadConfig();
   const source = read("index.html");

@@ -271,6 +271,11 @@
   const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
   const escapeText = (v) => String(v ?? "").replace(/[&<>]/g, (c) => ESC[c]);
   const escapeAttr = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ESC[c]);
+  // JSON inside a script element needs HTML-safe escaping. JSON.stringify by
+  // itself leaves </script> intact and would let text close the element.
+  const jsonForHtml = (value) => JSON.stringify(value).replace(/[<>&\u2028\u2029]/g, (c) =>
+    ({ "<": "\\u003c", ">": "\\u003e", "&": "\\u0026", "\u2028": "\\u2028", "\u2029": "\\u2029" }[c])
+  );
 
   const isStudioPage = (page) => /studio/i.test(String(page || ""));
 
@@ -384,7 +389,7 @@
     tags += meta("name", "twitter:description", description);
     tags += meta("name", "twitter:image", ogImage);
     tags += meta("name", "twitter:site", seo.twitterHandle);
-    tags += `  <script id="pf-ld-json" type="application/ld+json">${JSON.stringify(ld)}</script>\n`;
+    tags += `  <script id="pf-ld-json" type="application/ld+json">${jsonForHtml(ld)}</script>\n`;
 
     return { title, tags };
   };
@@ -483,6 +488,7 @@
     prerenderPage,
     staticHeadTags,
     staticVirtual,
+    jsonForHtml,
     checkUpload,
     uploadPath,
     withUploadPaths,
