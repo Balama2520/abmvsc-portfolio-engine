@@ -37,6 +37,7 @@ const decoder = new TextDecoder();
 // A name that cannot appear by accident, so a match proves the value the
 // test typed into the form reached the rendered page.
 const NAME = "Zephyr Quill";
+const EMAIL = "zephyr.quill@example.test";
 
 let repo;
 let browser;
@@ -81,6 +82,7 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   await page.click("#genShowAll");
 
   await page.fill('input[data-path="personal.name"]', NAME);
+  await page.fill('input[data-path="personal.email"]', EMAIL);
   await page.setInputFiles('input[data-upload="photo"]', path.join(ROOT, "favicon-32x32.png"));
   await page.setInputFiles('input[data-upload="resume"]', path.join(ROOT, "resume.pdf"));
 
@@ -206,6 +208,25 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
 
   const visible = await sitePage.evaluate(() => document.body.innerText);
   assert.ok(visible.includes(NAME), "the unzipped page should render the name from the form");
+
+  // A visitor can save the owner as a contact: the button builds a vCard in the
+  // browser from the same details the page shows, under the site's own policy.
+  const vcardButton = sitePage.locator("[data-vcard-download]");
+  assert.equal(await vcardButton.count(), 1, "the site should offer one save-contact button");
+  const [vcard] = await Promise.all([
+    sitePage.waitForEvent("download"),
+    vcardButton.click(),
+  ]);
+  const vcardPath = path.join(tempDir, "contact.vcf");
+  await vcard.saveAs(vcardPath);
+  const card = fs.readFileSync(vcardPath, "utf8");
+  assert.match(vcard.suggestedFilename(), /\.vcf$/, "the download is named as a vCard file");
+  assert.ok(card.startsWith("BEGIN:VCARD\r\n"), "the file opens as a vCard");
+  assert.ok(card.includes("VERSION:3.0"), "the vCard declares its version");
+  assert.ok(card.includes(`FN:${NAME}`), "the vCard carries the name from the form");
+  assert.ok(card.includes(`EMAIL;TYPE=INTERNET:${EMAIL}`), "the vCard carries the email from the form");
+  assert.ok(card.trimEnd().endsWith("END:VCARD"), "the vCard is closed");
+
   assert.deepEqual(consoleErrors, [], `the unzipped site should load cleanly:\n  ${consoleErrors.join("\n  ")}`);
   assert.deepEqual(
     siteOffenders,

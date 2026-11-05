@@ -38,7 +38,9 @@
     "quot",
     "apos",
     "ICONDIR",
-    "ICONDIRENTRY"
+    "ICONDIRENTRY",
+    "vcard",
+    "SOCIALPROFILE"
   ],
   "ignorePaths": [
     "node_modules/**",

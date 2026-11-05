@@ -48,7 +48,12 @@ it. The policy stays script-src 'self' with no inline allowance.
   cards are not split across pages.
 - [x] 3.4 Cancelled: the master plan lists "JSON Resume" as out of scope.
 - [x] 3.5 Cancelled: the master plan lists "GitHub import" as out of scope.
-- [ ] 3.6 Add client-side vCard download.
+- [x] 3.6 Add client-side vCard download.
+  Decision: the "Save contact" button sits in the hero action row and builds a
+  vCard 3.0 file in the browser from config.js, so nothing is uploaded and the
+  archive needs no extra file. Long lines are folded and commas and semicolons
+  are escaped as the format requires. The button is hidden when there is no
+  name, email or phone to save.
 - [x] 3.7 Add deploy guide, .nojekyll, and config cache hash to ZIPs.
 - [ ] 3.8 Enforce generated-site performance budget.
 

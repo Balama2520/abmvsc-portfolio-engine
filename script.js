@@ -694,6 +694,86 @@
   qa("[data-resume-trigger]").forEach((btn) => btn.addEventListener("click", openResumeModal));
   qa("[data-resume-close]").forEach((el) => el.addEventListener("click", closeResumeModal));
 
+  /* 4b. Save contact — a vCard (.vcf) built in the browser from config.js.
+     The file is assembled from the same details the page already shows, so a
+     visitor can add the owner to their address book. Nothing is uploaded. */
+  const vcardEscape = (value) =>
+    String(value ?? "")
+      .replace(/\\/g, "\\\\")
+      .replace(/;/g, "\\;")
+      .replace(/,/g, "\\,")
+      .replace(/\r?\n/g, "\\n");
+
+  // A vCard line over 75 characters is folded, and the next line begins with a
+  // single space. Without this a long note can be read back incorrectly.
+  const vcardFold = (line) => {
+    if (line.length <= 75) return line;
+    const out = [line.slice(0, 75)];
+    let rest = line.slice(75);
+    while (rest.length) {
+      out.push(" " + rest.slice(0, 74));
+      rest = rest.slice(74);
+    }
+    return out.join("\r\n");
+  };
+
+  const buildVCard = () => {
+    const name = String(p.name || "").trim();
+    const words = name.split(/\s+/).filter(Boolean);
+    const family = words.length > 1 ? words[words.length - 1] : words[0] || "";
+    const given = words.length > 1 ? words.slice(0, -1).join(" ") : "";
+
+    const lines = ["BEGIN:VCARD", "VERSION:3.0"];
+    lines.push(vcardFold(`N:${vcardEscape(family)};${vcardEscape(given)};;;`));
+    lines.push(vcardFold(`FN:${vcardEscape(name)}`));
+    if (p.role) lines.push(vcardFold(`TITLE:${vcardEscape(p.role)}`));
+    if (co.name) lines.push(vcardFold(`ORG:${vcardEscape(co.name)}`));
+    if (p.email) lines.push(vcardFold(`EMAIL;TYPE=INTERNET:${vcardEscape(p.email)}`));
+    if (p.phone) lines.push(vcardFold(`TEL;TYPE=CELL:${vcardEscape(p.phone)}`));
+    const site = p.website || p.linkedin || p.github || seo.siteUrl || "";
+    if (site) lines.push(vcardFold(`URL:${vcardEscape(site)}`));
+    if (p.location) lines.push(vcardFold(`ADR;TYPE=WORK:;;${vcardEscape(p.location)};;;;`));
+    if (p.bio) lines.push(vcardFold(`NOTE:${vcardEscape(p.bio)}`));
+    if (p.linkedin) lines.push(vcardFold(`X-SOCIALPROFILE;TYPE=linkedin:${vcardEscape(p.linkedin)}`));
+    if (p.github) lines.push(vcardFold(`X-SOCIALPROFILE;TYPE=github:${vcardEscape(p.github)}`));
+    if (p.twitter) lines.push(vcardFold(`X-SOCIALPROFILE;TYPE=twitter:${vcardEscape(p.twitter)}`));
+    lines.push("END:VCARD");
+    return lines.join("\r\n") + "\r\n";
+  };
+
+  const vcardFileName = () => {
+    const slug = String(p.name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    return `${slug || "contact"}.vcf`;
+  };
+
+  const initVCard = () => {
+    const buttons = qa("[data-vcard-download]");
+    if (!buttons.length) return;
+    // With nothing to save the button is hidden, rather than offering an empty
+    // contact card.
+    const hasDetails = Boolean(String(p.name || p.email || p.phone).trim());
+    buttons.forEach((btn) => {
+      setHidden(btn, !hasDetails);
+      if (!hasDetails) return;
+      btn.addEventListener("click", () => {
+        const blob = new Blob([buildVCard()], { type: "text/vcard;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = vcardFileName();
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        // Release the address once the browser has taken the file.
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    });
+  };
+
   /* 5. Site chrome — nav, scroll-spy, smooth scroll, reveal */
   const setupChrome = () => {
     // Copyright year — kept here so neither page needs an inline script.
@@ -1145,6 +1225,7 @@
   const boot = () => {
     hydrate();
     setupChrome();
+    initVCard();
     initChatbot();
   };
 
