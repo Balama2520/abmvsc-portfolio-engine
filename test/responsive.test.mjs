@@ -169,6 +169,63 @@ test("layout: the generator's controls are thumb-sized and the step nav sticks a
   await page.close();
 });
 
+// The master plan asks for a print stylesheet: Ctrl+P should give a clean CV.
+// In print media the page furniture is hidden, the palette becomes black on
+// white, and the entrance animation is switched off so no card is left faded.
+test("layout: printing hides the page furniture and uses black on white", async () => {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${repo.base}/index.html`, { waitUntil: "load" });
+  await page.waitForTimeout(600);
+
+  // Mark a card as revealed so the print override for .reveal can be measured.
+  const marked = await page.evaluate(() => {
+    const card = document.querySelector(".project-card, .experience-card, .skill-card");
+    if (card) card.classList.add("reveal");
+    return Boolean(card);
+  });
+  assert.ok(marked, "a card should be on the page to measure");
+
+  const screenAnimation = await page.evaluate(
+    () => getComputedStyle(document.querySelector(".reveal")).animationName
+  );
+  assert.equal(screenAnimation, "pf-reveal", "a revealed card animates on screen");
+
+  await page.emulateMedia({ media: "print" });
+
+  const result = await page.evaluate(() => {
+    const display = (sel) => {
+      const el = document.querySelector(sel);
+      return el ? getComputedStyle(el).display : "missing";
+    };
+    const heading = document.querySelector(".hero h1");
+    return {
+      hidden: {
+        navbar: display(".navbar"),
+        chatbot: display("#chatbot"),
+        skillsBar: display(".skills-bar"),
+        heroButtons: display(".hero-buttons"),
+        sectionFooter: display(".section-footer"),
+        builtBy: display(".built-by"),
+      },
+      animation: getComputedStyle(document.querySelector(".reveal")).animationName,
+      headingDisplay: heading ? getComputedStyle(heading).display : "missing",
+      bodyBackground: getComputedStyle(document.body).backgroundColor,
+      bodyColor: getComputedStyle(document.body).color,
+    };
+  });
+
+  for (const [name, value] of Object.entries(result.hidden)) {
+    assert.equal(value, "none", `${name} should be hidden when printing, got ${value}`);
+  }
+  assert.equal(result.animation, "none", "the entrance animation should be off when printing");
+  assert.notEqual(result.headingDisplay, "none", "the name heading should still be printed");
+  assert.equal(result.bodyBackground, "rgb(255, 255, 255)", "print background is white");
+  assert.equal(result.bodyColor, "rgb(0, 0, 0)", "print text is black");
+
+  await page.emulateMedia({ media: "screen" });
+  await page.close();
+});
+
 for (const view of VIEWPORTS) {
   test(`layout: nothing overflows at ${view.width}px`, async () => {
     for (const file of PAGES) {

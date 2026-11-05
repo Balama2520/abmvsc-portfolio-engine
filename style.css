@@ -1840,3 +1840,95 @@ section:focus {
     grid-template-columns: 1fr;
   }
 }
+
+/* PRINT */
+/* Ctrl+P and "Save as PDF" should give a clean CV. The page furniture that
+   only works with a mouse or a screen is removed, the palette becomes black on
+   white whatever theme is active, and the entrance animation is switched off so
+   a card can never be caught half-faded on the sheet. */
+@media print {
+  :root,
+  :root[data-theme="dark"],
+  :root[data-theme="minimal"] {
+    --bg: #ffffff;
+    --bg-alt: #ffffff;
+    --surface: #ffffff;
+    --text: #000000;
+    --text-muted: #1a1a1a;
+    --text-soft: #333333;
+    --border: #b3b3b3;
+    --border-strong: #808080;
+    --shadow: none;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Furniture with no meaning on paper. */
+  .skip-link,
+  .demo-banner,
+  .demo-notice,
+  .navbar,
+  .skills-bar,
+  .hero-buttons,
+  .section-footer,
+  .resume-modal,
+  .chatbot,
+  .built-by {
+    display: none !important;
+  }
+
+  /* Show every card as it is: no entrance animation, no drop shadow. */
+  .reveal {
+    animation: none !important;
+  }
+
+  .hero,
+  .section {
+    min-height: auto;
+    padding: 0 0 20px;
+  }
+
+  .hero-photo,
+  .stat-row,
+  .skill-card,
+  .project-card,
+  .experience-card,
+  .achievement-card,
+  .cert-card,
+  .reason-card,
+  .pillar-box,
+  .contact-link-card {
+    box-shadow: none;
+    background: #ffffff;
+    border-color: #b3b3b3;
+  }
+
+  footer {
+    background: #ffffff;
+    border-color: #b3b3b3;
+  }
+
+  /* Keep a heading with the text under it, and keep a card on one sheet. */
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  .project-card,
+  .experience-card,
+  .skill-card,
+  .achievement-card,
+  .cert-card {
+    break-inside: avoid;
+  }
+
+  a {
+    color: #000000;
+  }
+}

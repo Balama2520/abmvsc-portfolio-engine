@@ -40,7 +40,12 @@ it. The policy stays script-src 'self' with no inline allowance.
   twitter:image) because a crawler needs that. The favicons stay relative: an
   absolute icon URL would break the preview of an unzipped folder, and it works
   the same once deployed.
-- [ ] 3.3 Add print-friendly resume output.
+- [x] 3.3 Add print-friendly resume output.
+  Decision: the print sheet hides the on-screen furniture (navbar, chat, skills
+  ticker, hero buttons, section footers, demo notices, the built-by line) and
+  forces black on white in every theme, rather than trying to cram the whole
+  portfolio onto a single sheet. Headings stay with the text under them and
+  cards are not split across pages.
 - [x] 3.4 Cancelled: the master plan lists "JSON Resume" as out of scope.
 - [x] 3.5 Cancelled: the master plan lists "GitHub import" as out of scope.
 - [ ] 3.6 Add client-side vCard download.
