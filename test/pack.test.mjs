@@ -4,6 +4,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
+import { gzipSync } from "node:zlib";
 
 const require = createRequire(import.meta.url);
 const Pack = require("../pack.js");
@@ -232,6 +233,43 @@ test("pack: a generated archive contains every file its pages ask for", () => {
   Pack.collectIconRefs(decoder.decode(manifest.data)).forEach((ref) => {
     assert.ok(present.has(ref), `site.webmanifest points at ${ref}, which is not in the archive`);
   });
+});
+
+/* Performance budget: the code a generated site makes a visitor download. */
+
+test("pack: the generated code stays inside its size budget", () => {
+  const { config, files } = loadSite();
+  const { include } = Pack.buildManifest({ files, config });
+
+  const bytesOf = (path) => {
+    const data = files[path];
+    return typeof data === "string" ? Buffer.byteLength(data, "utf8") : data.byteLength;
+  };
+
+  // The budget covers the HTML, CSS and JavaScript the pages ship: the part that
+  // has to be downloaded and parsed before the site can be read. Photos, icons
+  // and fonts are the owner's own content and self-hosted files, so they are
+  // counted separately from the code the generator controls.
+  const code = include.filter((path) => /\.(html|css|js)$/.test(path));
+  const raw = code.reduce((sum, path) => sum + bytesOf(path), 0);
+  const gzipped = code.reduce((sum, path) => {
+    const data = files[path];
+    return sum + gzipSync(Buffer.from(data)).length;
+  }, 0);
+
+  // Measured on 5 November 2026: about 128 KB of HTML, CSS and JavaScript, or
+  // 35 KB once the server compresses it. The budget leaves room to grow but
+  // fails before the site gets heavy for a phone on a slow connection.
+  const CODE_BUDGET = 180 * 1024;
+  const CODE_BUDGET_GZIP = 60 * 1024;
+  assert.ok(
+    raw <= CODE_BUDGET,
+    `the generated HTML, CSS and JS is ${Math.round(raw / 1024)} KB, over the ${CODE_BUDGET / 1024} KB budget`
+  );
+  assert.ok(
+    gzipped <= CODE_BUDGET_GZIP,
+    `the compressed HTML, CSS and JS is ${Math.round(gzipped / 1024)} KB, over the ${CODE_BUDGET_GZIP / 1024} KB budget`
+  );
 });
 
 test("pack: crc32 matches the reference value for a known string", () => {

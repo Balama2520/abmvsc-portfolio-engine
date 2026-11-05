@@ -55,7 +55,14 @@ it. The policy stays script-src 'self' with no inline allowance.
   are escaped as the format requires. The button is hidden when there is no
   name, email or phone to save.
 - [x] 3.7 Add deploy guide, .nojekyll, and config cache hash to ZIPs.
-- [ ] 3.8 Enforce generated-site performance budget.
+- [x] 3.8 Enforce generated-site performance budget.
+  Decision: the budget covers the generated HTML, CSS and JavaScript — the code a
+  visitor must download and parse before the site can be read — with a test in
+  test/pack.test.mjs that fails if it passes 180 KB on disk or 60 KB over the
+  wire. Measured baseline on 5 November 2026 is about 128 KB on disk and 35 KB
+  compressed. Photos, icons and fonts are the owner's own or self-hosted files,
+  so they are not part of this budget. The master plan does not name this task,
+  so this is the simplest safe reading of it.
 
 ## Phase 4 — Quality gates
 
