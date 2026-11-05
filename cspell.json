@@ -33,6 +33,8 @@
     "popups",
     "topbar",
     "whatnow",
+    "nojekyll",
+    "msword",
     "quot"
   ],
   "ignorePaths": [

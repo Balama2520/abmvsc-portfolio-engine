@@ -1378,6 +1378,48 @@
     return `${slug || "portfolio"}-website.zip`;
   };
 
+  // Plain deploy steps that travel inside the ZIP, so the folder explains
+  // itself once it is unzipped. Named in the brand rules.
+  const buildDeployReadme = () => `ABMVSC Portfolio Engine
+A product of ABMVSC Technology & Innovation Studio.
+
+Your website is ready
+
+This folder is a finished website. Nothing needs to be built or installed.
+Pick one host below and follow the steps. All three are free to start.
+
+What is in this folder
+- index.html    your personal portfolio page
+- studio.html   your company page
+- style.css     the look of the site
+- script.js     the script that fills in your details
+- config.js     the file that holds every detail you typed
+- your photo and resume, if you added them
+- .nojekyll     a blank file that tells GitHub Pages to serve every file
+
+Netlify Drop (quickest)
+1. Open https://app.netlify.com/drop
+2. Drag this whole folder onto the page.
+3. After a few seconds Netlify shows your live address.
+4. Sign in to keep the site (a free account).
+
+GitHub Pages
+1. Create a repository on GitHub.
+2. Upload every file in this folder to the repository.
+3. Open Settings, then Pages.
+4. Under Source, choose the main branch and the root folder, then Save.
+5. Your site appears at https://yourname.github.io/repository-name.
+   The blank .nojekyll file keeps every file served as it is.
+
+Cloudflare Pages
+1. Open https://pages.cloudflare.com and sign in (a free account).
+2. Choose Upload assets and upload this folder.
+3. Cloudflare shows your live address.
+
+Where this came from
+Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
+`;
+
   // The archive is built from the files the pages name, so an unzipped copy
   // opens without a single missing request. The list is worked out to a fixed
   // point: a file the pages name can name more files of its own (the web
@@ -1390,6 +1432,8 @@
     };
     const supplied = new Set([
       "config.js",
+      ".nojekyll",
+      "README-DEPLOY.txt",
       ...[uploads.photo, uploads.resume].filter(Boolean).map((file) => file.path),
     ]);
     const skip = (path) =>
@@ -1431,6 +1475,14 @@
       }
       if (path === "config.js") {
         entries.push({ path, data: buildConfigSource() });
+        continue;
+      }
+      if (path === ".nojekyll") {
+        entries.push({ path, data: "" });
+        continue;
+      }
+      if (path === "README-DEPLOY.txt") {
+        entries.push({ path, data: buildDeployReadme() });
         continue;
       }
       const upload = [uploads.photo, uploads.resume].find((file) => file && file.path === path);

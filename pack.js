@@ -434,6 +434,19 @@
     return html.replace(re, (m, tag, attrs) => `<${tag}${attrs}>${escapeText(value)}</${tag}>`);
   };
 
+  // A short content hash of the config text. It goes into the config script
+  // tag as a version, so a browser that cached an older copy fetches the new
+  // one after the details change. FNV-1a, 32-bit, hex.
+  const contentHash = (text) => {
+    const s = String(text);
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(16).padStart(8, "0");
+  };
+
   /**
    * Writes the title, social tags, structured data and hero text straight into
    * a page so it reads correctly without JavaScript. Safe to run twice.
@@ -449,6 +462,10 @@
     out = out.replace(/\n?\s*<!-- pf:static -->[\s\S]*?<!-- \/pf:static -->/, "");
     out = out.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeText(title)}</title>`);
     out = out.replace(/<\/head>/i, `  <!-- pf:static -->\n${tags}  <!-- /pf:static -->\n</head>`);
+
+    // Version the config script so a cached copy is never served after an edit.
+    const version = contentHash(JSON.stringify(config));
+    out = out.replace(/(<script\s+src=")config\.js(?:\?[^"]*)?(")/gi, `$1config.js?v=${version}$2`);
 
     const virtual = staticVirtual(config, studio);
     for (const key of Object.keys(virtual)) {
@@ -516,6 +533,7 @@
     collectIconRefs,
     buildManifest,
     prerenderPage,
+    contentHash,
     staticHeadTags,
     staticVirtual,
     jsonForHtml,

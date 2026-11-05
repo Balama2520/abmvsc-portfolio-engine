@@ -108,9 +108,15 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   const files = new Map(entries.map((e) => [e.path, e.data]));
   const text = (p) => decoder.decode(files.get(p));
 
-  // The archive carries the files the pages name, plus the two uploads.
-  for (const required of ["index.html", "studio.html", "style.css", "script.js", "config.js", "robots.txt", "sitemap.xml", "netlify.toml", "_headers"]) {
+  // The archive carries the files the pages name, plus the two uploads and the
+  // two deploy extras the generator writes in.
+  for (const required of ["index.html", "studio.html", "style.css", "script.js", "config.js", "robots.txt", "sitemap.xml", "netlify.toml", "_headers", ".nojekyll", "README-DEPLOY.txt"]) {
     assert.ok(files.has(required), `${required} should be in the archive`);
+  }
+  // The deploy guide travels with the ZIP and names the three hosts.
+  const readme = text("README-DEPLOY.txt");
+  for (const host of ["Netlify Drop", "GitHub Pages", "Cloudflare Pages"]) {
+    assert.ok(readme.includes(host), `README-DEPLOY.txt should mention ${host}`);
   }
   const photoEntry = ["photo.webp", "photo.jpg", "photo.png"].find((name) => files.has(name));
   assert.ok(photoEntry, "the uploaded photo should be in the archive as a prepared image");
@@ -129,6 +135,8 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   assert.match(indexHtml, /property="og:title"\s+content="[^"]+"/, "the shipped index.html has og:title");
   assert.match(indexHtml, /name="twitter:card"\s+content="summary_large_image"/, "twitter:card is set");
   assert.match(text("studio.html"), /id="pf-ld-json"/, "the shipped studio.html has structured data");
+  // The config script is versioned, so an edited config is never served from cache.
+  assert.match(indexHtml, /<script src="config\.js\?v=[0-9a-f]+"><\/script>/, "the config script is versioned");
 
   // Every reference inside the archive resolves to another entry in it.
   for (const entry of entries.filter((e) => e.path.endsWith(".html"))) {

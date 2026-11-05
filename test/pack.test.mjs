@@ -127,6 +127,27 @@ test("prerender: the page still names only files that exist", () => {
   );
 });
 
+test("prerender: the config script is versioned with a content hash", () => {
+  const config = loadConfig();
+  const html = Pack.prerenderPage(read("index.html"), config, "index.html");
+  const match = html.match(/<script src="config\.js\?v=([0-9a-f]+)"><\/script>/);
+  assert.ok(match, "the config script tag carries a version");
+  assert.equal(
+    match[1],
+    Pack.contentHash(JSON.stringify(config)),
+    "the version is the config's own content hash"
+  );
+
+  // A changed detail must change the version, so a cached copy is never reused.
+  const other = { ...config, personal: { ...config.personal, name: "Someone Else" } };
+  const changed = Pack.prerenderPage(read("index.html"), other, "index.html");
+  assert.notEqual(changed.match(/config\.js\?v=([0-9a-f]+)/)[1], match[1], "a changed config gets a new version");
+
+  // Running it again must not stack a second version onto the tag.
+  const twice = Pack.prerenderPage(html, config, "index.html");
+  assert.equal((twice.match(/\?v=/g) || []).length, 1, "one version only");
+});
+
 test("pack: an archive round-trips through the reader", () => {
   const entries = [
     { path: "index.html", data: "<!doctype html><title>One</title>" },

@@ -40,7 +40,7 @@ it. The policy stays script-src 'self' with no inline allowance.
 - [x] 3.4 Cancelled: the master plan lists "JSON Resume" as out of scope.
 - [x] 3.5 Cancelled: the master plan lists "GitHub import" as out of scope.
 - [ ] 3.6 Add client-side vCard download.
-- [ ] 3.7 Add deploy guide, .nojekyll, and config cache hash to ZIPs.
+- [x] 3.7 Add deploy guide, .nojekyll, and config cache hash to ZIPs.
 - [ ] 3.8 Enforce generated-site performance budget.
 
 ## Phase 4 — Quality gates
