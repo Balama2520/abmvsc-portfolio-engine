@@ -898,6 +898,62 @@ body.gen-body {
   color: var(--text-soft);
 }
 
+/* Recruiter checklist */
+.gen-checklist {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gen-check-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+/* A drawn dot instead of a glyph, so nothing depends on an emoji font. */
+.gen-check-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+}
+
+.gen-check-item.is-done {
+  color: var(--text);
+}
+
+.gen-check-item.is-done::before {
+  background: #166534;
+  border-color: #166534;
+}
+
+.gen-check-label small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.gen-check-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #166534;
+  white-space: nowrap;
+}
+
 /* Toast */
 .gen-toast {
   position: fixed;

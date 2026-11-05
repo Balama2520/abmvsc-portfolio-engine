@@ -789,25 +789,70 @@
     updateCounts();
   };
 
-  const filledCount = () => {
-    // Flat scalar fields (including sub-objects) that hold a value.
-    let total = 0;
-    let filled = 0;
-    SCHEMA.forEach((sec) => {
-      const s = state[sec.id] || {};
-      (sec.fields || []).forEach((f) => {
-        if (f.type === "bool") return;
-        total++;
-        if (str(s[f.key]).trim()) filled++;
-      });
-      (sec.subs || []).forEach((sub) => {
-        sub.fields.forEach((f) => {
-          total++;
-          if (str((s[sub.key] || {})[f.key]).trim()) filled++;
-        });
-      });
-    });
-    return { total, filled };
+  // The recruiter checklist is computed from the current answers. Nothing is
+  // sent anywhere and nothing is stored. It lists the things a hiring manager
+  // looks for, and every missing item can jump straight to its field.
+  const recruiterItems = () => {
+    const p = state.personal || {};
+    const projects = (state.projects && state.projects.projects) || [];
+    const linked = projects.filter((pr) => str(pr.liveUrl).trim() || str(pr.githubUrl).trim());
+    const bioLen = str(p.bio).trim().length;
+    return [
+      { label: "Your full name", done: !!str(p.name).trim(), path: "personal.name" },
+      { label: "Your role in one line", done: !!str(p.role).trim(), path: "personal.role" },
+      {
+        label: "A short bio of 150 to 400 characters",
+        done: bioLen >= 150 && bioLen <= 400,
+        path: "personal.bio",
+        hint: bioLen ? `${bioLen} characters so far` : "Add a sentence or two about you",
+      },
+      { label: "A profile photo", done: !!(uploads.photo || str(p.photo).trim()), section: "personal", upload: "photo" },
+      { label: "Your resume as a PDF", done: !!(uploads.resume || str(p.resume).trim()), section: "personal", upload: "resume" },
+      {
+        label: "Three or more projects with a link",
+        done: linked.length >= 3,
+        section: "projects",
+        hint: `${linked.length} with a link`,
+      },
+      { label: "An email address", done: !!str(p.email).trim(), path: "personal.email" },
+      { label: "A LinkedIn or GitHub profile", done: !!str(p.linkedin).trim() || !!str(p.github).trim(), path: "personal.linkedin" },
+    ];
+  };
+
+  // Jump to whichever field, upload or card a checklist item is about.
+  const revealCheck = (item) => {
+    if (!item) return;
+    const sectionId = item.section || (item.path || "").split(".")[0];
+    const sec = SCHEMA.find((s) => s.id === sectionId);
+    if (!sec) return;
+    if (!showEverything) {
+      const ci = CHAPTERS.findIndex((c) => c.id === sec.chapter);
+      if (ci >= 0) goToChapter(ci);
+    }
+    const card = document.querySelector(`[data-section-id="${sectionId}"]`);
+    if (card) {
+      card.classList.remove("is-collapsed");
+      if (card.scrollIntoView) card.scrollIntoView({ block: "start" });
+    }
+    const selector = item.upload
+      ? `[data-upload="${item.upload}"]`
+      : item.path ? `[data-path="${item.path}"]` : "";
+    const field = selector ? document.querySelector(selector) : null;
+    if (field && field.focus) field.focus();
+  };
+
+  const renderChecklist = () => {
+    const host = $("#genChecklist");
+    if (!host) return;
+    const items = recruiterItems();
+    host.innerHTML = items.map((it, i) =>
+      `<li class="gen-check-item${it.done ? " is-done" : ""}">
+          <span class="gen-check-label">${esc(it.label)}${it.hint ? ` <small>${esc(it.hint)}</small>` : ""}</span>
+          ${it.done
+            ? '<span class="gen-check-tag">Done</span>'
+            : `<button type="button" class="gen-linkbtn" data-check-go="${i}">Go to this field</button>`}
+        </li>`
+    ).join("");
   };
 
   const updateCounts = () => {
@@ -819,12 +864,17 @@
       el.textContent = items ? `${items} item${items === 1 ? "" : "s"}` : hasScalar ? "filled" : "empty";
     });
 
-    const { total, filled } = filledCount();
-    const pct = total ? Math.round((filled / total) * 100) : 0;
-    $("#genMeterBar").style.width = pct + "%";
-    $("#genMeterText").textContent = filled
-      ? `${filled} of ${total} detail fields filled in (${pct}%).`
-      : "Nothing filled in yet.";
+    renderChecklist();
+    const items = recruiterItems();
+    const ready = items.filter((it) => it.done).length;
+    const meter = $("#genMeterBar");
+    if (meter) meter.style.width = Math.round((ready / items.length) * 100) + "%";
+    const text = $("#genMeterText");
+    if (text) {
+      text.textContent = ready === items.length
+        ? "All checks done — your site is ready to share."
+        : `${ready} of ${items.length} checks done.`;
+    }
 
     updateOutput();
   };
@@ -1450,6 +1500,16 @@
 
     const showAll = $("#genShowAll");
     if (showAll) showAll.addEventListener("click", setShowEverything);
+
+    // Recruiter checklist: "Go to this field" opens the chapter and focuses
+    // the field the missing item is about.
+    const checklist = $("#genChecklist");
+    if (checklist) {
+      checklist.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-check-go]");
+        if (btn) revealCheck(recruiterItems()[Number(btn.dataset.checkGo)]);
+      });
+    }
 
     // Launch panel: the same ZIP download, next to the deployment steps
     const launchZip = $("#genLaunchZip");

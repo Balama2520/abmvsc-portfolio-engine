@@ -23,7 +23,7 @@ it. The policy stays script-src 'self' with no inline allowance.
 ## Phase 2 — Beginner experience
 
 - [ ] 2.1 Add plain hints and examples to every field.
-- [ ] 2.2 Add locally computed recruiter-readiness checklist.
+- [x] 2.2 Add locally computed recruiter-readiness checklist. (Replaces the raw field counter.)
 - [ ] 2.3 Add project case-study helper fields and card rendering.
 - [x] 2.4 Add a visible "Saved on this device" autosave note. (Named local
   profiles dropped: the master plan scopes this task to the autosave note only.)
