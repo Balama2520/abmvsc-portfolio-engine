@@ -18,18 +18,25 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dev dependencies
         run: npm ci
 
-      # The smoke test drives the real generator in Chromium.
-      - name: Install Chromium for the smoke test
-        run: npx playwright install --with-deps chromium
+      # Every engine the smoke test can drive is installed so the browser
+      # checks below can run in all three.
+      - name: Install browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
 
-      # Covers the hydration contract (test/hydration.test.mjs), the
-      # zero-dependency / no-build-step guardrails (test/guardrails.test.mjs)
-      # and the end-to-end browser smoke test (test/browser-smoke.test.mjs).
+      # Covers the watertight contract tests (hydration, config parsing, the
+      # zero-dependency / no-build-step guardrails, the malicious-input ZIP
+      # test and the Chromium end-to-end smoke test).
       - name: Run the full test suite
         run: npm test
+
+      - name: Smoke test in Firefox
+        run: SMOKE_BROWSER=firefox node --test test/browser-smoke.test.mjs
+
+      - name: Smoke test in WebKit
+        run: SMOKE_BROWSER=webkit node --test test/browser-smoke.test.mjs

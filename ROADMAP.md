@@ -10,7 +10,7 @@ one commit, and a push of `v3.1-generator`.
 - [x] 1.3 Add permanent malicious-input ZIP/browser regression coverage.
 - [ ] 1.4 Add and test CSP headers and HTML fallback.
 - [ ] 1.5 Self-host fonts and block third-party requests by default.
-- [ ] 1.6 Update CI for Node 22 and Chromium, Firefox, and WebKit.
+- [x] 1.6 Update CI for Node 22 and Chromium, Firefox, and WebKit.
 
 ## Phase 2 — Beginner experience
 
