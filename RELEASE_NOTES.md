@@ -8,6 +8,8 @@ This is a gift for anyone who needs a personal website and does not want to
 write code, pay for a service, or hand their details to a stranger. Open the
 generator, answer what you can, download a folder, put it online.
 
+ABMVSC Portfolio Engine is a product of ABMVSC Technology & Innovation Studio.
+
 ## What you do
 
 1. Open the generator.

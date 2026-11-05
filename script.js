@@ -609,7 +609,7 @@
     // Plain text on purpose: a generated site should not carry a link to
     // anyone else's account. The owner opted in to the credit, not to a
     // backlink, and the template repository is where it belongs.
-    el.textContent = "Made with the Portfolio Engine";
+    el.textContent = "Made with ABMVSC Portfolio Engine";
   };
 
   // 3g. Demo chrome — [data-demo-banner] and [data-demo-notice]

@@ -1,0 +1,33 @@
+{
+  "version": "0.2",
+  "language": "en-GB",
+  "words": [
+    "ABMVSC",
+    "abmvsc",
+    "Balama",
+    "Grotesk",
+    "WCAG",
+    "nosniff",
+    "vbscript",
+    "Xplore",
+    "huggingface",
+    "researchgate",
+    "yourhandle",
+    "hackathon",
+    "headlessly",
+    "noopener",
+    "maxlength",
+    "fallbacks",
+    "mockups",
+    "tagline",
+    "taglines",
+    "popups",
+    "quot"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "package-lock.json",
+    "assets/**",
+    "*.min.*"
+  ]
+}

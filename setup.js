@@ -318,7 +318,7 @@
         { key: "fontHeading", label: "Heading font", placeholder: "'Space Grotesk', sans-serif", wide: true },
         { key: "fontBody", label: "Body font", placeholder: "'Inter', sans-serif", wide: true },
         { key: "fontMono", label: "Mono font", placeholder: "'IBM Plex Mono', monospace", wide: true },
-        { key: "showBuiltBy", label: "Show a small “Made with the Portfolio Engine” credit in the footer", type: "bool", default: false, wide: true, help: "Off by default. It is plain text with no link." },
+        { key: "showBuiltBy", label: "Show a small “Made with ABMVSC Portfolio Engine” credit in the footer", type: "bool", default: false, wide: true, help: "Off by default. It is plain text with no link." },
         { key: "showDemoNotice", label: "Show floating demo notice", type: "bool", default: false, wide: true, help: "Shows the floating demo notice on index and studio pages." },
       ],
     },
