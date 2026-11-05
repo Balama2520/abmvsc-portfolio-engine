@@ -8,6 +8,10 @@
 (() => {
   "use strict";
 
+  const sanitizeUrl = (typeof UrlAllowlist !== "undefined" && UrlAllowlist.sanitizeUrl)
+    ? UrlAllowlist.sanitizeUrl
+    : (typeof require === "function" ? require("./url-allowlist.js").sanitizeUrl : (u) => u);
+
   /* 1. Reusable field sets */
   const PROJECT_FIELDS = [
     { key: "name", label: "Project name", placeholder: "Project One" },
@@ -839,6 +843,9 @@
   };
 
   const BARE_ARRAY_SECTIONS = new Set(["projects", "experience", "research", "achievements", "certifications"]);
+  const URL_FIELD_NAMES = new Set([
+    "siteUrl", "liveUrl", "githubUrl", "url", "linkedin", "github", "twitter", "website", "huggingface", "researchgate", "photo", "resume", "ogImage"
+  ]);
 
   const validateConfig = (config) => {
     if (!config || typeof config !== "object" || Array.isArray(config)) {
@@ -861,6 +868,13 @@
           if (!item || typeof item !== "object" || Array.isArray(item)) {
             throw new Error(`Invalid field: "${sec.id}[${idx}]" must be an object.`);
           }
+          for (const k of Object.keys(item)) {
+            if (URL_FIELD_NAMES.has(k) && typeof item[k] === "string" && item[k].trim()) {
+              if (!sanitizeUrl(item[k], "link")) {
+                throw new Error(`Invalid field: "${sec.id}[${idx}].${k}" has an unsafe URL.`);
+              }
+            }
+          }
         });
       } else {
         if (typeof val !== "object" || Array.isArray(val)) {
@@ -879,6 +893,12 @@
           for (const fKey of Object.keys(val)) {
             if (!knownFields.has(fKey)) {
               throw new Error(`Invalid field: unknown field "${sec.id}.${fKey}".`);
+            }
+            if (URL_FIELD_NAMES.has(fKey) && typeof val[fKey] === "string" && val[fKey].trim()) {
+              const kind = fKey === "photo" || fKey === "ogImage" ? "image" : "link";
+              if (!sanitizeUrl(val[fKey], kind)) {
+                throw new Error(`Invalid field: "${sec.id}.${fKey}" has an unsafe URL.`);
+              }
             }
           }
         }

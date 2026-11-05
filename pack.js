@@ -13,10 +13,16 @@
  * test suite runs exactly the code the generator ships.
  */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory();
-  else root.Pack = factory();
-})(typeof self !== "undefined" ? self : this, function () {
+  if (typeof module === "object" && module.exports) {
+    const UrlAllowlist = require("./url-allowlist.js");
+    module.exports = factory(UrlAllowlist);
+  } else {
+    root.Pack = factory(root.UrlAllowlist);
+  }
+})(typeof self !== "undefined" ? self : this, function (UrlAllowlist) {
   "use strict";
+
+  const sanitizeUrl = UrlAllowlist && UrlAllowlist.sanitizeUrl ? UrlAllowlist.sanitizeUrl : (u) => u;
 
   /* CRC-32 */
 
@@ -186,6 +192,7 @@
     "studio.html",
     "style.css",
     "script.js",
+    "url-allowlist.js",
     "config.js",
     "robots.txt",
     "sitemap.xml",
@@ -229,7 +236,11 @@
     const personal = config.personal || {};
     const company = config.company || {};
     const seo = config.seo || {};
-    return [personal.photo, (company.logo || {}).card, seo.ogImage].filter(Boolean);
+    return [
+      sanitizeUrl(personal.photo, "image"),
+      sanitizeUrl((company.logo || {}).card, "image"),
+      sanitizeUrl(seo.ogImage, "image"),
+    ].filter(Boolean);
   };
 
   /**
@@ -497,5 +508,6 @@
     RESUME_MAX,
     CORE_FILES,
     PAGES,
+    sanitizeUrl,
   };
 });

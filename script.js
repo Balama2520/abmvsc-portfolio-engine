@@ -13,6 +13,10 @@
 (() => {
   "use strict";
 
+  const sanitizeUrl = (typeof UrlAllowlist !== "undefined" && UrlAllowlist.sanitizeUrl)
+    ? UrlAllowlist.sanitizeUrl
+    : (u) => u;
+
   /* 0. Context & helpers */
   const cfg = window.PORTFOLIO_CONFIG || {};
 
@@ -170,9 +174,11 @@
 
   const projectCards = (items) => items
     .map((pr, i) => {
+      const safeLive = sanitizeUrl(pr.liveUrl, "link");
+      const safeGh = sanitizeUrl(pr.githubUrl, "link");
       const links = [
-        pr.liveUrl   ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer">Live ↗</a>` : "",
-        pr.githubUrl ? `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : "",
+        safeLive   ? `<a href="${esc(safeLive)}" target="_blank" rel="noopener noreferrer">Live ↗</a>` : "",
+        safeGh ? `<a href="${esc(safeGh)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : "",
       ].filter(Boolean).join("");
 
       const topRight = links
@@ -221,8 +227,9 @@
     .map((r, i) => {
       const metrics = arr(r.metrics);
       const tag = [r.publisher, r.year].filter(Boolean).map(esc).join(" · ");
-      const link = r.url
-        ? `<a class="achievement-link" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">Read the paper ↗</a>`
+      const safePaperUrl = sanitizeUrl(r.url, "link");
+      const link = safePaperUrl
+        ? `<a class="achievement-link" href="${esc(safePaperUrl)}" target="_blank" rel="noopener noreferrer">Read the paper ↗</a>`
         : r.docId ? `<span class="achievement-tag">Doc #${esc(r.docId)}</span>` : "";
       return `
       <article class="achievement-card ${i === 0 ? "achievement-highlight" : ""}">
@@ -236,24 +243,30 @@
     .join("");
 
   const achievementCards = (items) => items
-    .map((a) => `
+    .map((a) => {
+      const safeProof = sanitizeUrl(a.url, "link");
+      return `
       <article class="achievement-card">
         <p class="achievement-tag">${esc(a.issuer || "Recognition")}</p>
         <h3>${esc(a.title || "Achievement")}</h3>
         ${a.detail ? `<p>${esc(a.detail)}</p>` : ""}
         ${a.year ? `<span class="exp-date" style="display:inline-block; margin-top:8px;">${esc(a.year)}</span>` : ""}
-        ${a.url ? `<a class="achievement-link" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">View proof ↗</a>` : ""}
-      </article>`)
+        ${safeProof ? `<a class="achievement-link" href="${esc(safeProof)}" target="_blank" rel="noopener noreferrer">View proof ↗</a>` : ""}
+      </article>`;
+    })
     .join("");
 
   const certCards = (items) => items
-    .map((c) => `
+    .map((c) => {
+      const safeVerify = sanitizeUrl(c.url, "link");
+      return `
       <article class="cert-card">
         <p class="cert-issuer">${esc(c.issuer || "Certification")}</p>
         <h3>${esc(c.title || "Certification")}</h3>
         ${c.year ? `<p class="cert-date">${esc(c.year)}</p>` : ""}
-        ${c.url ? `<a class="achievement-link" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">Verify ↗</a>` : ""}
-      </article>`)
+        ${safeVerify ? `<a class="achievement-link" href="${esc(safeVerify)}" target="_blank" rel="noopener noreferrer">Verify ↗</a>` : ""}
+      </article>`;
+    })
     .join("");
 
   const pillarCards = (items) => items
@@ -273,15 +286,19 @@
     .join("");
 
   const linkCards = (items) => items
-    .map((l) => `
-      <a class="contact-link-card" href="${esc(l.url)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>
+    .map((l) => {
+      const safeHref = sanitizeUrl(l.url, "link");
+      if (!safeHref) return "";
+      return `
+      <a class="contact-link-card" href="${esc(safeHref)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>
         <span class="contact-link-icon">${esc(l.icon)}</span>
         <div>
           <p class="contact-link-label">${esc(l.label)}</p>
           <p class="contact-link-sub">${esc(l.sub)}</p>
         </div>
         <span class="contact-link-arrow">↗</span>
-      </a>`)
+      </a>`;
+    })
     .join("");
 
   const paragraphBlock = (items) => items
@@ -492,20 +509,29 @@
       setHidden(el, false);
 
       if (el.tagName === "IMG") {
-        el.setAttribute("src", val);
-        if (p.name) el.setAttribute("alt", p.name);
+        const safe = sanitizeUrl(val, "image");
+        if (safe) {
+          el.setAttribute("src", safe);
+          if (p.name) el.setAttribute("alt", p.name);
+        } else {
+          setHidden(el, true);
+        }
         return;
       }
 
       if (el.tagName === "A") {
         if (key.includes("email")) {
-          el.setAttribute("href", `mailto:${val}`);
+          const safe = sanitizeUrl(`mailto:${val}`, "link");
+          if (safe) el.setAttribute("href", safe);
           el.textContent = val;
         } else if (key.includes("phone")) {
-          el.setAttribute("href", `tel:${String(val).replace(/\s/g, "")}`);
+          const safe = sanitizeUrl(`tel:${String(val).replace(/\s/g, "")}`, "link");
+          if (safe) el.setAttribute("href", safe);
           el.textContent = val;
         } else {
-          el.setAttribute("href", val);
+          const safe = sanitizeUrl(val, "link");
+          if (safe) el.setAttribute("href", safe);
+          else setHidden(el, true);
         }
         return;
       }

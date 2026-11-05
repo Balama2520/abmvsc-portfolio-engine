@@ -85,3 +85,4 @@ test("config-parser: malicious JavaScript inputs execute nothing and throw error
     assert.equal(globalThis.__flag_pwned, false, `Flag was set by payload: ${payload}`);
   }
 });
+
