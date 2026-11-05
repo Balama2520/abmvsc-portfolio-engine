@@ -53,9 +53,13 @@ it. The policy stays script-src 'self' with no inline allowance.
 
 ## Phase 5 — Repository and docs
 
+Note: the studio email also appeared in SETUP.md, so it was replaced there too
+for consistency. package.json homepage was set to a neutral placeholder; the
+repository and bugs URLs stay pointed at the real repo so the links keep working.
+
 - [ ] 5.1 Reorder and update README with live screenshots.
-- [ ] 5.2 Remove personal policy emails and inspect GitHub templates.
-- [ ] 5.3 Remove orphan assets, unused CSS, and scratch files.
+- [x] 5.2 Remove personal policy emails and inspect GitHub templates.
+- [x] 5.3 Remove orphan assets, unused CSS, and scratch files.
 - [ ] 5.4 Run spelling and banned-word checks.
 - [ ] 5.5 Update changelog, test count, and draft release notes.
 - [ ] 5.6 Add plain-language privacy documentation.

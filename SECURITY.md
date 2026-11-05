@@ -44,8 +44,9 @@ Use GitHub's private reporting:
 3. Include: what you found, the steps to reproduce, the impact, and any
    suggested fix.
 
-If you cannot use GitHub's advisory form, email **contact@abmvsc.studio** with
-`SECURITY` in the subject line.
+If you cannot use GitHub's advisory form, open a minimal issue asking a
+maintainer to contact you privately. Do not put any details of the vulnerability
+in a public issue.
 
 ## What to expect
 

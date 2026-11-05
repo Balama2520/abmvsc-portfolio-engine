@@ -114,6 +114,6 @@ When adding a new list, register it in **both** `RENDERERS` and `LIST_COUNTS` in
 ## Contact
 
 **ABMVSC Technology & Innovation Studio**
-- Email: contact@abmvsc.studio
-- GitHub: [github.com/Balama2520](https://github.com/Balama2520)
+- Questions and bug reports: [github.com/Balama2520/abmvsc-portfolio-template/issues](https://github.com/Balama2520/abmvsc-portfolio-template/issues)
+- Security reports: use the repository's private vulnerability reporting form
 

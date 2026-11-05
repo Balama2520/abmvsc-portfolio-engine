@@ -5,7 +5,7 @@
   "description": "Development tooling for the Portfolio Engine. The template itself ships with zero dependencies and no build step — jsdom is used only to run the regression tests in CI.",
   "license": "MIT",
   "author": "ABMVSC Technology & Innovation Studio",
-  "homepage": "https://github.com/Balama2520/abmvsc-portfolio-template#readme",
+  "homepage": "https://example.com/abmvsc-portfolio-template",
   "repository": {
     "type": "git",
     "url": "https://github.com/Balama2520/abmvsc-portfolio-template.git"

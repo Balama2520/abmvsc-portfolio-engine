@@ -287,6 +287,5 @@ goes live still showing the demo content.
 
 ## Need Help?
 
-- **Email:** contact@abmvsc.studio
-- **GitHub:** [github.com/Balama2520](https://github.com/Balama2520)
+- **Questions and bug reports:** [github.com/Balama2520/abmvsc-portfolio-template/issues](https://github.com/Balama2520/abmvsc-portfolio-template/issues)
 - **Studio:** `your-site.netlify.app/studio.html` once you deploy your own copy
