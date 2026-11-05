@@ -370,6 +370,26 @@ body.gen-body {
   .gen-rail-text small {
     display: block;
   }
+
+  /* Keep "Next" within thumb reach: the step buttons ride the bottom edge
+     while the form scrolls. The negative margins cancel the layout padding so
+     the bar meets both screen edges. */
+  .gen-steps-nav {
+    position: sticky;
+    bottom: 0;
+    z-index: 400;
+    margin: 12px -24px 0;
+    padding: 12px 24px;
+    background: var(--bar-bg);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+  }
+
+  /* Every control a thumb can land on is at least 44px tall. */
+  .gen-btn,
+  .gen-linkbtn {
+    min-height: 44px;
+  }
 }
 
 .gen-steps-nav {

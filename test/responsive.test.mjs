@@ -137,6 +137,38 @@ test("layout: the demo notice, chat bubble and skills ticker do not overlap at 3
   await page.close();
 });
 
+// The master plan asks for a thumb-friendly generator: every control a phone
+// user can tap is at least 44px tall, and the step buttons stay pinned to the
+// bottom edge so "Next" is always within reach.
+test("layout: the generator's controls are thumb-sized and the step nav sticks at 375px", async () => {
+  const page = await browser.newPage({ viewport: { width: 375, height: 812 } });
+  await page.goto(`${repo.base}/setup.html`, { waitUntil: "load" });
+  await page.waitForTimeout(500);
+
+  const small = await page.evaluate(() => {
+    const selectors = ["#genZipBtn", "#genBack", "#genNext", ".gen-rail-step", ".gen-upload-pick .gen-btn"];
+    const out = [];
+    selectors.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el) => {
+        if (el.closest("[hidden]") || el.closest("details:not([open])")) return;
+        if (getComputedStyle(el).display === "none") return;
+        const height = el.getBoundingClientRect().height;
+        if (height < 44) out.push({ sel, height });
+      });
+    });
+    return out;
+  });
+  assert.deepEqual(small, [], `controls under 44px tall:\n${JSON.stringify(small)}`);
+
+  const sticky = await page.evaluate(() => {
+    const nav = document.querySelector(".gen-steps-nav");
+    return nav ? getComputedStyle(nav).position : "missing";
+  });
+  assert.equal(sticky, "sticky", "the step buttons should stick to the bottom on a phone");
+
+  await page.close();
+});
+
 for (const view of VIEWPORTS) {
   test(`layout: nothing overflows at ${view.width}px`, async () => {
     for (const file of PAGES) {
