@@ -40,7 +40,8 @@
     "ICONDIR",
     "ICONDIRENTRY",
     "vcard",
-    "SOCIALPROFILE"
+    "SOCIALPROFILE",
+    "fulfill"
   ],
   "ignorePaths": [
     "node_modules/**",

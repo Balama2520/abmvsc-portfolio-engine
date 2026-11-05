@@ -1073,4 +1073,6 @@ body.gen-body {
 
 .gen-foot a {
   color: var(--accent-text);
+  /* A link inside a sentence needs more than colour to stand out. */
+  text-decoration: underline;
 }

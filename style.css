@@ -98,6 +98,10 @@
   --text: #0f172a;
   --text-muted: #475569;
   --text-soft: #64748b;
+  /* Brand ink: the dark brand colour used for a few headings and figures on a
+     light background. It flips to the normal text colour in the dark theme,
+     where the brand colour would be invisible. */
+  --brand-ink: var(--navy);
 
   /* Accent — orange. Fills carry navy text. Text on a light background uses
      --accent-text, a darker shade that clears 4.5:1 against --bg and --surface. */
@@ -141,6 +145,9 @@
   --text-soft: #8fa0b8;
   --accent-text: #ffa64d;
   --accent-soft: #2a1c0a;
+  /* On a dark surface the brand colour is too dark to read, so the brand ink
+     becomes the normal light text colour. */
+  --brand-ink: var(--text);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
@@ -582,14 +589,15 @@ nav a.active {
 }
 
 .skills-scroll span {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 13px;
   font-weight: 500;
   flex-shrink: 0;
 }
 
+/* The alternating dimmer words still clear 4.5:1 on the brand bar. */
 .skills-scroll span:nth-child(odd) {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 @keyframes marquee {
@@ -990,13 +998,16 @@ nav a.active {
   border-color: var(--navy);
 }
 
-.achievement-highlight h3,
-.achievement-highlight p {
+/* The highlight card is dark, so its text has to be light. These selectors are
+   doubled up with .achievement-card so they beat the base rules further down. */
+.achievement-card.achievement-highlight h3,
+.achievement-card.achievement-highlight p,
+.achievement-card.achievement-highlight .metric-list {
   color: rgba(255, 255, 255, 0.9);
 }
 
-.achievement-highlight .achievement-tag {
-  color: rgba(255, 255, 255, 0.6);
+.achievement-card.achievement-highlight .achievement-tag {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .achievement-tag {
@@ -1160,7 +1171,7 @@ nav a.active {
 }
 
 .contact-link-sub {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.62);
   font-size: 12px;
   margin-top: 2px;
 }

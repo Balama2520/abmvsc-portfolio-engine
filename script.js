@@ -166,7 +166,7 @@
     .map((s, i) => `
       ${i ? '<div class="stat-divider"></div>' : ""}
       <div class="stat">
-        <span class="stat-num"${navy ? ' style="color:var(--navy);"' : ""}>${esc(s.value)}</span>
+        <span class="stat-num"${navy ? ' style="color:var(--brand-ink);"' : ""}>${esc(s.value)}</span>
         <span class="stat-label">${esc(s.label)}</span>
       </div>`)
     .join("");
@@ -1171,6 +1171,9 @@
       chatbot.classList.add("open");
       toggle.setAttribute("aria-expanded", "true");
       win.setAttribute("aria-hidden", "false");
+      // The closed window is inert so its controls are not focusable while it is
+      // out of sight and out of the screen reader's reach.
+      win.inert = false;
       if (!messages.dataset.greeted) {
         messages.dataset.greeted = "true";
         updateQuickChips(null);
@@ -1183,6 +1186,7 @@
       chatbot.classList.remove("open");
       toggle.setAttribute("aria-expanded", "false");
       win.setAttribute("aria-hidden", "true");
+      win.inert = true;
     };
 
     toggle.addEventListener("click", () => (chatbot.classList.contains("open") ? closeChat() : openChat()));

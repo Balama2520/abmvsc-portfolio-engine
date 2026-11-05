@@ -66,7 +66,17 @@ it. The policy stays script-src 'self' with no inline allowance.
 
 ## Phase 4 — Quality gates
 
-- [ ] 4.1 Add axe-core accessibility coverage.
+- [x] 4.1 Add axe-core accessibility coverage.
+  Decision: axe-core runs in real Chromium through Playwright in test/a11y.test.mjs,
+  scanning the generator once and both generated pages in the light, dark and
+  minimal themes. A theme only exists when the runtime blends the accent shades
+  from config.theme.mode, so each themed page is served its own config by
+  intercepting the request; the scan runs with the content policy lifted because
+  axe is injected at test time. The bar is zero serious or critical issues, which
+  the run meets. The colour fixes this needed (brand ink on dark surfaces, the
+  skills marquee, the highlighted achievement card, footer links, the closed chat
+  window made inert) cover the plan's "contrast of every text pair at least
+  4.5:1", which overlaps task 4.6.
 - [ ] 4.2 Add full keyboard-only flow coverage.
 - [ ] 4.3 Add Lighthouse checks and thresholds.
 - [ ] 4.4 Run cross-browser ZIP smoke tests.

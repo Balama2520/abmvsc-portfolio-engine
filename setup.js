@@ -937,9 +937,11 @@
       const active = !showEverything && i === chapterIndex;
       // The done state is a filled badge, not a colour change alone, so it is
       // still readable without colour; the label says the same thing in words.
+      // The label starts with the number and title shown on the button, so the
+      // spoken name matches the visible text.
       return `<button type="button" class="gen-rail-step${active ? " is-active" : ""}${done ? " is-done" : ""}"
           data-goto="${i}" aria-current="${active ? "step" : "false"}"
-          aria-label="${esc(c.title)}: ${esc(c.hint)}${done ? " (started)" : ""}">
+          aria-label="${i + 1} ${esc(c.title)} ${esc(c.hint)}${done ? " (started)" : ""}">
           <span class="gen-rail-num">${i + 1}</span>
           <span class="gen-rail-text"><b>${esc(c.title)}</b><small>${esc(c.hint)}</small></span>
         </button>`;
