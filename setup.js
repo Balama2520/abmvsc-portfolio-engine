@@ -17,6 +17,8 @@
     { key: "name", label: "Project name", placeholder: "Recipe Finder", help: "Short and clear — this becomes the card heading." },
     { key: "category", label: "Category / tag", placeholder: "Web Application", help: "One or two words shown as a small tag on the card." },
     { key: "description", label: "Description", type: "textarea", placeholder: "A web app that suggests recipes from the ingredients you already have.", help: "One or two sentences on what it does and who it is for." },
+    { key: "problem", label: "The problem it solves", type: "textarea", placeholder: "People buy food they forget about and end up throwing it away.", help: "Optional. One sentence on the problem, to turn the card into a short case study." },
+    { key: "built", label: "What you built", type: "textarea", placeholder: "I built an app that reads what is in the kitchen and suggests meals with it.", help: "Optional. What did you build, and what happened?" },
     { key: "tech", label: "Tech stack", type: "csv", placeholder: "React, Node.js, PostgreSQL", help: "Separate each tool with a comma." },
     { key: "liveUrl", label: "Live URL", placeholder: "https://recipe-finder.netlify.app", help: "The address of the running project. Leave blank if there is none." },
     { key: "githubUrl", label: "GitHub URL", placeholder: "https://github.com/yourname/recipe-finder", help: "The code repository link. Leave blank if it is private." },
@@ -143,7 +145,7 @@
 
     {
       id: "projects", title: "Projects", page: "portfolio", chapter: "work",
-      help: "Shown on the portfolio page and reused as the studio's product ecosystem when you don't define separate products. The chatbot can answer questions about each one by name.",
+      help: "Shown on the portfolio page and reused as the studio's product ecosystem when you don't define separate products. The chatbot can answer questions about each one by name. Fill in the problem and what you built to show each one as a short case study.",
       lists: [{ key: "projects", title: "Project cards", kind: "object", fields: PROJECT_FIELDS, addLabel: "project", itemTitle: (o) => o.name }],
     },
 

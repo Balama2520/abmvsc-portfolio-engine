@@ -134,6 +134,8 @@ window.PORTFOLIO_CONFIG = {
       "name": "Project One",
       "category": "Web Application",
       "description": "A production web application with a modern frontend, scalable APIs and reliable data storage. Explain the problem it solves and who it is for.",
+      "problem": "Small teams had no simple way to see what they shipped each week.",
+      "built": "A dashboard that pulls from their tools and shows what changed, in one view.",
       "tech": [
         "React",
         "Node.js",
@@ -149,6 +151,8 @@ window.PORTFOLIO_CONFIG = {
       "name": "Project Two",
       "category": "AI Platform",
       "description": "A retrieval-augmented AI platform that turns documents into an answerable knowledge base with vector search.",
+      "problem": "Support staff spent hours searching long documents for a single answer.",
+      "built": "A search tool that turns their documents into answers, with links back to the source.",
       "tech": [
         "Python",
         "FastAPI",

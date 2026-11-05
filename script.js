@@ -197,6 +197,13 @@
         ? `<div class="project-links">${links}</div>`
         : pr.status ? `<span class="project-status">${esc(pr.status)}</span>` : "";
 
+      const study = (pr.problem || pr.built)
+        ? `<div class="project-study">
+            ${pr.problem ? `<p><span class="study-label">The problem</span>${esc(pr.problem)}</p>` : ""}
+            ${pr.built ? `<p><span class="study-label">What I built</span>${esc(pr.built)}</p>` : ""}
+          </div>`
+        : "";
+
       return `
       <article class="project-card ${i === 0 ? "project-featured" : ""}">
         <div class="project-card-top">
@@ -205,6 +212,7 @@
         </div>
         <h3>${esc(pr.name || "Untitled Project")}</h3>
         <p>${esc(pr.description || "")}</p>
+        ${study}
         ${pr.result ? `<div class="project-metric">${esc(pr.result)}</div>` : ""}
         <p class="tech-stack">${arr(pr.tech).map(esc).join(" · ")}</p>
       </article>`;

@@ -228,6 +228,7 @@ test("index.html hydrates from config.js", async () => {
   assert.equal(JSON.parse(ld.textContent)["@type"], "Person");
 
   assert.ok(doc.querySelectorAll(".project-card").length > 0, "projects rendered");
+  assert.ok(doc.querySelectorAll(".project-study").length > 0, "project case studies rendered");
   assert.ok(doc.querySelectorAll(".skill-card").length > 0, "skills rendered");
   assert.ok(doc.querySelectorAll(".contact-link-card").length > 0, "contact links rendered");
 
