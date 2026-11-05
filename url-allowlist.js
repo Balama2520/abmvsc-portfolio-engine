@@ -36,6 +36,14 @@
     const stripped = str.replace(/[\u0000-\u001F\u007F]/g, "").trim();
     if (!stripped) return "";
 
+    // A real URL or file path never contains whitespace or the characters that
+    // end HTML attributes. Rejecting them here stops a hostile string such as
+    // "<img src=x onerror=alert(1)>" from being accepted as a "relative path".
+    if (/[\s<>"'`]/.test(stripped)) return "";
+
+    // Longer than any real browser URL; treat it as junk, not a path.
+    if (stripped.length > 2048) return "";
+
     // Decode percent-encoded characters to inspect scheme
     let decoded = stripped;
     try {

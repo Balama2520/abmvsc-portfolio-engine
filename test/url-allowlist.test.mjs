@@ -64,6 +64,21 @@ test("url-allowlist: blocks javascript, vbscript, and data:text/html across bypa
   }
 });
 
+test("url-allowlist: rejects junk that is not a real URL or path", () => {
+  const junk = [
+    "<img src=x onerror=alert(1)>",
+    "\"><svg onload=alert(1)>",
+    "path with spaces.html",
+    'a"b.html',
+    "a<b.html",
+    "Z".repeat(10000)
+  ];
+  for (const value of junk) {
+    assert.equal(sanitizeUrl(value, "link"), "", `link junk should be blocked: ${value.slice(0, 40)}`);
+    assert.equal(sanitizeUrl(value, "image"), "", `image junk should be blocked: ${value.slice(0, 40)}`);
+  }
+});
+
 test("url-allowlist: pack.js shares the identical sanitizeUrl function", () => {
   assert.equal(typeof Pack.sanitizeUrl, "function");
   assert.equal(Pack.sanitizeUrl("javascript:alert(1)", "link"), "");
