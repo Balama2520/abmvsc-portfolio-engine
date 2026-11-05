@@ -104,6 +104,17 @@ async function loadPage(file, { settle = 900 } = {}) {
   });
 
   await new Promise((r) => setTimeout(r, settle));
+
+  // The generator paints the form once, then imports config.js and paints the
+  // list items. A fixed sleep is a race under load, so wait for the imported
+  // fields to land before the assertions below read the form.
+  if (file === "setup.html") {
+    const deadline = Date.now() + 8000;
+    while (Date.now() < deadline && dom.window.document.querySelectorAll("[data-path]").length <= 100) {
+      await new Promise((r) => setTimeout(r, 50));
+    }
+  }
+
   return { dom, doc: dom.window.document, errors };
 }
 
