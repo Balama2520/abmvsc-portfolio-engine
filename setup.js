@@ -1016,12 +1016,25 @@
   /* 8. Draft (localStorage) */
   const DRAFT_KEY = "portfolio-engine-draft-v1";
   let draftTimer = null;
+  let savedNoteTimer = null;
+
+  // A small, honest status line: the draft really is written to this browser
+  // and nowhere else. It hides itself again so it never becomes clutter.
+  const noteSaved = (message) => {
+    const el = $("#genSaved");
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = false;
+    clearTimeout(savedNoteTimer);
+    savedNoteTimer = setTimeout(() => { el.hidden = true; }, 4000);
+  };
 
   const saveDraft = () => {
     clearTimeout(draftTimer);
     draftTimer = setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(buildConfig()));
+        noteSaved("Saved on this device");
       } catch (err) {
         /* storage full or blocked — drafts are a convenience, not a requirement */
       }
@@ -1451,6 +1464,7 @@
     renderAll();
     wireEvents();
     refreshPreview(true);
+    if (draft) noteSaved("Loaded the draft saved on this device");
 
     // When served over http(s) we can offer the project's own config as a
     // starting point. On file:// the fetch is blocked, so the form simply

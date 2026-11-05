@@ -218,6 +218,15 @@ body.gen-body {
   font-size: 12px;
 }
 
+/* Autosave status line — a visible confirmation that the draft was stored on
+   this device. Dark green on the light page clears WCAG AA for body text. */
+.gen-saved {
+  font-size: 12px;
+  font-weight: 600;
+  color: #166534;
+  margin: -6px 0 14px;
+}
+
 /* Guided wizard */
 .gen-wizard {
   background: var(--surface);

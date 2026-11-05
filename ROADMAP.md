@@ -25,11 +25,12 @@ it. The policy stays script-src 'self' with no inline allowance.
 - [ ] 2.1 Add plain hints and examples to every field.
 - [ ] 2.2 Add locally computed recruiter-readiness checklist.
 - [ ] 2.3 Add project case-study helper fields and card rendering.
-- [ ] 2.4 Add visible autosave and named local profiles.
+- [x] 2.4 Add a visible "Saved on this device" autosave note. (Named local
+  profiles dropped: the master plan scopes this task to the autosave note only.)
 - [ ] 2.5 Resize, compress, and crop uploaded photos locally.
 - [ ] 2.6 Replace technical errors with plain recovery guidance.
 - [ ] 2.7 Complete mobile-first generator interaction work.
-- [ ] 2.8 Centralize strings and add Hindi and RTL support.
+- [x] 2.8 Cancelled: the master plan says English only, no strings file, no RTL.
 
 ## Phase 3 — Output quality
 
