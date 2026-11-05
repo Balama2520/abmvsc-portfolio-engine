@@ -14,7 +14,7 @@
     "url": "https://github.com/Balama2520/abmvsc-portfolio-template/issues"
   },
   "scripts": {
-    "test": "node --test \"test/*.test.mjs\"",
+    "test": "node --test test/*.test.mjs",
     "serve": "npx --yes serve ."
   },
   "keywords": [
