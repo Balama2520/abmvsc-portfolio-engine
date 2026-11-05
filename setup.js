@@ -461,6 +461,172 @@
     return { bytes: new Uint8Array(buffer), type: blob.type || "image/jpeg", originalSize: file.size, newSize: buffer.byteLength };
   };
 
+  /* Brand images: a social preview card and initials favicons, drawn here with
+     the canvas rather than shipped as the sample artwork. If the browser cannot
+     draw them the files on disk are used unchanged, so a ZIP is never lost. */
+  const OG_FILE = "og-image.png";
+  const OG_WIDTH = 1200;
+  const OG_HEIGHT = 630;
+  const BRAND_FONT = "'Space Grotesk', 'Inter', system-ui, sans-serif";
+
+  const ICON_FILES = [
+    { file: "favicon-16x16.png", size: 16 },
+    { file: "favicon-32x32.png", size: 32 },
+    { file: "apple-touch-icon.png", size: 180 },
+    { file: "android-chrome-192x192.png", size: 192 },
+    { file: "android-chrome-512x512.png", size: 512 },
+  ];
+
+  const hexColor = (value, fallback) =>
+    /^#[0-9a-f]{6}$/i.test(str(value).trim()) ? str(value).trim() : fallback;
+
+  // WCAG relative luminance, used only to choose a readable text colour.
+  const luminance = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    const parts = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+      const c = v / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * parts[0] + 0.7152 * parts[1] + 0.0722 * parts[2];
+  };
+
+  const contrast = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+
+  // Picks white or near-black, whichever reads better on the given colour.
+  const readableText = (bg) =>
+    contrast(luminance(bg), luminance("#FFFFFF")) >= contrast(luminance(bg), luminance("#0B1729"))
+      ? "#FFFFFF"
+      : "#0B1729";
+
+  const initialsOf = (name, initials) => {
+    const given = str(initials).trim();
+    if (given) return given.slice(0, 3).toUpperCase();
+    const words = str(name).trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return "AB";
+    return words.slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  };
+
+  // Sets the font at a starting size and shrinks it until the text fits.
+  const fitText = (ctx, text, maxWidth, weight, size, family) => {
+    let at = size;
+    for (;;) {
+      ctx.font = `${weight} ${at}px ${family}`;
+      if (ctx.measureText(text).width <= maxWidth || at <= 16) break;
+      at -= 2;
+    }
+    return at;
+  };
+
+  const newCanvas = (w, h) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext && canvas.getContext("2d");
+    return ctx ? { canvas, ctx } : null;
+  };
+
+  const canvasBytes = async (canvas) => {
+    const blob = await canvasToBlob(canvas, "image/png", 1);
+    if (!blob) return null;
+    return new Uint8Array(await blob.arrayBuffer());
+  };
+
+  // A 1200 x 630 card: dark background, an accent bar and monogram, the name
+  // and role in large type. Sized for the social preview images crawlers read.
+  const drawSocialCard = async (config, accent, primary, initials) => {
+    const frame = newCanvas(OG_WIDTH, OG_HEIGHT);
+    if (!frame) return null;
+    const { ctx } = frame;
+    const p = (config && config.personal) || {};
+    const name = str(p.name).trim() || "Your Name";
+    const role = str(p.role).trim();
+
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, OG_WIDTH, OG_HEIGHT);
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, OG_HEIGHT - 18, OG_WIDTH, 18);
+
+    const badge = 132;
+    const bx = 96;
+    const by = 88;
+    ctx.fillStyle = accent;
+    if (ctx.arc) {
+      ctx.beginPath();
+      ctx.arc(bx + badge / 2, by + badge / 2, badge / 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillRect(bx, by, badge, badge);
+    }
+    ctx.fillStyle = readableText(accent);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    fitText(ctx, initials, badge * 0.8, 700, 64, BRAND_FONT);
+    ctx.fillText(initials, bx + badge / 2, by + badge / 2 + 4);
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    const left = 96;
+    const maxWidth = OG_WIDTH - left * 2;
+
+    const nameSize = fitText(ctx, name, maxWidth, 700, 76, BRAND_FONT);
+    ctx.font = `700 ${nameSize}px ${BRAND_FONT}`;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(name, left, 372);
+
+    ctx.fillStyle = accent;
+    ctx.fillRect(left, 400, 128, 8);
+
+    if (role) {
+      const roleSize = fitText(ctx, role, maxWidth, 500, 34, BRAND_FONT);
+      ctx.font = `500 ${roleSize}px ${BRAND_FONT}`;
+      ctx.fillStyle = "#C7D2E0";
+      ctx.fillText(role, left, 468);
+    }
+
+    return canvasBytes(frame.canvas);
+  };
+
+  // A square tile carrying the initials, for every favicon size.
+  const drawMonogram = async (size, initials, accent) => {
+    const frame = newCanvas(size, size);
+    if (!frame) return null;
+    const { ctx } = frame;
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = readableText(accent);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const seed = initials.length > 2 ? Math.round(size * 0.42) : Math.round(size * 0.58);
+    const glyph = fitText(ctx, initials, size * 0.82, 700, seed, BRAND_FONT);
+    ctx.fillText(initials, size / 2, size / 2 + Math.max(1, glyph * 0.04));
+    return canvasBytes(frame.canvas);
+  };
+
+  // Returns the generated files keyed by name, or {} when the browser cannot
+  // draw them and the files on disk should be kept.
+  const renderBrandAssets = async (config) => {
+    if (typeof document === "undefined" || !document.createElement) return {};
+    const theme = (config && config.theme) || {};
+    const accent = hexColor(theme.accentColor, "#FF7900");
+    const primary = hexColor(theme.primaryColor, "#10264B");
+    const p = (config && config.personal) || {};
+    const initials = initialsOf(p.name, p.initials);
+
+    const out = {};
+    try {
+      const social = await drawSocialCard(config, accent, primary, initials);
+      if (social) out[OG_FILE] = social;
+      for (const icon of ICON_FILES) {
+        const bytes = await drawMonogram(icon.size, initials, accent);
+        if (bytes) out[icon.file] = bytes;
+      }
+      if (out["favicon-32x32.png"]) out["favicon.ico"] = Pack.pngToIco(out["favicon-32x32.png"], 32);
+    } catch (err) {
+      return {};
+    }
+    return out;
+  };
+
   /* 4. State — normalize (config → form) and buildConfig (form → config) */
   const emptyItem = (list) => {
     if (list.kind === "string") return "";
@@ -561,6 +727,10 @@
     // notice is always off in it. (The round-trip test compares paths, so the
     // key has to be present.)
     if (out.theme) out.theme.showDemoNotice = false;
+
+    // A blank social image is filled with the card the generator draws, so a
+    // shared link always has a picture to show.
+    if (out.seo && !str(out.seo.ogImage).trim()) out.seo.ogImage = OG_FILE;
 
     return out;
   };
@@ -934,10 +1104,11 @@
   /* 6. Output — config.js source */
   // The file starts with the assignment. No header banner: the first thing a
   // reader sees should be the config, and a test locks that in.
-  const buildConfigSource = () => {
-    const json = JSON.stringify(buildConfig(), null, 2).replace(/</g, "\\u003c");
+  const configSource = (config) => {
+    const json = JSON.stringify(config, null, 2).replace(/</g, "\\u003c");
     return `window.PORTFOLIO_CONFIG = ${json};\n`;
   };
+  const buildConfigSource = () => configSource(buildConfig());
 
   const updateOutput = () => {
     const out = $("#genOutput");
@@ -1425,7 +1596,7 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
   // point: a file the pages name can name more files of its own (the web
   // manifest names its icons), so we load what the manifest asks for until it
   // stops growing. Anything still absent is reported instead of shipped.
-  const collectSite = async (config) => {
+  const collectSite = async (config, generated = []) => {
     const files = {
       "index.html": await fetchSiteFile("index.html"),
       "studio.html": await fetchSiteFile("studio.html"),
@@ -1434,6 +1605,8 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       "config.js",
       ".nojekyll",
       "README-DEPLOY.txt",
+      // Files the generator writes itself take the place of the copies on disk.
+      ...generated,
       ...[uploads.photo, uploads.resume].filter(Boolean).map((file) => file.path),
     ]);
     const skip = (path) =>
@@ -1453,7 +1626,17 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
 
   const buildZip = async () => {
     const config = Pack.withUploadPaths(buildConfig(), uploads);
-    const { files, manifest } = await collectSite(config);
+
+    // The social card and favicons are drawn here, and robots.txt and
+    // sitemap.xml are rewritten with the site's address, so the archive carries
+    // the owner's own artwork and address instead of the sample ones.
+    const generated = {
+      ...(await renderBrandAssets(config)),
+      "robots.txt": Pack.staticRobots(config),
+      "sitemap.xml": Pack.staticSitemap(config),
+    };
+
+    const { files, manifest } = await collectSite(config, Object.keys(generated));
 
     // A crawler fetches the HTML and stops; it never runs script.js. Bake the
     // title, social tags, structured data and hero text into the two pages so
@@ -1469,12 +1652,16 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
     const entries = [];
     const absent = [];
     for (const path of wanted) {
+      if (Object.prototype.hasOwnProperty.call(generated, path)) {
+        entries.push({ path, data: generated[path] });
+        continue;
+      }
       if (Object.prototype.hasOwnProperty.call(files, path)) {
         entries.push({ path, data: files[path] });
         continue;
       }
       if (path === "config.js") {
-        entries.push({ path, data: buildConfigSource() });
+        entries.push({ path, data: configSource(config) });
         continue;
       }
       if (path === ".nojekyll") {

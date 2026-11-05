@@ -525,6 +525,65 @@
     return out;
   };
 
+  /* Files the generator rewrites from config rather than shipping as they are */
+
+  // The site's address with any trailing slash removed, or "" when none is set.
+  const siteBase = (config) => String(((config && config.seo) || {}).siteUrl || "").trim().replace(/\/+$/, "");
+
+  const xmlEscape = (v) =>
+    String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[c]));
+
+  // robots.txt names the sitemap by its full address once one is known, so a
+  // search engine finds it without guessing the domain.
+  const staticRobots = (config) => {
+    const base = siteBase(config);
+    return [
+      "User-agent: *",
+      "Allow: /",
+      "",
+      base ? `Sitemap: ${base}/sitemap.xml` : "# Add your website address in the generator and the sitemap line appears here.",
+      "",
+    ].join("\n");
+  };
+
+  // sitemap.xml lists the two pages at the site's own address. With no address
+  // the placeholder domain stays, exactly as the shipped file has it.
+  const staticSitemap = (config) => {
+    const base = siteBase(config);
+    const origin = base || "https://your-domain.com";
+    const note = base ? "" : "  <!-- Replace https://your-domain.com with your own address. -->\n";
+    const url = (loc, priority) =>
+      `  <url>\n    <loc>${xmlEscape(loc)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>\n`;
+    return (
+      '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      note +
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+      url(`${origin}/`, "1.0") +
+      url(`${origin}/studio.html`, "0.9") +
+      "</urlset>\n"
+    );
+  };
+
+  // Wraps one PNG in the ICO container. Modern browsers accept a PNG inside an
+  // ICO, so the generator can offer a favicon.ico without an image library.
+  const pngToIco = (png, size) => {
+    const edge = Math.max(1, Math.min(256, Math.round(size) || 32));
+    const head = new Uint8Array(22); // ICONDIR (6) + one ICONDIRENTRY (16)
+    const view = new DataView(head.buffer);
+    view.setUint16(0, 0, true); // reserved
+    view.setUint16(2, 1, true); // type: icon
+    view.setUint16(4, 1, true); // image count
+    head[6] = edge === 256 ? 0 : edge; // width, 0 means 256
+    head[7] = edge === 256 ? 0 : edge; // height
+    head[8] = 0; // palette size
+    head[9] = 0; // reserved
+    view.setUint16(10, 1, true); // colour planes
+    view.setUint16(12, 32, true); // bits per pixel
+    view.setUint32(14, png.length, true); // bytes of image data
+    view.setUint32(18, 22, true); // image offset
+    return concat([head, toBytes(png)]);
+  };
+
   return {
     crc32,
     writeZip,
@@ -540,6 +599,10 @@
     checkUpload,
     uploadPath,
     withUploadPaths,
+    siteBase,
+    staticRobots,
+    staticSitemap,
+    pngToIco,
     PHOTO_TYPES,
     PHOTO_MAX,
     RESUME_MAX,

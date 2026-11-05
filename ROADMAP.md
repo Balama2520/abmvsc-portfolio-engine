@@ -35,7 +35,11 @@ it. The policy stays script-src 'self' with no inline allowance.
 ## Phase 3 — Output quality
 
 - [x] 3.1 Cancelled: the master plan lists "a second layout" as out of scope.
-- [ ] 3.2 Generate social preview and favicon assets in-browser.
+- [x] 3.2 Generate social preview and favicon assets in-browser.
+  Decision: the social preview is referenced by its full address (og:image and
+  twitter:image) because a crawler needs that. The favicons stay relative: an
+  absolute icon URL would break the preview of an unzipped folder, and it works
+  the same once deployed.
 - [ ] 3.3 Add print-friendly resume output.
 - [x] 3.4 Cancelled: the master plan lists "JSON Resume" as out of scope.
 - [x] 3.5 Cancelled: the master plan lists "GitHub import" as out of scope.

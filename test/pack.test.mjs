@@ -148,6 +148,51 @@ test("prerender: the config script is versioned with a content hash", () => {
   assert.equal((twice.match(/\?v=/g) || []).length, 1, "one version only");
 });
 
+test("prerender: the social image is referenced by its full address", () => {
+  const config = loadConfig();
+  const html = Pack.prerenderPage(read("index.html"), config, "index.html");
+  const og = html.match(/property="og:image"\s+content="([^"]+)"/)[1];
+  assert.ok(og.startsWith("https://"), "a crawler needs the social image at an absolute address");
+  assert.ok(og.endsWith("/og-image.png"), `the social image should be the generated card, got ${og}`);
+  assert.ok(html.includes(`name="twitter:image" content="${og}"`), "twitter:image matches og:image");
+});
+
+test("pack: robots.txt and sitemap.xml carry the site's own address", () => {
+  const config = loadConfig();
+  const base = Pack.siteBase(config);
+  assert.ok(base.startsWith("https://") && !base.endsWith("/"), "the base is a clean origin");
+
+  const robots = Pack.staticRobots(config);
+  assert.ok(robots.includes(`Sitemap: ${base}/sitemap.xml`), "robots names the sitemap absolutely");
+
+  const sitemap = Pack.staticSitemap(config);
+  assert.ok(sitemap.includes(`<loc>${base}/</loc>`), "the home page is listed");
+  assert.ok(sitemap.includes(`<loc>${base}/studio.html</loc>`), "the studio page is listed");
+  assert.ok(!sitemap.includes("your-domain.com"), "the placeholder domain is replaced");
+  assert.ok(!sitemap.includes("setup.html"), "the builder is never in the sitemap");
+
+  // With no address set, the placeholder stays rather than a broken domain.
+  const blank = { seo: { siteUrl: "" } };
+  assert.ok(Pack.staticRobots(blank).includes("Add your website address"));
+  assert.ok(Pack.staticSitemap(blank).includes("https://your-domain.com/"));
+});
+
+test("pack: pngToIco wraps a PNG in a single-image icon", () => {
+  const png = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 1, 2, 3]);
+  const ico = Pack.pngToIco(png, 32);
+  const view = new DataView(ico.buffer, ico.byteOffset, ico.byteLength);
+
+  assert.equal(view.getUint16(0, true), 0, "reserved field is zero");
+  assert.equal(view.getUint16(2, true), 1, "the file is an icon");
+  assert.equal(view.getUint16(4, true), 1, "it holds one image");
+  assert.equal(ico[6], 32, "the width is 32");
+  assert.equal(ico[7], 32, "the height is 32");
+  assert.equal(view.getUint16(12, true), 32, "32 bits per pixel");
+  assert.equal(view.getUint32(14, true), png.length, "the image length is recorded");
+  assert.equal(view.getUint32(18, true), 22, "the image starts after the header");
+  assert.deepEqual(ico.subarray(22), png, "the PNG bytes follow the header");
+});
+
 test("pack: an archive round-trips through the reader", () => {
   const entries = [
     { path: "index.html", data: "<!doctype html><title>One</title>" },

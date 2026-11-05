@@ -118,6 +118,34 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   for (const host of ["Netlify Drop", "GitHub Pages", "Cloudflare Pages"]) {
     assert.ok(readme.includes(host), `README-DEPLOY.txt should mention ${host}`);
   }
+  // The archive carries the artwork the generator drew, not the sample files:
+  // a social card and favicons built from the name, role and colour.
+  const isPng = (p) => {
+    const bytes = files.get(p);
+    return bytes && bytes[0] === 137 && bytes[1] === 80 && bytes[2] === 78 && bytes[3] === 71;
+  };
+  assert.ok(isPng("og-image.png"), "og-image.png should be a generated PNG");
+  for (const icon of ["favicon-16x16.png", "favicon-32x32.png", "apple-touch-icon.png", "android-chrome-192x192.png", "android-chrome-512x512.png"]) {
+    assert.ok(isPng(icon), `${icon} should be a generated PNG`);
+  }
+  const ico = files.get("favicon.ico");
+  assert.ok(ico && ico[0] === 0 && ico[1] === 0 && ico[2] === 1 && ico[3] === 0, "favicon.ico should be an icon file");
+  // Differing from the files on disk is what proves these were drawn here
+  // rather than copied out of the sample artwork.
+  const drawn = (name) => {
+    const archived = files.get(name);
+    const onDisk = new Uint8Array(fs.readFileSync(path.join(ROOT, name)));
+    return archived && !Buffer.from(archived).equals(Buffer.from(onDisk));
+  };
+  assert.ok(drawn("og-image.png"), "og-image.png should be drawn from the name, role and colour");
+  assert.ok(drawn("favicon-32x32.png"), "the favicon should be drawn from the initials");
+  assert.ok(drawn("favicon.ico"), "favicon.ico should wrap the drawn favicon");
+  // robots.txt and sitemap.xml carry the website address typed into the form.
+  assert.match(text("robots.txt"), /Sitemap: https:\/\/[^\s]+\/sitemap\.xml/, "robots.txt names the sitemap");
+  assert.match(text("sitemap.xml"), /<loc>https:\/\/[^<]+\/studio\.html<\/loc>/, "sitemap.xml lists the studio page");
+  assert.ok(!text("robots.txt").includes("your-domain.com"), "robots.txt is rewritten with the address");
+  assert.ok(!text("sitemap.xml").includes("your-domain.com"), "the placeholder domain is gone once an address is set");
+
   const photoEntry = ["photo.webp", "photo.jpg", "photo.png"].find((name) => files.has(name));
   assert.ok(photoEntry, "the uploaded photo should be in the archive as a prepared image");
   assert.ok(files.has("resume.pdf"), "the uploaded resume should be in the archive");
@@ -137,6 +165,8 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   assert.match(text("studio.html"), /id="pf-ld-json"/, "the shipped studio.html has structured data");
   // The config script is versioned, so an edited config is never served from cache.
   assert.match(indexHtml, /<script src="config\.js\?v=[0-9a-f]+"><\/script>/, "the config script is versioned");
+  // The social image is referenced by its full address, which is what a crawler needs.
+  assert.match(indexHtml, /property="og:image"\s+content="https:\/\/[^"]*\/og-image\.png"/, "og:image is the generated card at an absolute address");
 
   // Every reference inside the archive resolves to another entry in it.
   for (const entry of entries.filter((e) => e.path.endsWith(".html"))) {

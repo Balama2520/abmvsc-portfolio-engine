@@ -35,7 +35,10 @@
     "whatnow",
     "nojekyll",
     "msword",
-    "quot"
+    "quot",
+    "apos",
+    "ICONDIR",
+    "ICONDIRENTRY"
   ],
   "ignorePaths": [
     "node_modules/**",
