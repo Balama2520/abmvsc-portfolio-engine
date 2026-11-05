@@ -61,8 +61,8 @@ repository and bugs URLs stay pointed at the real repo so the links keep working
 - [x] 5.2 Remove personal policy emails and inspect GitHub templates.
 - [x] 5.3 Remove orphan assets, unused CSS, and scratch files.
 - [ ] 5.4 Run spelling and banned-word checks.
-- [ ] 5.5 Update changelog, test count, and draft release notes.
-- [ ] 5.6 Add plain-language privacy documentation.
+- [x] 5.5 Update changelog, test count, and draft release notes.
+- [x] 5.6 Add plain-language privacy documentation.
 
 ## Phase 6 — Final report
 
