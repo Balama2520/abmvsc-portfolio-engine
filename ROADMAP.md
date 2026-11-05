@@ -57,7 +57,7 @@ Note: the studio email also appeared in SETUP.md, so it was replaced there too
 for consistency. package.json homepage was set to a neutral placeholder; the
 repository and bugs URLs stay pointed at the real repo so the links keep working.
 
-- [ ] 5.1 Reorder and update README with live screenshots.
+- [x] 5.1 Reorder and update README with live screenshots.
 - [x] 5.2 Remove personal policy emails and inspect GitHub templates.
 - [x] 5.3 Remove orphan assets, unused CSS, and scratch files.
 - [ ] 5.4 Run spelling and banned-word checks.
