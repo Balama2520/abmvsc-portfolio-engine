@@ -781,9 +781,12 @@
     }
 
     if (f.type === "color") {
+      // The swatch and the text box share one value. The label points at the
+      // swatch, so the text box needs its own name for a screen reader.
       control = `<div class="gen-colour-row">
           <input type="color" data-path="${esc(path)}" id="${id}" value="${esc(value || f.default || "#000000")}" />
-          <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}" placeholder="${esc(f.placeholder || "#10264B")}" />
+          <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}"
+            placeholder="${esc(f.placeholder || "#10264B")}" aria-label="${esc(f.label)} value" />
         </div>`;
     } else if (f.type === "select") {
       const options = (f.options || []).map((o) =>
@@ -816,8 +819,10 @@
 
     const body = list.kind === "string"
       ? (list.multiline
-        ? `<textarea class="gen-textarea" data-path="${esc(base)}" placeholder="Write it here…">${esc(item)}</textarea>`
-        : `<input class="gen-input" type="text" data-path="${esc(base)}" value="${esc(item)}" placeholder="Add a value…" />`)
+        ? `<textarea class="gen-textarea" data-path="${esc(base)}" aria-label="${esc(title)}"
+            placeholder="Write it here…">${esc(item)}</textarea>`
+        : `<input class="gen-input" type="text" data-path="${esc(base)}" value="${esc(item)}"
+            aria-label="${esc(title)}" placeholder="Add a value…" />`)
       : `<div class="gen-grid">${list.fields.map((f) => renderField(`${base}.${f.key}`, f, item[f.key])).join("")}</div>`;
 
     return `<div class="gen-item" data-item="${esc(base)}">

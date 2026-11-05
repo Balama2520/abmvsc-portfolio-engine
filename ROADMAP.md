@@ -77,7 +77,20 @@ it. The policy stays script-src 'self' with no inline allowance.
   skills marquee, the highlighted achievement card, footer links, the closed chat
   window made inert) cover the plan's "contrast of every text pair at least
   4.5:1", which overlaps task 4.6.
-- [ ] 4.2 Add full keyboard-only flow coverage.
+- [x] 4.2 Add full keyboard-only flow coverage.
+  Decision: test/keyboard.test.mjs drives real Tab presses in Chromium. It walks
+  the generator (with every section shown) and both generated pages, checking
+  that each visible control is reachable, that each one shows a focus ring while
+  focused, that every field has a label, and that the generator's toast and
+  saved note are polite live regions that a real action fills. A closed chat
+  window or resume dialog is left out of the walk, as a real Tab cannot reach it
+  either, and the embedded live preview is taken out because it is a second
+  document whose keyboard access the generated-pages walk already covers. The
+  test found and fixed three real gaps: the colour text boxes and the list-item
+  text boxes had no name for a screen reader. It also exposed a race in the
+  page harness: the generator paints its form, then imports config.js and paints
+  the list items, so hydration.test.mjs now waits for that import instead of
+  trusting a fixed sleep.
 - [ ] 4.3 Add Lighthouse checks and thresholds.
 - [ ] 4.4 Run cross-browser ZIP smoke tests.
 - [ ] 4.5 Review and document all required screenshots.

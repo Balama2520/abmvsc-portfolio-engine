@@ -41,7 +41,8 @@
     "ICONDIRENTRY",
     "vcard",
     "SOCIALPROFILE",
-    "fulfill"
+    "fulfill",
+    "labelledby"
   ],
   "ignorePaths": [
     "node_modules/**",
