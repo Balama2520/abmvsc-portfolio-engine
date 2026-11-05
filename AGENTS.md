@@ -4,6 +4,10 @@ Project: Portfolio Engine, a static portfolio generator. The user fills a form
 in setup.html and downloads a ZIP containing a ready-to-deploy site. Everything
 runs in the browser.
 
+Read `ROADMAP.md` and continue at the first unchecked task. After each task:
+tick it, commit, run `git push origin v3.1-generator`, and paste the full push
+output. If the push result cannot be seen, write "push unverified" and stop.
+
 ## Hard constraints
 
 - No runtime dependencies, no build step, no third-party JavaScript, no tracking.
