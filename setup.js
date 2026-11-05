@@ -60,7 +60,7 @@
         {
           key: "photo", label: "Profile photo", type: "file", upload: "photo",
           accept: "image/jpeg,image/png,image/webp", placeholder: "assets/engineer-avatar.svg",
-          help: "JPG, PNG or WebP, up to 2 MB. Stays in this browser — it is written into the ZIP you download.",
+          help: "JPG, PNG or WebP, up to 2 MB. It is cropped to a square and shrunk to 800 px in this browser, then written into the ZIP you download.",
         },
         {
           key: "resume", label: "Resume", type: "file", upload: "resume",
@@ -390,27 +390,76 @@
     return null;
   };
 
+  // Turns bytes into the shape the rest of the generator expects: a display
+  // name, a MIME type, the raw bytes for the ZIP, a path for config.js, and a
+  // data URL the live preview can show without another read.
+  const uploadEntry = (name, type, bytes, path) => {
+    let binary = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    }
+    return { name, type, bytes, path, dataUrl: `data:${type};base64,${btoa(binary)}` };
+  };
+
   const readUpload = (kind, file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onerror = () => reject(new Error("The file could not be read."));
       reader.onload = () => {
-        const entry = {
-          name: file.name,
-          type: file.type,
-          bytes: new Uint8Array(reader.result),
-          path: Pack.uploadPath(kind, file),
-        };
-        // Base64 once, here, rather than on every preview refresh.
-        let binary = "";
-        for (let i = 0; i < entry.bytes.length; i += 0x8000) {
-          binary += String.fromCharCode.apply(null, entry.bytes.subarray(i, i + 0x8000));
-        }
-        entry.dataUrl = `data:${entry.type};base64,${btoa(binary)}`;
-        resolve(entry);
+        const bytes = new Uint8Array(reader.result);
+        resolve(uploadEntry(file.name, file.type, bytes, Pack.uploadPath(kind, file)));
       };
       reader.readAsArrayBuffer(file);
     });
+
+  /* Photos are cropped to a square, scaled down and re-encoded before they go
+     into the ZIP, so a large phone photo becomes a small, square file. */
+  const PHOTO_EDGE = 800;
+  const PHOTO_QUALITY = 0.85;
+
+  // Decoded through a data URL, not an object URL: the page's Content Security
+  // Policy allows data: images but not blob: ones.
+  const loadImageFile = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("The photo could not be read."));
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("The photo could not be read."));
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+  const canvasToBlob = (canvas, type, quality) =>
+    new Promise((resolve) => {
+      if (!canvas.toBlob) { resolve(null); return; }
+      canvas.toBlob((blob) => resolve(blob), type, quality);
+    });
+
+  // Returns { bytes, type, originalSize, newSize }, or null when the browser
+  // cannot do the work — the caller then keeps the raw file.
+  const preparePhoto = async (file) => {
+    const img = await loadImageFile(file);
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    if (!w || !h) return null;
+    const side = Math.min(w, h);
+    const edge = Math.max(1, Math.min(side, PHOTO_EDGE));
+    const canvas = document.createElement("canvas");
+    canvas.width = edge;
+    canvas.height = edge;
+    const ctx = canvas.getContext && canvas.getContext("2d");
+    if (!ctx) return null;
+    // Centre crop to a square, then scale to the target edge.
+    ctx.drawImage(img, (w - side) / 2, (h - side) / 2, side, side, 0, 0, edge, edge);
+    let blob = await canvasToBlob(canvas, "image/webp", PHOTO_QUALITY);
+    if (!blob || blob.type !== "image/webp") blob = await canvasToBlob(canvas, "image/jpeg", PHOTO_QUALITY);
+    if (!blob) return null;
+    const buffer = await blob.arrayBuffer();
+    return { bytes: new Uint8Array(buffer), type: blob.type || "image/jpeg", originalSize: file.size, newSize: buffer.byteLength };
+  };
 
   /* 4. State — normalize (config → form) and buildConfig (form → config) */
   const emptyItem = (list) => {
@@ -536,6 +585,7 @@
             ${picked ? "" : "hidden"}>Remove</button>
         </div>
         <p class="gen-upload-error" data-upload-error="${esc(f.upload)}" hidden></p>
+        <p class="gen-upload-note" data-upload-note="${esc(f.upload)}" hidden></p>
         <details class="gen-advanced">
           <summary>Use a file path instead</summary>
           <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}"
@@ -1130,23 +1180,52 @@
     el.hidden = !message;
   };
 
+  const setUploadNote = (kind, message) => {
+    const el = document.querySelector(`[data-upload-note="${kind}"]`);
+    if (!el) return;
+    el.textContent = message || "";
+    el.hidden = !message;
+  };
+
+  const kb = (bytes) => {
+    const k = bytes / 1024;
+    return k >= 1000 ? `${(k / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(k))} KB`;
+  };
+
   const acceptUpload = (kind, file) => {
     const problem = Pack.checkUpload(kind, file);
     setUploadError(kind, problem);
     if (problem) return;
 
-    readUpload(kind, file).then((upload) => {
+    const finish = (upload, note) => {
       const field = uploadField(kind);
       uploads[kind] = upload;
       if (field) {
         state[field.section][field.key] = upload.path;
         writeToInput(field.path, upload.path);
       }
+      setUploadNote(kind, note);
       showUploadState(kind);
       saveDraft();
       updateCounts();
       refreshPreview();
-    });
+    };
+
+    const keepRawFile = () => readUpload(kind, file).then((upload) => finish(upload, ""));
+
+    if (kind === "photo") {
+      preparePhoto(file)
+        .then((made) => {
+          if (!made) return keepRawFile();
+          const path = Pack.uploadPath("photo", { type: made.type });
+          const entry = uploadEntry(file.name, made.type, made.bytes, path);
+          return finish(entry, `Saved as ${path} (${kb(made.newSize)}, down from ${kb(made.originalSize)}).`);
+        })
+        .catch(() => keepRawFile());
+      return;
+    }
+
+    keepRawFile();
   };
 
   const clearUpload = (kind) => {
@@ -1160,6 +1239,7 @@
     }
     uploads[kind] = null;
     setUploadError(kind, "");
+    setUploadNote(kind, "");
     showUploadState(kind);
     saveDraft();
     updateCounts();

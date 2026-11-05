@@ -31,6 +31,8 @@
     "tagline",
     "taglines",
     "popups",
+    "topbar",
+    "whatnow",
     "quot"
   ],
   "ignorePaths": [

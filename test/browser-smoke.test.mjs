@@ -112,8 +112,15 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   for (const required of ["index.html", "studio.html", "style.css", "script.js", "config.js", "robots.txt", "sitemap.xml", "netlify.toml", "_headers"]) {
     assert.ok(files.has(required), `${required} should be in the archive`);
   }
-  assert.ok(files.has("photo.png"), "the uploaded photo should be in the archive");
+  const photoEntry = ["photo.webp", "photo.jpg", "photo.png"].find((name) => files.has(name));
+  assert.ok(photoEntry, "the uploaded photo should be in the archive as a prepared image");
   assert.ok(files.has("resume.pdf"), "the uploaded resume should be in the archive");
+  // The shipped config points at the prepared file, so the page and the archive
+  // agree on the photo name.
+  assert.ok(
+    text("config.js").includes(`"photo": "${photoEntry}"`),
+    `config.js should point at ${photoEntry}`
+  );
 
   // A crawler that never runs script.js must still see the owner's name and the
   // social tags: they are baked into the shipped HTML at build time.
