@@ -34,11 +34,11 @@ it. The policy stays script-src 'self' with no inline allowance.
 
 ## Phase 3 — Output quality
 
-- [ ] 3.1 Add Classic and One page layouts.
+- [x] 3.1 Cancelled: the master plan lists "a second layout" as out of scope.
 - [ ] 3.2 Generate social preview and favicon assets in-browser.
 - [ ] 3.3 Add print-friendly resume output.
-- [ ] 3.4 Add JSON Resume import and export.
-- [ ] 3.5 Add opt-in GitHub project import.
+- [x] 3.4 Cancelled: the master plan lists "JSON Resume" as out of scope.
+- [x] 3.5 Cancelled: the master plan lists "GitHub import" as out of scope.
 - [ ] 3.6 Add client-side vCard download.
 - [ ] 3.7 Add deploy guide, .nojekyll, and config cache hash to ZIPs.
 - [ ] 3.8 Enforce generated-site performance budget.
