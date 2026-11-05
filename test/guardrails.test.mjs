@@ -12,6 +12,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -42,8 +43,18 @@ test("guardrail: the template has no build step", () => {
 
 test("guardrail: every JavaScript file parses", () => {
   for (const file of JS_FILES) {
-    assert.doesNotThrow(() => new Function(read(file)), `${file} failed to parse`);
+    assert.doesNotThrow(() => new vm.Script(read(file)), `${file} failed to parse`);
   }
+});
+
+test("guardrail: repo contains no new Function or eval", () => {
+  const offenders = [];
+  for (const file of JS_FILES) {
+    const src = read(file);
+    if (/\bnew\s+Function\b/.test(src)) offenders.push(`${file} uses new Function`);
+    if (/\beval\s*\(/.test(src)) offenders.push(`${file} uses eval`);
+  }
+  assert.deepEqual(offenders, [], `Found forbidden eval/new Function:\n  ${offenders.join("\n  ")}`);
 });
 
 test("guardrail: the pages load no third-party JavaScript", () => {

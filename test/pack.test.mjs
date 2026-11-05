@@ -15,8 +15,9 @@ const read = (path) => readFileSync(join(ROOT, path), "utf8");
 const readBytes = (path) => new Uint8Array(readFileSync(join(ROOT, path)));
 
 const loadConfig = () => {
-  const fn = new Function("window", `${read("config.js")}\n;return window.PORTFOLIO_CONFIG;`);
-  return fn({});
+  const src = read("config.js").trim();
+  const json = src.replace(/^(?:window\.)?PORTFOLIO_CONFIG\s*=\s*/, "").replace(/;\s*$/, "");
+  return JSON.parse(json);
 };
 
 const TEXT = /\.(html|css|js|txt|xml|toml|json|webmanifest)$/;

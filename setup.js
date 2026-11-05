@@ -315,6 +315,7 @@
         { key: "fontBody", label: "Body font", placeholder: "'Inter', sans-serif", wide: true },
         { key: "fontMono", label: "Mono font", placeholder: "'IBM Plex Mono', monospace", wide: true },
         { key: "showBuiltBy", label: "Show a small “Made with the Portfolio Engine” credit in the footer", type: "bool", default: false, wide: true, help: "Off by default. It is plain text with no link." },
+        { key: "showDemoNotice", label: "Show floating demo notice", type: "bool", default: false, wide: true, help: "Shows the floating demo notice on index and studio pages." },
       ],
     },
   ];
@@ -837,10 +838,84 @@
     if (out) out.value = buildConfigSource();
   };
 
+  const BARE_ARRAY_SECTIONS = new Set(["projects", "experience", "research", "achievements", "certifications"]);
+
+  const validateConfig = (config) => {
+    if (!config || typeof config !== "object" || Array.isArray(config)) {
+      throw new Error("Invalid config: expected a JSON object at root.");
+    }
+    const knownSections = new Set(SCHEMA.map((s) => s.id));
+    for (const key of Object.keys(config)) {
+      if (!knownSections.has(key)) {
+        throw new Error(`Invalid field: unknown section "${key}".`);
+      }
+    }
+    for (const sec of SCHEMA) {
+      const val = config[sec.id];
+      if (val === undefined || val === null) continue;
+      if (BARE_ARRAY_SECTIONS.has(sec.id)) {
+        if (!Array.isArray(val)) {
+          throw new Error(`Invalid field: "${sec.id}" must be an array.`);
+        }
+        val.forEach((item, idx) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) {
+            throw new Error(`Invalid field: "${sec.id}[${idx}]" must be an object.`);
+          }
+        });
+      } else {
+        if (typeof val !== "object" || Array.isArray(val)) {
+          throw new Error(`Invalid field: "${sec.id}" must be an object.`);
+        }
+        if (sec.fields) {
+          const knownFields = new Set(sec.fields.map((f) => f.key));
+          if (sec.lists) sec.lists.forEach((l) => knownFields.add(l.key));
+          if (sec.id === "chatbot") {
+            knownFields.add("customResponses");
+            knownFields.add("extraRules");
+          }
+          if (sec.id === "company") {
+            knownFields.add("logo");
+          }
+          for (const fKey of Object.keys(val)) {
+            if (!knownFields.has(fKey)) {
+              throw new Error(`Invalid field: unknown field "${sec.id}.${fKey}".`);
+            }
+          }
+        }
+      }
+    }
+    return true;
+  };
+
   const parseConfigSource = (src) => {
-    // The config file only ever assigns window.PORTFOLIO_CONFIG.
-    const fn = new Function("window", `${src}\n;return window.PORTFOLIO_CONFIG;`);
-    return fn({});
+    if (typeof src !== "string") {
+      throw new Error("Config source must be a string.");
+    }
+    const trimmed = src.trim();
+    const hasComments = /(\/\*|\/\/)/.test(trimmed);
+    const hasUnquotedKeys = /([{,]\s*)[a-zA-Z_$][a-zA-Z0-9_$]*(\s*:)/.test(trimmed);
+
+    const prefixMatch = trimmed.match(/^(?:window\.)?PORTFOLIO_CONFIG\s*=\s*([\s\S]*?);?\s*$/);
+    if (!prefixMatch) {
+      if (hasComments || hasUnquotedKeys || trimmed.includes("PORTFOLIO_CONFIG")) {
+        throw new Error("This file uses the old format. Re-export it from the generator.");
+      }
+      throw new Error("This file does not set window.PORTFOLIO_CONFIG.");
+    }
+
+    const rawJson = prefixMatch[1].trim();
+    let parsed;
+    try {
+      parsed = JSON.parse(rawJson);
+    } catch (err) {
+      if (hasComments || hasUnquotedKeys || /[{,]\s*[a-zA-Z_$]/.test(rawJson)) {
+        throw new Error("This file uses the old format. Re-export it from the generator.");
+      }
+      throw new Error("Invalid JSON: " + err.message);
+    }
+
+    validateConfig(parsed);
+    return parsed;
   };
 
   /* 7. Live preview */
@@ -1366,9 +1441,19 @@
       .catch(() => { /* file:// or missing — expected */ });
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
-  } else {
-    boot();
+  if (typeof window !== "undefined") {
+    window.parseConfigSource = parseConfigSource;
+    window.validateConfig = validateConfig;
+  }
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = { parseConfigSource, validateConfig, SCHEMA };
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", boot);
+    } else {
+      boot();
+    }
   }
 })();

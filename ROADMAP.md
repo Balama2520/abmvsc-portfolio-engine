@@ -5,7 +5,7 @@ one commit, and a push of `v3.1-generator`.
 
 ## Phase 1 — Security and privacy
 
-- [ ] 1.1 Use strict JSON config files; safe import validation; move notes to SETUP.md.
+- [x] 1.1 Use strict JSON config files; safe import validation; move notes to SETUP.md.
 - [ ] 1.2 Add a shared URL allowlist in generator, packer, and runtime.
 - [ ] 1.3 Add permanent malicious-input ZIP/browser regression coverage.
 - [ ] 1.4 Add and test CSP headers and HTML fallback.

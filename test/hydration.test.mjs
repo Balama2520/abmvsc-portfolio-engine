@@ -108,8 +108,9 @@ async function loadPage(file, { settle = 900 } = {}) {
 }
 
 const readConfig = (file = "config.js") => {
-  const src = fs.readFileSync(path.join(ROOT, file), "utf8");
-  return new Function("window", `${src};return window.PORTFOLIO_CONFIG;`)({});
+  const src = fs.readFileSync(path.join(ROOT, file), "utf8").trim();
+  const json = src.replace(/^(?:window\.)?PORTFOLIO_CONFIG\s*=\s*/, "").replace(/;\s*$/, "");
+  return JSON.parse(json);
 };
 
 // Every leaf path in a config object, e.g. "personal.email", "projects[].name"
@@ -171,7 +172,8 @@ test("the generator round-trips config.js with zero data loss", async () => {
   const generated = doc.querySelector("#genOutput").value;
   assert.ok(generated.length > 1000, "generator produced output");
 
-  const genCfg = new Function("window", `${generated};return window.PORTFOLIO_CONFIG;`)({});
+  const genJson = generated.trim().replace(/^(?:window\.)?PORTFOLIO_CONFIG\s*=\s*/, "").replace(/;\s*$/, "");
+  const genCfg = JSON.parse(genJson);
   const realLeaves = leafPaths(readConfig());
   const genLeaves = leafPaths(genCfg);
 
@@ -202,7 +204,8 @@ test("the generated config.js opens with the config, not a comment banner", asyn
 test("array-shaped sections keep their shape through the generator", async () => {
   const { doc } = await loadPage("setup.html");
   const generated = doc.querySelector("#genOutput").value;
-  const genCfg = new Function("window", `${generated};return window.PORTFOLIO_CONFIG;`)({});
+  const genJson = generated.trim().replace(/^(?:window\.)?PORTFOLIO_CONFIG\s*=\s*/, "").replace(/;\s*$/, "");
+  const genCfg = JSON.parse(genJson);
 
   // These five live as a bare array in config.js, not as { key: [...] }.
   for (const key of ["projects", "experience", "research", "achievements", "certifications"]) {

@@ -10,7 +10,15 @@
 2. Fill in your details
 3. Deploy
 
-That's it. `index.html`, `studio.html`, `style.css` and `script.js` read everything from `config.js` — you never need to open them.
+`config.js` uses strict JSON assigned to `window.PORTFOLIO_CONFIG`:
+```javascript
+window.PORTFOLIO_CONFIG = {
+  // strict JSON: quoted keys, double-quoted strings, no comments, no trailing commas
+};
+```
+Every section is optional. Leave an array empty (`[]`) or a string empty (`""`) and the related element hides automatically.
+
+`index.html`, `studio.html`, `style.css` and `script.js` read everything from `config.js` — you never need to open them.
 
 ---
 
