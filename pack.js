@@ -218,6 +218,20 @@
     return [...refs].filter(Boolean);
   };
 
+  // A stylesheet names its fonts and background images with url(), so no HTML
+  // attribute points at them. Only the local ones become part of the site.
+  const collectCssRefs = (css) => {
+    const refs = new Set();
+    const call = /\burl\(\s*["']?([^"')]+)["']?\s*\)/gi;
+    let match;
+    while ((match = call.exec(css))) {
+      const value = match[1].trim();
+      if (!value || NOT_A_FILE.test(value)) continue;
+      refs.add(value.split("#")[0].split("?")[0]);
+    }
+    return [...refs].filter(Boolean);
+  };
+
   // A web manifest names its icons as JSON, so no HTML attribute points at them.
   const collectIconRefs = (manifestJson) => {
     let manifest;
@@ -258,6 +272,11 @@
     });
     const manifest = files["site.webmanifest"];
     if (manifest) collectIconRefs(manifest).forEach((path) => wanted.add(path));
+    Object.entries(files).forEach(([path, data]) => {
+      if (/\.css$/i.test(path) && typeof data === "string") {
+        collectCssRefs(data).forEach((ref) => wanted.add(ref));
+      }
+    });
     configAssets(config).forEach((path) => wanted.add(path));
     extra.forEach((path) => wanted.add(path));
 

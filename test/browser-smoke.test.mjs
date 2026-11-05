@@ -64,6 +64,11 @@ const writeFiles = (dir, entries) => {
 
 test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working site`, async () => {
   const page = await browser.newPage();
+  const generatorOffenders = [];
+  page.on("request", (req) => {
+    const url = req.url();
+    if (!url.startsWith(repo.base) && !/^(data|blob|about):/.test(url)) generatorOffenders.push(url);
+  });
   await page.goto(`${repo.base}/setup.html`);
 
   // The wizard shows one chapter at a time; "Show everything" reveals the
@@ -82,6 +87,12 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   const zipPath = path.join(tempDir, "site.zip");
   await download.saveAs(zipPath);
   await page.close();
+
+  assert.deepEqual(
+    generatorOffenders,
+    [],
+    `the generator must not reach outside its own origin:\n  ${generatorOffenders.join("\n  ")}`
+  );
 
   const entries = Pack.readZip(new Uint8Array(fs.readFileSync(zipPath)));
   const files = new Map(entries.map((e) => [e.path, e.data]));
@@ -120,7 +131,12 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
 
   const sitePage = await browser.newPage();
   const consoleErrors = [];
+  const siteOffenders = [];
   sitePage.on("pageerror", (err) => consoleErrors.push(err.message));
+  sitePage.on("request", (req) => {
+    const url = req.url();
+    if (!url.startsWith(site.base) && !/^(data|blob|about):/.test(url)) siteOffenders.push(url);
+  });
   sitePage.on("response", (res) => {
     if (res.status() === 404) consoleErrors.push(`404 ${res.url()}`);
   });
@@ -131,6 +147,11 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
   const visible = await sitePage.evaluate(() => document.body.innerText);
   assert.ok(visible.includes(NAME), "the unzipped page should render the name from the form");
   assert.deepEqual(consoleErrors, [], `the unzipped site should load cleanly:\n  ${consoleErrors.join("\n  ")}`);
+  assert.deepEqual(
+    siteOffenders,
+    [],
+    `the unzipped site must not reach outside its own origin:\n  ${siteOffenders.join("\n  ")}`
+  );
 
   await sitePage.close();
   await new Promise((r) => site.server.close(r));

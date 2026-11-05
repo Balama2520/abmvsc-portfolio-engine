@@ -98,6 +98,35 @@ test("guardrail: the generator stays out of search results", () => {
   assert.ok(!read("sitemap.xml").includes("setup.html"), "setup.html must not be in sitemap.xml");
 });
 
+test("guardrail: no page or stylesheet loads a third-party host", () => {
+  // Plain <a href> links to Netlify or GitHub are navigation, not loads, so
+  // only resource attributes (src, <link href>) and CSS url() are checked.
+  const offenders = [];
+  const scan = (file, re) => {
+    const src = read(file);
+    for (const m of src.matchAll(re)) offenders.push(`${file} → ${m[1]}`);
+  };
+  for (const page of PAGES) {
+    scan(page, /\bsrc\s*=\s*"(https?:\/\/[^"]+)"/gi);
+    scan(page, /<link\b[^>]*?\bhref\s*=\s*"(https?:\/\/[^"]+)"/gi);
+  }
+  for (const css of ["style.css", "setup.css"]) scan(css, /url\(\s*["']?(https?:\/\/[^"')]+)/gi);
+  assert.deepEqual(
+    offenders,
+    [],
+    `Nothing may load from another host:\n  ${offenders.join("\n  ")}`
+  );
+});
+
+test("guardrail: the self-hosted fonts are present", () => {
+  const css = read("style.css");
+  const faces = [...css.matchAll(/url\("(assets\/fonts\/[^"]+\.woff2)"\)/g)].map((m) => m[1]);
+  assert.ok(faces.length >= 8, `expected the self-hosted @font-face rules, found ${faces.length}`);
+  for (const face of new Set(faces)) {
+    assert.ok(fs.existsSync(path.join(ROOT, face)), `${face} is named by style.css but missing`);
+  }
+});
+
 test("guardrail: the licence is MIT and attributed", () => {
   const licence = read("LICENSE");
   assert.match(licence, /MIT License/);
