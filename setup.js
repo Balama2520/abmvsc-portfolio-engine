@@ -1604,10 +1604,19 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
   // manifest names its icons), so we load what the manifest asks for until it
   // stops growing. Anything still absent is reported instead of shipped.
   const collectSite = async (config, generated = []) => {
-    const files = {
-      "index.html": await fetchSiteFile("index.html"),
-      "studio.html": await fetchSiteFile("studio.html"),
+    const readRequired = async (path) => {
+      try {
+        return await fetchSiteFile(path);
+      } catch (err) {
+        console.error(err);
+        throw new Error(`Could not read ${path}. Reload the page and try again.`);
+      }
     };
+    const files = {
+      "index.html": await readRequired("index.html"),
+      "studio.html": await readRequired("studio.html"),
+    };
+    const optionalMissing = new Set();
     const supplied = new Set([
       "config.js",
       ".nojekyll",
@@ -1622,11 +1631,16 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
     for (;;) {
       const manifest = Pack.buildManifest({ files, config, extra: [...supplied] });
       const next = manifest.include.concat(manifest.missing).find((path) => !skip(path));
-      if (!next) return { files, manifest };
+      if (!next) return { files, manifest, optionalMissing };
       try {
         files[next] = await fetchSiteFile(next);
       } catch (err) {
-        supplied.add(next); // not on disk; the manifest will report it as missing
+        if (Pack.COPIED_FILES.includes(next)) {
+          console.error(err);
+          throw new Error(`Could not read ${next}. Reload the page and try again.`);
+        }
+        optionalMissing.add(next);
+        supplied.add(next);
       }
     }
   };
@@ -1644,7 +1658,7 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       ...Pack.HOST_FILES,
     };
 
-    const { files, manifest } = await collectSite(config, Object.keys(generated));
+    const { files, manifest, optionalMissing } = await collectSite(config, Object.keys(generated));
 
     // A crawler fetches the HTML and stops; it never runs script.js. Bake the
     // title, social tags, structured data and hero text into the two pages so
@@ -1655,7 +1669,9 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       }
     });
 
-    const wanted = [...new Set([...manifest.include, ...manifest.missing, ...manifest.generated])].sort();
+    const wanted = [...new Set([...manifest.include, ...manifest.missing, ...manifest.generated])]
+      .filter((path) => !optionalMissing.has(path))
+      .sort();
 
     const entries = [];
     const absent = [];
@@ -1704,10 +1720,17 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       saveFile(await buildZip(), zipName(), "application/zip");
       showWhatNow();
       toast("Downloaded your website. Unzip it, then drag the folder onto Netlify Drop.");
-    } catch {
-      toast(previewFetchable
-        ? "Could not build your website file. Refresh the page and try again."
-        : "Building your website file needs the page served over http(s). Run <code>npx serve .</code> and open the address it prints.");
+    } catch (err) {
+      const message = err && /^Could not read /.test(err.message)
+        ? err.message
+        : previewFetchable
+          ? "Could not build your website file. Refresh the page and try again."
+          : "Building your website file needs the page served over http(s). Run npx serve . and open the address it prints.";
+      const notice = $("#genToast");
+      notice.textContent = message;
+      notice.classList.add("is-visible");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => notice.classList.remove("is-visible"), 4000);
     } finally {
       btn.disabled = false;
       btn.textContent = label;

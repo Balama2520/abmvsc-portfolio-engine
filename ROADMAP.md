@@ -15,7 +15,10 @@ one commit, and a push of `v3.1-generator`.
   Decision: the test compares the meaningful lines of generated `_headers` and
   `netlify.toml` with their repository versions, ignoring comments and blank
   lines. It also checks Vercel's JSON carries the same CSP.
-- [ ] 1.3 Handle optional and required missing ZIP files clearly.
+- [x] 1.3 Handle optional and required missing ZIP files clearly.
+  Decision: copied source files stop the ZIP build with the file name and a
+  reload instruction. Optional references are skipped. Generated names are
+  never fetched. The underlying error is written to the console.
 
 ## Phase 1 — Security and privacy
 
