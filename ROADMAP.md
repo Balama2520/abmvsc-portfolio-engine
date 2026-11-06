@@ -20,6 +20,13 @@ one commit, and a push of `v3.1-generator`.
   reload instruction. Optional references are skipped. Generated names are
   never fetched. The underlying error is written to the console.
 
+- [x] 2.1 Make the browser test server behave like a deployment host.
+  Decision: the server returns 404 for host-only configuration, `package.json`,
+  and test paths, and applies the root `_headers` policy to successful
+  responses.
+- [ ] 2.2 Fail the production ZIP flow on browser errors and missing files.
+- [ ] 2.3 Inspect every required ZIP entry in the production flow.
+
 ## Phase 1 — Security and privacy
 
 Note: 1.5 was done before 1.4. The CSP check needs the third-party font request
