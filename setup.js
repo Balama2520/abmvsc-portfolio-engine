@@ -1641,6 +1641,7 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       ...(await renderBrandAssets(config)),
       "robots.txt": Pack.staticRobots(config),
       "sitemap.xml": Pack.staticSitemap(config),
+      ...Pack.HOST_FILES,
     };
 
     const { files, manifest } = await collectSite(config, Object.keys(generated));
@@ -1669,10 +1670,6 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       }
       if (path === "config.js") {
         entries.push({ path, data: configSource(config) });
-        continue;
-      }
-      if (path === ".nojekyll") {
-        entries.push({ path, data: "" });
         continue;
       }
       if (path === "README-DEPLOY.txt") {

@@ -186,6 +186,101 @@
 
   /* Which files does a site need? */
 
+  const SECURITY_POLICY = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'";
+  const SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
+    "Content-Security-Policy": SECURITY_POLICY,
+  };
+  const CACHE_CONTROL = "public, max-age=0, must-revalidate";
+
+  const HOST_FILES = Object.freeze({
+    "_headers": `/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: ${SECURITY_POLICY}
+
+/config.js
+  Cache-Control: ${CACHE_CONTROL}
+
+/index.html
+  Cache-Control: ${CACHE_CONTROL}
+
+/studio.html
+  Cache-Control: ${CACHE_CONTROL}
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+/setup.html
+  X-Robots-Tag: noindex, nofollow
+`,
+    "netlify.toml": `[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Content-Security-Policy = "${SECURITY_POLICY}"
+
+[[headers]]
+  for = "/config.js"
+  [headers.values]
+    Cache-Control = "${CACHE_CONTROL}"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "${CACHE_CONTROL}"
+
+[[headers]]
+  for = "/studio.html"
+  [headers.values]
+    Cache-Control = "${CACHE_CONTROL}"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/setup.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+`,
+    "vercel.json": `${JSON.stringify({
+      headers: [
+        { source: "/(.*)", headers: Object.entries(SECURITY_HEADERS).map(([key, value]) => ({ key, value })) },
+        { source: "/config.js", headers: [{ key: "Cache-Control", value: CACHE_CONTROL }] },
+      ],
+    }, null, 2)}\n`,
+    ".nojekyll": "",
+  });
+
   // Always shipped, whatever the pages happen to say.
   const CORE_FILES = [
     "index.html",
@@ -196,8 +291,7 @@
     "config.js",
     "robots.txt",
     "sitemap.xml",
-    "netlify.toml",
-    "_headers",
+    ...Object.keys(HOST_FILES),
   ];
 
   const PAGES = ["index.html", "studio.html"];
@@ -606,6 +700,8 @@
     PHOTO_TYPES,
     PHOTO_MAX,
     RESUME_MAX,
+    HOST_FILES,
+    SECURITY_POLICY,
     CORE_FILES,
     PAGES,
     sanitizeUrl,

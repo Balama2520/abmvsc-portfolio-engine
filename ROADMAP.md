@@ -3,6 +3,17 @@
 Continue at the first unchecked task. Each task requires a passing `npm test`,
 one commit, and a push of `v3.1-generator`.
 
+## Launch fixes — 6 November 2026
+
+- [x] 1.1 Generate deployment host files inside ZIPs.
+  Decision: `pack.js` owns `_headers`, `netlify.toml`, `vercel.json`, and
+  `.nojekyll`, so the generator never fetches host-only files that a deployed
+  site does not serve. The CSP is unchanged: `script-src 'self'`,
+  `style-src 'self' 'unsafe-inline'`, and all other directives remain the
+  same. `config.js` remains non-cacheable.
+- [ ] 1.2 Test generated host files against repository headers.
+- [ ] 1.3 Handle optional and required missing ZIP files clearly.
+
 ## Phase 1 — Security and privacy
 
 Note: 1.5 was done before 1.4. The CSP check needs the third-party font request
