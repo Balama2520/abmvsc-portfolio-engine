@@ -52,9 +52,10 @@ test("pack: every href and src in the pages resolves to a real file", () => {
 
 test("pack: the manifest picks up the icons, manifest and social image", () => {
   const { config, files } = loadSite();
-  const { include } = Pack.buildManifest({ files, config });
+  const { include, generated } = Pack.buildManifest({ files, config });
+  const archiveFiles = new Set([...include, ...generated]);
   for (const path of ["favicon.ico", "site.webmanifest", "og-image.png", "apple-touch-icon.png"]) {
-    assert.ok(include.includes(path), `${path} should be in the manifest`);
+    assert.ok(archiveFiles.has(path), `${path} should be in the archive manifest`);
   }
 });
 
@@ -211,11 +212,27 @@ test("pack: an archive round-trips through the reader", () => {
 
 test("pack: a generated archive contains every file its pages ask for", () => {
   const { config, files } = loadSite();
-  const { include, missing } = Pack.buildManifest({ files, config });
+  const { include, missing, generated } = Pack.buildManifest({
+    files,
+    config,
+    extra: Pack.GENERATED_FILES,
+  });
   assert.deepEqual(missing, []);
 
-  const back = Pack.readZip(Pack.writeZip(include.map((path) => ({ path, data: files[path] }))));
-  assert.deepEqual(back.map((e) => e.path).sort(), [...include].sort());
+  const entries = [
+    ...include.map((path) => ({ path, data: files[path] })),
+    ...generated.map((path) => ({ path, data: path === ".nojekyll" ? "" : `generated ${path}` })),
+  ];
+  const back = Pack.readZip(Pack.writeZip(entries));
+  assert.deepEqual(back.map((e) => e.path).sort(), entries.map((e) => e.path).sort());
+
+  const output = new Map(back.map((entry) => [entry.path, entry.data]));
+  for (const path of generated) {
+    assert.ok(output.has(path), `${path} should be generated in the archive`);
+    if (path !== ".nojekyll") {
+      assert.ok(output.get(path).byteLength > 0, `${path} should contain generated data`);
+    }
+  }
 
   const present = new Set(back.map((e) => e.path));
   back

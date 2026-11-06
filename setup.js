@@ -1655,7 +1655,7 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       }
     });
 
-    const wanted = [...new Set([...manifest.include, ...manifest.missing])].sort();
+    const wanted = [...new Set([...manifest.include, ...manifest.missing, ...manifest.generated])].sort();
 
     const entries = [];
     const absent = [];

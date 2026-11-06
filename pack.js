@@ -281,18 +281,35 @@
     ".nojekyll": "",
   });
 
-  // Always shipped, whatever the pages happen to say.
-  const CORE_FILES = [
+  // Copied files must exist in the source site and are the only files the
+  // generator fetches before it builds an archive.
+  const COPIED_FILES = [
     "index.html",
     "studio.html",
     "style.css",
     "script.js",
     "url-allowlist.js",
+    "site.webmanifest",
+  ];
+
+  // These entries are made by the generator for each ZIP. They are never read
+  // from the host: deployment services deliberately do not serve their own
+  // configuration files.
+  const GENERATED_FILES = [
     "config.js",
     "robots.txt",
     "sitemap.xml",
+    "README-DEPLOY.txt",
     ...Object.keys(HOST_FILES),
+    "og-image.png",
+    "favicon.ico",
+    "favicon-16x16.png",
+    "favicon-32x32.png",
+    "apple-touch-icon.png",
+    "android-chrome-192x192.png",
+    "android-chrome-512x512.png",
   ];
+  const GENERATED_FILE_SET = new Set(GENERATED_FILES);
 
   const PAGES = ["index.html", "studio.html"];
 
@@ -359,7 +376,7 @@
    *   missing is referenced-but-absent, which is a bug worth surfacing.
    */
   const buildManifest = ({ files, config, extra = [] }) => {
-    const wanted = new Set(CORE_FILES);
+    const wanted = new Set(COPIED_FILES);
     PAGES.forEach((page) => {
       const html = files[page];
       if (html) collectRefs(html).forEach((ref) => wanted.add(ref));
@@ -376,14 +393,17 @@
 
     const include = [];
     const missing = [];
+    const generated = [];
     wanted.forEach((path) => {
-      if (Object.prototype.hasOwnProperty.call(files, path)) include.push(path);
+      if (GENERATED_FILE_SET.has(path)) generated.push(path);
+      else if (Object.prototype.hasOwnProperty.call(files, path)) include.push(path);
       else missing.push(path);
     });
 
     include.sort();
     missing.sort();
-    return { include, missing };
+    generated.sort();
+    return { include, missing, generated };
   };
 
   /* Static render — what a crawler that cannot run script.js must still see */
@@ -702,7 +722,8 @@
     RESUME_MAX,
     HOST_FILES,
     SECURITY_POLICY,
-    CORE_FILES,
+    COPIED_FILES,
+    GENERATED_FILES,
     PAGES,
     sanitizeUrl,
   };
