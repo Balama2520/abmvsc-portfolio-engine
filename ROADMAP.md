@@ -25,7 +25,9 @@ one commit, and a push of `v3.1-generator`.
   and test paths, and applies the root `_headers` policy to successful
   responses.
 - [ ] 2.2 Fail the production ZIP flow on browser errors and missing files.
-- [ ] 2.3 Inspect every required ZIP entry in the production flow.
+- [x] 2.3 Inspect every required ZIP entry in the production flow.
+  Decision: the Chromium ZIP smoke test checks the host files, generated
+  artwork, uploaded photo and PDF, plus every HTML and manifest reference.
 
 ## Phase 1 — Security and privacy
 

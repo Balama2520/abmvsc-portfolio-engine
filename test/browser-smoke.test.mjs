@@ -66,14 +66,25 @@ const writeFiles = (dir, entries) => {
 test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working site`, async () => {
   const page = await browser.newPage();
   const generatorOffenders = [];
+  const generatorErrors = [];
   page.on("request", (req) => {
     const url = req.url();
     if (!url.startsWith(repo.base) && !/^(data|blob|about):/.test(url)) generatorOffenders.push(url);
   });
   const generatorCsp = [];
+  page.on("pageerror", (error) => generatorErrors.push(error.message));
   page.on("console", (msg) => {
     const text = msg.text();
+    if (msg.type() === "error") generatorErrors.push(text);
     if (/Content Security Policy/i.test(text)) generatorCsp.push(text);
+  });
+  page.on("response", (response) => {
+    if (response.status() === 404) generatorErrors.push(`404 ${response.url()}`);
+  });
+  await page.addInitScript(() => {
+    window.addEventListener("securitypolicyviolation", (event) => {
+      console.error(`CSP ${event.violatedDirective}: ${event.blockedURI}`);
+    });
   });
   await page.goto(`${repo.base}/setup.html`);
 
@@ -105,6 +116,7 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
     [],
     `the generator must run clean under its Content-Security-Policy:\n  ${generatorCsp.join("\n  ")}`
   );
+  assert.deepEqual(generatorErrors, [], `the generator must load cleanly:\n  ${generatorErrors.join("\n  ")}`);
 
   const entries = Pack.readZip(new Uint8Array(fs.readFileSync(zipPath)));
   const files = new Map(entries.map((e) => [e.path, e.data]));
@@ -112,7 +124,7 @@ test(`browser (${ENGINE}): the generator ships a ZIP that opens as a working sit
 
   // The archive carries the files the pages name, plus the two uploads and the
   // two deploy extras the generator writes in.
-  for (const required of ["index.html", "studio.html", "style.css", "script.js", "config.js", "robots.txt", "sitemap.xml", "netlify.toml", "_headers", ".nojekyll", "README-DEPLOY.txt"]) {
+  for (const required of ["index.html", "studio.html", "style.css", "script.js", "config.js", "robots.txt", "sitemap.xml", "netlify.toml", "_headers", "vercel.json", ".nojekyll", "README-DEPLOY.txt"]) {
     assert.ok(files.has(required), `${required} should be in the archive`);
   }
   // The deploy guide travels with the ZIP and names the three hosts.
