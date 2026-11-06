@@ -20,7 +20,14 @@ one commit, and a push of `v3.1-generator`.
   download controls and follow-up panel; Chromium retains the actual download
   coverage. Runtime preview code captures the document, search string, and
   storage at startup so a torn-down preview frame cannot read globals later.
-- [ ] 0.3 Review commits `4dfcfd6` and `fdf1000`, including the preview iframe sandbox.
+- [x] 0.3 Review commits `4dfcfd6` and `fdf1000`, including the preview iframe sandbox.
+  Decision: `4dfcfd6` did replace `srcdoc` with same-origin preview URLs and
+  local preview data; `fdf1000` did add generator page-error, console-error,
+  404, and CSP checks plus the Vercel archive entry. The sandbox keeps
+  `allow-scripts` with `allow-same-origin` because the preview must read its
+  same-origin local data and load self-hosted scripts under `script-src 'self'`.
+  Removing same-origin makes that configuration unavailable, so this is an
+  accepted limitation of an iframe that renders the user's own generated page.
 - [ ] 0.4 Run the full test suite three times; every run must pass.
 
 ### Tier 1 — The download must work everywhere
