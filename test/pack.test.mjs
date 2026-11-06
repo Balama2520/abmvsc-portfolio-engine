@@ -14,6 +14,12 @@ const decoder = new TextDecoder();
 
 const read = (path) => readFileSync(join(ROOT, path), "utf8");
 const readBytes = (path) => new Uint8Array(readFileSync(join(ROOT, path)));
+const headerValues = (source) =>
+  String(source)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith("#"))
+    .join("\n");
 
 const loadConfig = () => {
   const src = read("config.js").trim();
@@ -65,6 +71,26 @@ test("pack: the generator page is never part of a generated site", () => {
   assert.ok(
     !include.includes("setup.html"),
     "setup.html is the builder, not part of a visitor's site — it must not be packaged"
+  );
+});
+
+test("pack: generated deployment headers match the repository host files", () => {
+  assert.equal(
+    headerValues(Pack.HOST_FILES._headers),
+    headerValues(read("_headers")),
+    "the generated _headers file must keep the repository header values"
+  );
+  assert.equal(
+    headerValues(Pack.HOST_FILES["netlify.toml"]),
+    headerValues(read("netlify.toml")),
+    "the generated netlify.toml file must keep the repository header values"
+  );
+  const vercel = JSON.parse(Pack.HOST_FILES["vercel.json"]);
+  const main = vercel.headers.find((entry) => entry.source === "/(.*)");
+  assert.equal(
+    main.headers.find((header) => header.key === "Content-Security-Policy").value,
+    Pack.SECURITY_POLICY,
+    "Vercel must receive the same content policy"
   );
 });
 

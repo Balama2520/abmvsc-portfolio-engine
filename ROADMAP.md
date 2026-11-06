@@ -11,7 +11,10 @@ one commit, and a push of `v3.1-generator`.
   site does not serve. The CSP is unchanged: `script-src 'self'`,
   `style-src 'self' 'unsafe-inline'`, and all other directives remain the
   same. `config.js` remains non-cacheable.
-- [ ] 1.2 Test generated host files against repository headers.
+- [x] 1.2 Test generated host files against repository headers.
+  Decision: the test compares the meaningful lines of generated `_headers` and
+  `netlify.toml` with their repository versions, ignoring comments and blank
+  lines. It also checks Vercel's JSON carries the same CSP.
 - [ ] 1.3 Handle optional and required missing ZIP files clearly.
 
 ## Phase 1 — Security and privacy
