@@ -91,7 +91,13 @@ it. The policy stays script-src 'self' with no inline allowance.
   page harness: the generator paints its form, then imports config.js and paints
   the list items, so hydration.test.mjs now waits for that import instead of
   trusting a fixed sleep.
-- [ ] 4.3 Add Lighthouse checks and thresholds.
+- [x] 4.3 Add Lighthouse checks and thresholds.
+  Decision: `test/lighthouse.test.mjs` audits the generated index and studio
+  pages in mobile and desktop Lighthouse runs. Accessibility, best practices,
+  and SEO must each score at least 90. Performance has a 35 regression floor:
+  the current unminified static bundle and local font transfer make the mobile
+  baseline vary in the low 40s, so bundle optimization needs its own measured task rather
+  than hiding a lower score behind an arbitrary universal threshold.
 - [ ] 4.4 Run cross-browser ZIP smoke tests.
 - [ ] 4.5 Review and document all required screenshots.
 - [ ] 4.6 Verify contrast in all themes.
