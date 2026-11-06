@@ -3,6 +3,68 @@
 Continue at the first unchecked task. Each task requires a passing `npm test`,
 one commit, and a push of `v3.1-generator`.
 
+## Launch task list — copied 6 November 2026
+
+- [x] Record the complete launch task list in this roadmap.
+  Decision: the pasted launch checklist below is the source for this session;
+  the existing phase history remains for context.
+
+### Tier 0 — Get CI green
+
+- [ ] 0.1 Reproduce test 26 in a 20-run loop with `CI=true` and report its failure rate.
+- [ ] 0.2 Capture window globals around awaits, stop ZIP work after page close, and make the test wait for completion or avoid the jsdom download click.
+- [ ] 0.3 Review commits `4dfcfd6` and `fdf1000`, including the preview iframe sandbox.
+- [ ] 0.4 Run the full test suite three times; every run must pass.
+
+### Tier 1 — The download must work everywhere
+
+- [ ] 1.1 Complete the Netlify-like server behaviour for host-only files and response headers.
+- [ ] 1.2 Fail the full production ZIP flow on browser errors, missing files, failed requests, or CSP violations.
+- [ ] 1.3 Assert every required ZIP file is non-empty and every page reference resolves inside the ZIP.
+- [ ] 1.4 Add and document `npm run check:live -- <url>` for the deployed preview flow.
+- [ ] 1.5 Add tests for empty, large, invalid, multilingual, long, malicious, and corrupt imported input.
+- [ ] 1.6 Verify Blob downloads with Playwright Pixel 7 and iPhone 13; document any fallback and real-device limits.
+
+### Tier 2 — Phone experience
+
+- [ ] 2.1 Make the narrow-screen step rail compact, correctly coloured, and expandable.
+- [ ] 2.2 Keep the Advanced menu fully inside 360px and 375px viewports.
+- [ ] 2.3 Make the toast accessible, bottom-fixed, wrapped, and non-overlapping with the required plain text.
+- [ ] 2.4 Remove the floating bottom demo bar and keep the chat button visible.
+- [ ] 2.5 Replace beginner-facing “config generator” wording and remove config, JSON, and schema terms.
+- [ ] 2.6 Remove invented performance claims and use the stated plain sample numbers.
+- [ ] 2.7 Keep the Alex Rivera studio link unwrapped and align Save contact typography with other buttons.
+- [ ] 2.8 Complete touch, input, keyboard, focus, and no-overflow mobile checks.
+- [ ] 2.9 Add the required unzipping and computer-deployment note to What now and README-DEPLOY.txt.
+- [ ] 2.10 Verify product pages have no preloaded broken-file frames or grey embeds.
+
+### Tier 3 — First impression and link previews
+
+- [ ] 3.1 Add static setup and demo metadata plus a 1200x630 ABMVSC navy wordmark image.
+- [ ] 3.2 Test static tags with JavaScript disabled.
+- [ ] 3.3 Ensure static demo HTML has no blank headings or empty mail links.
+
+### Tier 4 — Device and browser matrix
+
+- [ ] 4.1 Run the full flow across the specified mobile, tablet, desktop, and engine matrix and report results.
+- [ ] 4.2 Run axe and keyboard checks at 375px and across generated themes.
+- [ ] 4.3 Capture, inspect, describe, and fix the required viewport screenshots.
+- [ ] 4.4 Measure mobile Lighthouse, fix inexpensive causes, and update the regression floor honestly.
+
+### Tier 5 — Repository and docs
+
+- [ ] 5.1 Reorder README with the specified launch copy, screenshots, guide, and testing details.
+- [ ] 5.2 Update CHANGELOG and v3.1.0 release notes with real entries and counts.
+- [ ] 5.3 Check policy emails, GitHub files, orphan assets, unused CSS, and temporary files.
+- [ ] 5.4 Run cspell and the banned-word check and fix real findings.
+
+### Tier 6 — Final audit and launch gate
+
+- [ ] 6.1 Run the full test suite three times.
+- [ ] 6.2 Push `v3.1-generator` once and record its output.
+- [ ] 6.3 Score every launch-gate item with evidence.
+- [ ] 6.4 Write and show REPORT.md with the task table, device matrix, gates, test output, audits, screenshots, unverified work, and risks.
+
 ## Launch fixes — 6 November 2026
 
 - [x] 1.1 Generate deployment host files inside ZIPs.
