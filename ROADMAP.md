@@ -11,8 +11,15 @@ one commit, and a push of `v3.1-generator`.
 
 ### Tier 0 — Get CI green
 
-- [ ] 0.1 Reproduce test 26 in a 20-run loop with `CI=true` and report its failure rate.
-- [ ] 0.2 Capture window globals around awaits, stop ZIP work after page close, and make the test wait for completion or avoid the jsdom download click.
+- [x] 0.1 Reproduce test 26 in a 20-run loop with `CI=true` and report its failure rate.
+  Result: 20 of 20 runs failed before the fix. The failure was an asynchronous
+  preview frame reading browser globals after jsdom had closed its page.
+- [x] 0.2 Capture window globals around awaits, stop ZIP work after page close, and make the test wait for completion or avoid the jsdom download click.
+  Decision: setup captures its page objects before asynchronous ZIP work and
+  exits quietly if that page has closed. The jsdom assertion only checks the
+  download controls and follow-up panel; Chromium retains the actual download
+  coverage. Runtime preview code captures the document, search string, and
+  storage at startup so a torn-down preview frame cannot read globals later.
 - [ ] 0.3 Review commits `4dfcfd6` and `fdf1000`, including the preview iframe sandbox.
 - [ ] 0.4 Run the full test suite three times; every run must pass.
 

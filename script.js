@@ -13,6 +13,15 @@
 (() => {
   "use strict";
 
+  // jsdom may close a preview frame while asynchronous generator work is still
+  // settling. Keep these page values from startup instead of reading a torn
+  // down window object later.
+  const win = window;
+  const document = win.document;
+  if (!document) return;
+  const pageSearch = win.location ? win.location.search : "";
+  const pageStorage = win.localStorage;
+
   const sanitizeUrl = (typeof UrlAllowlist !== "undefined" && UrlAllowlist.sanitizeUrl)
     ? UrlAllowlist.sanitizeUrl
     : (u) => u;
@@ -31,14 +40,14 @@
     }
   };
   const savedPreview = () => {
-    if (!new URLSearchParams(location.search).has("preview")) return null;
+    if (!new URLSearchParams(pageSearch).has("preview")) return null;
     try {
-      return JSON.parse(localStorage.getItem("pf-live-preview") || "null");
+      return JSON.parse((pageStorage && pageStorage.getItem("pf-live-preview")) || "null");
     } catch (err) {
       return null;
     }
   };
-  const cfg = savedPreview() || window.PORTFOLIO_CONFIG || inlineConfig() || {};
+  const cfg = savedPreview() || win.PORTFOLIO_CONFIG || inlineConfig() || {};
 
   const co   = cfg.company  || {};
   const p    = cfg.personal || {};

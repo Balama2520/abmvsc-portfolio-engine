@@ -341,7 +341,15 @@
   ];
 
   /* 3. Helpers */
-  const $ = (sel, root = document) => root.querySelector(sel);
+  // Async work (ZIP generation and preview rendering) can finish after a test
+  // closes its window. Keep the page objects from startup instead of looking
+  // up browser globals again after an await.
+  const win = typeof window === "undefined" ? null : window;
+  const doc = typeof document === "undefined" ? null : document;
+  const nav = typeof navigator === "undefined" ? null : navigator;
+  const pageLocation = win && win.location;
+  const $ = (sel, root = doc) => root.querySelector(sel);
+  const pageIsOpen = () => !!doc && doc.defaultView === win && !win.closed;
 
   const str = (v) => (v === undefined || v === null ? "" : String(v));
 
@@ -447,7 +455,7 @@
     if (!w || !h) return null;
     const side = Math.min(w, h);
     const edge = Math.max(1, Math.min(side, PHOTO_EDGE));
-    const canvas = document.createElement("canvas");
+    const canvas = doc.createElement("canvas");
     canvas.width = edge;
     canvas.height = edge;
     const ctx = canvas.getContext && canvas.getContext("2d");
@@ -518,7 +526,7 @@
   };
 
   const newCanvas = (w, h) => {
-    const canvas = document.createElement("canvas");
+    const canvas = doc.createElement("canvas");
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext && canvas.getContext("2d");
@@ -605,7 +613,7 @@
   // Returns the generated files keyed by name, or {} when the browser cannot
   // draw them and the files on disk should be kept.
   const renderBrandAssets = async (config) => {
-    if (typeof document === "undefined" || !document.createElement) return {};
+    if (!doc || !doc.createElement) return {};
     const theme = (config && config.theme) || {};
     const accent = hexColor(theme.accentColor, "#FF7900");
     const primary = hexColor(theme.primaryColor, "#10264B");
@@ -1251,7 +1259,7 @@
     if (!res.ok) throw new Error("HTTP " + res.status);
     const html = await res.text();
 
-    const base = new URL(".", location.href).href;
+    const base = new URL(".", pageLocation.href).href;
     // A strict Content-Security-Policy blocks an inline <script>, and the
     // preview runs under the page's policy (an iframe inherits it). A JSON
     // block is not executable, so it is allowed; script.js reads it instead of
@@ -1287,7 +1295,7 @@
     try {
       const html = await buildPreviewHtml();
       const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      window.open(url, "_blank", "noopener");
+      win.open(url, "_blank", "noopener");
       setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (err) {
       toast("Open the site from a local server to preview it in a new tab.");
@@ -1522,10 +1530,10 @@
 
   const saveFile = (data, filename, type) => {
     const url = URL.createObjectURL(new Blob([data], { type }));
-    const link = document.createElement("a");
+    const link = doc.createElement("a");
     link.href = url;
     link.download = filename;
-    document.body.appendChild(link);
+    doc.body.appendChild(link);
     link.click();
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
@@ -1718,10 +1726,13 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
     btn.disabled = true;
     btn.textContent = "Building the ZIP…";
     try {
-      saveFile(await buildZip(), zipName(), "application/zip");
+      const archive = await buildZip();
+      if (!pageIsOpen()) return;
+      saveFile(archive, zipName(), "application/zip");
       showWhatNow();
       toast("Downloaded your website. Unzip it, then drag the folder onto Netlify Drop.");
     } catch (err) {
+      if (!pageIsOpen()) return;
       const message = err && /^Could not read /.test(err.message)
         ? err.message
         : previewFetchable
@@ -1733,6 +1744,7 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => notice.classList.remove("is-visible"), 4000);
     } finally {
+      if (!pageIsOpen()) return;
       btn.disabled = false;
       btn.textContent = label;
     }
@@ -1740,13 +1752,13 @@ Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(buildConfigSource());
+      await nav.clipboard.writeText(buildConfigSource());
       toast("Copied <strong>config.js</strong> to your clipboard.");
     } catch (err) {
       const out = $("#genOutput");
       out.removeAttribute("readonly");
       out.select();
-      document.execCommand("copy");
+      doc.execCommand("copy");
       out.setAttribute("readonly", "readonly");
       toast("Copied config.js to your clipboard.");
     }
