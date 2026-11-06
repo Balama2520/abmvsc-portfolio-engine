@@ -30,7 +30,15 @@
       return null;
     }
   };
-  const cfg = window.PORTFOLIO_CONFIG || inlineConfig() || {};
+  const savedPreview = () => {
+    if (!new URLSearchParams(location.search).has("preview")) return null;
+    try {
+      return JSON.parse(localStorage.getItem("pf-live-preview") || "null");
+    } catch (err) {
+      return null;
+    }
+  };
+  const cfg = savedPreview() || window.PORTFOLIO_CONFIG || inlineConfig() || {};
 
   const co   = cfg.company  || {};
   const p    = cfg.personal || {};

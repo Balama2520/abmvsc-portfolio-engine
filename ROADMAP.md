@@ -34,10 +34,10 @@ one commit, and a push of `v3.1-generator`.
 Note: 1.5 was done before 1.4. The CSP check needs the third-party font request
 gone first, so the headers could be added with zero violations.
 
-Note: the generator's live preview runs inside an iframe, and an iframe inherits
-the page's policy. An inline <script> setting the preview config would be
-blocked, so the preview now ships the config as a JSON block and script.js reads
-it. The policy stays script-src 'self' with no inline allowance.
+Note: the generator's live preview loads the normal same-origin page inside an
+iframe. Its temporary details are stored locally before the frame loads, so
+Firefox can enforce `script-src 'self'` without the opaque origin that `srcdoc`
+creates. The policy stays script-src 'self' with no inline allowance.
 
 - [x] 1.1 Use strict JSON config files; safe import validation; move notes to SETUP.md.
 - [x] 1.2 Add a shared URL allowlist in generator, packer, and runtime.

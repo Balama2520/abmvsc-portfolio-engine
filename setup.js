@@ -1274,7 +1274,8 @@
     }
     const frame = $("#genPreview");
     try {
-      frame.srcdoc = await buildPreviewHtml();
+      localStorage.setItem("pf-live-preview", JSON.stringify(previewConfig()));
+      frame.src = `${PREVIEW_FILES[previewPage]}?preview=1`;
       $("#genPreviewNotice").hidden = true;
     } catch (err) {
       previewFetchable = false;
