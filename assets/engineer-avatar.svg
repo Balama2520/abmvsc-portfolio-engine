@@ -1,46 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
-  <defs>
-    <linearGradient id="avatarBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10264B"/>
-      <stop offset="50%" stop-color="#0B1220"/>
-      <stop offset="100%" stop-color="#070D18"/>
-    </linearGradient>
-    <linearGradient id="accentGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38BDF8"/>
-      <stop offset="50%" stop-color="#2563EB"/>
-      <stop offset="100%" stop-color="#FF7900"/>
-    </linearGradient>
-    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="#0B1220" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-
-  <!-- Deep Studio Canvas -->
-  <rect width="400" height="400" rx="200" fill="url(#avatarBg)"/>
-  <circle cx="200" cy="200" r="160" fill="url(#centerGlow)"/>
-
-  <!-- Precision Blueprint Rings -->
-  <circle cx="200" cy="200" r="185" stroke="#10264B" stroke-width="2"/>
-  <circle cx="200" cy="200" r="170" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.6"/>
-  <circle cx="200" cy="200" r="135" stroke="#38BDF8" stroke-width="1" opacity="0.3"/>
-
-  <!-- Minimalist Structural Monogram Shield -->
-  <g transform="translate(100, 100)">
-    <!-- Outer Shield / Hex Geometry -->
-    <polygon points="100,20 180,65 180,155 100,200 20,155 20,65" fill="#0B1220" stroke="url(#accentGlow)" stroke-width="3"/>
-    
-    <!-- Code / Architecture Symbol: Intersecting Vectors -->
-    <path d="M60 100 L90 70 L90 130 Z" fill="#38BDF8"/>
-    <path d="M140 100 L110 70 L110 130 Z" fill="#FF7900"/>
-    <rect x="96" y="60" width="8" height="80" rx="4" fill="#FFFFFF"/>
-    
-    <!-- Subtle Technology Core Indicator -->
-    <circle cx="100" cy="100" r="6" fill="#FF7900"/>
-  </g>
-
-  <!-- Studio Typography Badge at bottom of circle -->
-  <rect x="120" y="315" width="160" height="26" rx="13" fill="#10264B" stroke="#2563EB" stroke-width="1"/>
-  <text x="200" y="332" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="11" font-weight="700" letter-spacing="0.15em" fill="#38BDF8" text-anchor="middle">ENGINEERING LEAD</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%" role="img" aria-label="Profile photo placeholder">
+  <rect width="400" height="400" fill="#e5e7eb"/>
+  <circle cx="200" cy="158" r="64" fill="#9ca3af"/>
+  <path d="M200 244c-70 0-128 44-128 99 0 10 8 18 18 18h220c10 0 18-8 18-18 0-55-58-99-128-99z" fill="#9ca3af"/>
 </svg>
-

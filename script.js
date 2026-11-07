@@ -1,25 +1,53 @@
-/**
- * ABMVSC Portfolio Engine
- * ------------------------------------------------------------------
- * A single, dependency-free script that renders BOTH websites —
- * index.html (your portfolio) and studio.html (your company) —
- * entirely from window.PORTFOLIO_CONFIG (config.js).
- *
- *   • Hydration engine  — text, links, images, lists, sections, SEO
- *   • Site chrome       — sticky nav, scroll-spy, smooth scroll, reveal
- *   • Resume modal      — zero-dependency PDF preview
- *   • AI assistant      — streaming rule-based chatbot built from config
- *
- * You should never need to edit this file. Edit config.js instead.
- */
+/* Portfolio Engine */
+// A single, dependency-free script that renders BOTH websites —
+// index.html (your portfolio) and studio.html (your company) —
+// entirely from window.PORTFOLIO_CONFIG (config.js).
+//
+// - Hydration engine  — text, links, images, lists, sections, SEO
+// - Site chrome       — sticky nav, scroll-spy, smooth scroll, reveal
+// - Resume modal      — zero-dependency PDF preview
+// - Assistant         — rule-based chat, answered from config.js
+//
+// You should never need to edit this file. Edit config.js instead.
 
 (() => {
   "use strict";
 
-  /* ══════════════════════════════════════════════════════════════
-     0. CONTEXT & HELPERS
-     ══════════════════════════════════════════════════════════════ */
-  const cfg = window.PORTFOLIO_CONFIG || {};
+  // jsdom may close a preview frame while asynchronous generator work is still
+  // settling. Keep these page values from startup instead of reading a torn
+  // down window object later.
+  const win = window;
+  const document = win.document;
+  if (!document) return;
+  const pageSearch = win.location ? win.location.search : "";
+  const pageStorage = win.localStorage;
+
+  const sanitizeUrl = (typeof UrlAllowlist !== "undefined" && UrlAllowlist.sanitizeUrl)
+    ? UrlAllowlist.sanitizeUrl
+    : (u) => u;
+
+  /* 0. Context & helpers */
+  // config.js sets window.PORTFOLIO_CONFIG. The generator's live preview ships
+  // the same object in a JSON block instead, because a strict
+  // Content-Security-Policy blocks the inline script that would set it.
+  const inlineConfig = () => {
+    const el = document.getElementById("pf-inline-config");
+    if (!el) return null;
+    try {
+      return JSON.parse(el.textContent || "{}");
+    } catch (err) {
+      return null;
+    }
+  };
+  const savedPreview = () => {
+    if (!new URLSearchParams(pageSearch).has("preview")) return null;
+    try {
+      return JSON.parse((pageStorage && pageStorage.getItem("pf-live-preview")) || "null");
+    } catch (err) {
+      return null;
+    }
+  };
+  const cfg = savedPreview() || win.PORTFOLIO_CONFIG || inlineConfig() || {};
 
   const co   = cfg.company  || {};
   const p    = cfg.personal || {};
@@ -42,6 +70,9 @@
     String(v ?? "").replace(/[&<>"']/g, (c) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
     );
+  const jsonForHtml = (value) => JSON.stringify(value).replace(/[<>&\u2028\u2029]/g, (c) =>
+    ({ "<": "\\u003c", ">": "\\u003e", "&": "\\u0026", "\u2028": "\\u2028", "\u2029": "\\u2029" }[c])
+  );
 
   // Read a dotted path out of the config: get("personal.email")
   const get = (path, fallback = "") => {
@@ -55,9 +86,7 @@
     else el.removeAttribute("hidden");
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     1. DATA SOURCES  (handles both new + legacy config shapes)
-     ══════════════════════════════════════════════════════════════ */
+  /* 1. Data sources (handles both new + legacy config shapes) */
   const projects       = arr(cfg.projects);
   const experience     = arr(cfg.experience);
   const education      = cfg.education ? arr(cfg.education) : [];
@@ -80,15 +109,31 @@
   // Values that are derived (with sensible fallbacks) rather than literal.
   // Anything in here can still be overridden from config.js.
   const taglineBits = String(co.tagline || "").split(".").map((s) => s.trim()).filter(Boolean);
+
+  // The hero headline is the role split across two lines. The "&" that joins
+  // the two halves is part of how the role reads, so it stays on line two
+  // rather than being dropped. Set hero.titleLine1/2 to override the split.
+  const roleBits = String(p.role || "").split("&").map((s) => s.trim());
+  const roleLine1 = roleBits[0] || "";
+  const roleLine2 = roleBits.length > 1 ? `& ${roleBits.slice(1).join(" & ")}` : "";
+
   const VIRTUAL = {
     "hero.eyebrow": hero.eyebrow || p.availability || "",
     "hero.badge": hero.badge || (co.name ? `Founder @ ${co.name}` : ""),
-    "hero.titleLine1": hero.titleLine1 || String(p.role || "").split("&")[0].trim(),
-    "hero.titleLine2": hero.titleLine2 || (String(p.role || "").split("&")[1] || "").trim(),
+    "hero.titleLine1": hero.titleLine1 || roleLine1,
+    "hero.titleLine2": hero.titleLine2 || roleLine2,
     "company.eyebrow": [co.descriptor, co.founded ? `Founded ${co.founded}` : ""].filter(Boolean).join(" · "),
     "company.titleLine1": taglineBits[0] ? `${taglineBits[0]}.` : "",
     "company.titleLine2": taglineBits.length > 1 ? `${taglineBits.slice(1).join(". ")}.` : "",
     "company.heroParagraph": co.heroParagraph || co.description || "",
+  };
+
+  // Contact cards carry a short text mark rather than a pictograph, so the row
+  // reads the same in every browser and stays legible at 11px.
+  const initialsOf = (text) => {
+    const words = String(text || "").trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return "↗";
+    return (words.length > 1 ? words[0][0] + words[1][0] : words[0].slice(0, 2)).toUpperCase();
   };
 
   // Contact link cards — explicit config first, otherwise auto-built
@@ -96,7 +141,7 @@
     const explicit = arr(cfg.contact && cfg.contact.links);
     if (explicit.length) {
       return explicit.map((l) => ({
-        icon: l.icon || "↗",
+        icon: l.icon || initialsOf(l.label),
         label: l.label,
         sub: l.sub || "",
         url: l.url || "#",
@@ -107,7 +152,7 @@
     const out = [];
     if (!isStudio && co.name) {
       out.push({
-        icon: "🏢",
+        icon: initialsOf(co.name),
         label: co.name,
         sub: co.descriptor || "Company",
         url: co.studioUrl || "studio.html",
@@ -116,7 +161,7 @@
     }
     if (isStudio && p.name) {
       out.push({
-        icon: "👤",
+        icon: initialsOf(p.name),
         label: `${p.name.split(" ")[0]}'s Portfolio`.replace("'s's", "'s"),
         sub: "Personal Portfolio",
         url: "index.html",
@@ -125,22 +170,20 @@
     }
     if (p.linkedin) out.push({ icon: "in", label: "LinkedIn", sub: "Professional Profile", url: p.linkedin, external: true });
     if (p.github)   out.push({ icon: "gh", label: "GitHub",   sub: "Code Repositories",    url: p.github,   external: true });
-    if (p.twitter)  out.push({ icon: "𝕏",  label: "Twitter / X", sub: "Updates",           url: p.twitter,  external: true });
-    if (p.website)  out.push({ icon: "🌐", label: "Website",  sub: "Personal site",        url: p.website,  external: true });
-    if (p.huggingface)  out.push({ icon: "🤗", label: "Hugging Face", sub: "Models & datasets", url: p.huggingface, external: true });
-    if (p.researchgate) out.push({ icon: "🔬", label: "ResearchGate", sub: "Publications",      url: p.researchgate, external: true });
+    if (p.twitter)  out.push({ icon: "X",  label: "Twitter / X", sub: "Updates",           url: p.twitter,  external: true });
+    if (p.website)  out.push({ icon: "W",  label: "Website",  sub: "Personal site",        url: p.website,  external: true });
+    if (p.huggingface)  out.push({ icon: "HF", label: "Hugging Face", sub: "Models & datasets", url: p.huggingface, external: true });
+    if (p.researchgate) out.push({ icon: "RG", label: "ResearchGate", sub: "Publications",      url: p.researchgate, external: true });
     if (p.resume)   out.push({ icon: "cv", label: "Resume",   sub: "Download the PDF",     url: p.resume,   external: false });
     return out;
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     2. LIST RENDERERS  (one per [data-list="…"] container)
-     ══════════════════════════════════════════════════════════════ */
+  /* 2. List renderers (one per [data-list="…"] container) */
   const statRow = (items, navy) => items
     .map((s, i) => `
       ${i ? '<div class="stat-divider"></div>' : ""}
       <div class="stat">
-        <span class="stat-num"${navy ? ' style="color:var(--navy);"' : ""}>${esc(s.value)}</span>
+        <span class="stat-num"${navy ? ' style="color:var(--brand-ink);"' : ""}>${esc(s.value)}</span>
         <span class="stat-label">${esc(s.label)}</span>
       </div>`)
     .join("");
@@ -160,14 +203,23 @@
 
   const projectCards = (items) => items
     .map((pr, i) => {
+      const safeLive = sanitizeUrl(pr.liveUrl, "link");
+      const safeGh = sanitizeUrl(pr.githubUrl, "link");
       const links = [
-        pr.liveUrl   ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer">Live ↗</a>` : "",
-        pr.githubUrl ? `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : "",
+        safeLive   ? `<a href="${esc(safeLive)}" target="_blank" rel="noopener noreferrer">Live ↗</a>` : "",
+        safeGh ? `<a href="${esc(safeGh)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : "",
       ].filter(Boolean).join("");
 
       const topRight = links
         ? `<div class="project-links">${links}</div>`
         : pr.status ? `<span class="project-status">${esc(pr.status)}</span>` : "";
+
+      const study = (pr.problem || pr.built)
+        ? `<div class="project-study">
+            ${pr.problem ? `<p><span class="study-label">The problem</span>${esc(pr.problem)}</p>` : ""}
+            ${pr.built ? `<p><span class="study-label">What I built</span>${esc(pr.built)}</p>` : ""}
+          </div>`
+        : "";
 
       return `
       <article class="project-card ${i === 0 ? "project-featured" : ""}">
@@ -177,7 +229,8 @@
         </div>
         <h3>${esc(pr.name || "Untitled Project")}</h3>
         <p>${esc(pr.description || "")}</p>
-        ${pr.result ? `<div class="project-metric">✦ ${esc(pr.result)}</div>` : ""}
+        ${study}
+        ${pr.result ? `<div class="project-metric">${esc(pr.result)}</div>` : ""}
         <p class="tech-stack">${arr(pr.tech).map(esc).join(" · ")}</p>
       </article>`;
     })
@@ -211,8 +264,9 @@
     .map((r, i) => {
       const metrics = arr(r.metrics);
       const tag = [r.publisher, r.year].filter(Boolean).map(esc).join(" · ");
-      const link = r.url
-        ? `<a class="achievement-link" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">Read the paper ↗</a>`
+      const safePaperUrl = sanitizeUrl(r.url, "link");
+      const link = safePaperUrl
+        ? `<a class="achievement-link" href="${esc(safePaperUrl)}" target="_blank" rel="noopener noreferrer">Read the paper ↗</a>`
         : r.docId ? `<span class="achievement-tag">Doc #${esc(r.docId)}</span>` : "";
       return `
       <article class="achievement-card ${i === 0 ? "achievement-highlight" : ""}">
@@ -226,30 +280,35 @@
     .join("");
 
   const achievementCards = (items) => items
-    .map((a) => `
+    .map((a) => {
+      const safeProof = sanitizeUrl(a.url, "link");
+      return `
       <article class="achievement-card">
-        <p class="achievement-tag">🏆 ${esc(a.issuer || "Recognition")}</p>
+        <p class="achievement-tag">${esc(a.issuer || "Recognition")}</p>
         <h3>${esc(a.title || "Achievement")}</h3>
         ${a.detail ? `<p>${esc(a.detail)}</p>` : ""}
         ${a.year ? `<span class="exp-date" style="display:inline-block; margin-top:8px;">${esc(a.year)}</span>` : ""}
-        ${a.url ? `<a class="achievement-link" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">View proof ↗</a>` : ""}
-      </article>`)
+        ${safeProof ? `<a class="achievement-link" href="${esc(safeProof)}" target="_blank" rel="noopener noreferrer">View proof ↗</a>` : ""}
+      </article>`;
+    })
     .join("");
 
   const certCards = (items) => items
-    .map((c) => `
+    .map((c) => {
+      const safeVerify = sanitizeUrl(c.url, "link");
+      return `
       <article class="cert-card">
         <p class="cert-issuer">${esc(c.issuer || "Certification")}</p>
         <h3>${esc(c.title || "Certification")}</h3>
         ${c.year ? `<p class="cert-date">${esc(c.year)}</p>` : ""}
-        ${c.url ? `<a class="achievement-link" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">Verify ↗</a>` : ""}
-      </article>`)
+        ${safeVerify ? `<a class="achievement-link" href="${esc(safeVerify)}" target="_blank" rel="noopener noreferrer">Verify ↗</a>` : ""}
+      </article>`;
+    })
     .join("");
 
   const pillarCards = (items) => items
     .map((b) => `
       <article class="pillar-box">
-        <div class="pillar-box-icon">${esc(b.icon || "◆")}</div>
         <h4>${esc(b.title || "Pillar")}</h4>
         ${b.text ? `<p style="font-size:13px; color:var(--text-muted); margin-top:8px;">${esc(b.text)}</p>` : ""}
       </article>`)
@@ -264,15 +323,19 @@
     .join("");
 
   const linkCards = (items) => items
-    .map((l) => `
-      <a class="contact-link-card" href="${esc(l.url)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>
+    .map((l) => {
+      const safeHref = sanitizeUrl(l.url, "link");
+      if (!safeHref) return "";
+      return `
+      <a class="contact-link-card" href="${esc(safeHref)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>
         <span class="contact-link-icon">${esc(l.icon)}</span>
         <div>
           <p class="contact-link-label">${esc(l.label)}</p>
           <p class="contact-link-sub">${esc(l.sub)}</p>
         </div>
         <span class="contact-link-arrow">↗</span>
-      </a>`)
+      </a>`;
+    })
     .join("");
 
   const paragraphBlock = (items) => items
@@ -317,19 +380,45 @@
     "contact-links": contactLinks().length,
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     3. HYDRATION PASSES
-     ══════════════════════════════════════════════════════════════ */
+  /* 3. Hydration passes */
 
-  // 3a. Theme colours + fonts
+  // Blends a hex colour toward black (amount < 0) or white (amount > 0). One
+  // accent value then yields a readable text shade and a soft background,
+  // instead of asking the visitor to pick three colours that agree.
+  const blend = (hex, amount) => {
+    const match = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(hex).trim());
+    if (!match) return hex;
+    const digits = match[1].length === 3
+      ? match[1].replace(/./g, (c) => c + c)
+      : match[1];
+    const to = amount < 0 ? 0 : 255;
+    const ratio = Math.min(1, Math.abs(amount));
+    const channels = [0, 2, 4].map((i) => {
+      const value = parseInt(digits.slice(i, i + 2), 16);
+      return Math.round(value + (to - value) * ratio).toString(16).padStart(2, "0");
+    });
+    return "#" + channels.join("");
+  };
+
+  // 3a. Theme mode, colours + fonts. Mode is "light", "dark" or "minimal".
   const hydrateTheme = () => {
     const root = document.documentElement;
-    if (theme.primaryColor) root.style.setProperty("--navy", theme.primaryColor);
-    if (theme.accentColor)  root.style.setProperty("--orange", theme.accentColor);
-    if (theme.blueColor)    root.style.setProperty("--blue", theme.blueColor);
-    if (theme.fontHeading)  root.style.setProperty("--font-heading", theme.fontHeading);
-    if (theme.fontBody)     root.style.setProperty("--font-body", theme.fontBody);
-    if (theme.fontMono)     root.style.setProperty("--font-mono", theme.fontMono);
+    const dark = theme.mode === "dark";
+    root.dataset.theme = theme.mode === "dark" || theme.mode === "minimal" ? theme.mode : "light";
+
+    if (theme.primaryColor) {
+      root.style.setProperty("--navy", theme.primaryColor);
+      root.style.setProperty("--on-accent", theme.primaryColor);
+    }
+    if (theme.accentColor) {
+      root.style.setProperty("--accent", theme.accentColor);
+      root.style.setProperty("--accent-hover", blend(theme.accentColor, dark ? 0.14 : -0.14));
+      root.style.setProperty("--accent-text", blend(theme.accentColor, dark ? 0.4 : -0.34));
+      root.style.setProperty("--accent-soft", blend(theme.accentColor, dark ? -0.82 : 0.9));
+    }
+    if (theme.fontHeading) root.style.setProperty("--font-heading", theme.fontHeading);
+    if (theme.fontBody) root.style.setProperty("--font-body", theme.fontBody);
+    if (theme.fontMono) root.style.setProperty("--font-mono", theme.fontMono);
   };
 
   // 3b. <head> — title, meta, social cards, structured data
@@ -437,7 +526,7 @@
       ldEl.type = "application/ld+json";
       document.head.appendChild(ldEl);
     }
-    ldEl.textContent = JSON.stringify(ld, (key, val) => (val === undefined ? undefined : val));
+    ldEl.textContent = jsonForHtml(JSON.parse(JSON.stringify(ld, (key, val) => (val === undefined ? undefined : val))));
 
     if (p.resume) {
       const modalDownload = q('.resume-modal-actions a[download]');
@@ -457,20 +546,29 @@
       setHidden(el, false);
 
       if (el.tagName === "IMG") {
-        el.setAttribute("src", val);
-        if (p.name) el.setAttribute("alt", p.name);
+        const safe = sanitizeUrl(val, "image");
+        if (safe) {
+          el.setAttribute("src", safe);
+          if (p.name) el.setAttribute("alt", p.name);
+        } else {
+          setHidden(el, true);
+        }
         return;
       }
 
       if (el.tagName === "A") {
         if (key.includes("email")) {
-          el.setAttribute("href", `mailto:${val}`);
+          const safe = sanitizeUrl(`mailto:${val}`, "link");
+          if (safe) el.setAttribute("href", safe);
           el.textContent = val;
         } else if (key.includes("phone")) {
-          el.setAttribute("href", `tel:${String(val).replace(/\s/g, "")}`);
+          const safe = sanitizeUrl(`tel:${String(val).replace(/\s/g, "")}`, "link");
+          if (safe) el.setAttribute("href", safe);
           el.textContent = val;
         } else {
-          el.setAttribute("href", val);
+          const safe = sanitizeUrl(val, "link");
+          if (safe) el.setAttribute("href", safe);
+          else setHidden(el, true);
         }
         return;
       }
@@ -533,27 +631,42 @@
       return;
     }
     setHidden(el, false);
-    el.innerHTML =
-      'Built with the <a href="setup.html">ABMVSC Portfolio Engine</a>' +
-      '<span class="built-by-sep">·</span><a href="setup.html">Make this yours →</a>';
+    // Plain text on purpose: a generated site should not carry a link to
+    // anyone else's account. The owner opted in to the credit, not to a
+    // backlink, and the template repository is where it belongs.
+    el.textContent = "Made with ABMVSC Portfolio Engine";
   };
 
-  // 3g. Demo notice — [data-demo-notice]
-  // Shown only while config.js is still the shipped ABMVSC sample
+  // 3g. Demo chrome — [data-demo-banner] and [data-demo-notice]
+  // Shown only while config.js is still the shipped sample
   // (theme.showDemoNotice === true). A config made in setup.html always has
-  // this off, so the notice disappears the moment the site becomes yours.
+  // this off, so the sample chrome disappears the moment the site becomes
+  // yours. The top strip carries one clear action; the corner notice repeats
+  // the same line for people who have scrolled away from the top.
+  const DEMO_TEXT = "This is sample content.";
   const hydrateDemoNotice = () => {
-    const el = q("[data-demo-notice]");
-    if (!el) return;
-    if (theme.showDemoNotice !== true) {
-      setHidden(el, true);
-      return;
+    const on = theme.showDemoNotice === true;
+
+    const banner = q("[data-demo-banner]");
+    if (banner) {
+      setHidden(banner, !on);
+      if (on) {
+        banner.innerHTML =
+          `<span class="demo-banner-text">${DEMO_TEXT}</span>` +
+          '<a class="demo-banner-cta" href="setup.html">Create your own portfolio</a>';
+      }
     }
-    setHidden(el, false);
-    el.innerHTML =
-      '<span class="demo-notice-tag">Demo</span>' +
-      '<span class="demo-notice-text">This is sample content — your details go in <code>config.js</code>.</span>' +
-      '<a href="setup.html">Make it yours →</a>';
+
+    const notice = q("[data-demo-notice]");
+    if (notice) {
+      setHidden(notice, !on);
+      if (on) {
+        notice.innerHTML =
+          '<span class="demo-notice-tag">Demo</span>' +
+          `<span class="demo-notice-text">${DEMO_TEXT}</span>` +
+          '<a href="setup.html">Make it yours →</a>';
+      }
+    }
   };
 
   const hydrate = () => {
@@ -566,9 +679,7 @@
     hydrateDemoNotice();
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     4. RESUME MODAL
-     ══════════════════════════════════════════════════════════════ */
+  /* 4. Resume modal */
   const resumeModal = document.getElementById("resumeModal");
   const resumeFrame = document.getElementById("resumeFrame");
   const resumeFile = p.resume || "resume.pdf";
@@ -600,10 +711,92 @@
   qa("[data-resume-trigger]").forEach((btn) => btn.addEventListener("click", openResumeModal));
   qa("[data-resume-close]").forEach((el) => el.addEventListener("click", closeResumeModal));
 
-  /* ══════════════════════════════════════════════════════════════
-     5. SITE CHROME — nav, scroll-spy, smooth scroll, reveal
-     ══════════════════════════════════════════════════════════════ */
+  /* 4b. Save contact — a vCard (.vcf) built in the browser from config.js.
+     The file is assembled from the same details the page already shows, so a
+     visitor can add the owner to their address book. Nothing is uploaded. */
+  const vcardEscape = (value) =>
+    String(value ?? "")
+      .replace(/\\/g, "\\\\")
+      .replace(/;/g, "\\;")
+      .replace(/,/g, "\\,")
+      .replace(/\r?\n/g, "\\n");
+
+  // A vCard line over 75 characters is folded, and the next line begins with a
+  // single space. Without this a long note can be read back incorrectly.
+  const vcardFold = (line) => {
+    if (line.length <= 75) return line;
+    const out = [line.slice(0, 75)];
+    let rest = line.slice(75);
+    while (rest.length) {
+      out.push(" " + rest.slice(0, 74));
+      rest = rest.slice(74);
+    }
+    return out.join("\r\n");
+  };
+
+  const buildVCard = () => {
+    const name = String(p.name || "").trim();
+    const words = name.split(/\s+/).filter(Boolean);
+    const family = words.length > 1 ? words[words.length - 1] : words[0] || "";
+    const given = words.length > 1 ? words.slice(0, -1).join(" ") : "";
+
+    const lines = ["BEGIN:VCARD", "VERSION:3.0"];
+    lines.push(vcardFold(`N:${vcardEscape(family)};${vcardEscape(given)};;;`));
+    lines.push(vcardFold(`FN:${vcardEscape(name)}`));
+    if (p.role) lines.push(vcardFold(`TITLE:${vcardEscape(p.role)}`));
+    if (co.name) lines.push(vcardFold(`ORG:${vcardEscape(co.name)}`));
+    if (p.email) lines.push(vcardFold(`EMAIL;TYPE=INTERNET:${vcardEscape(p.email)}`));
+    if (p.phone) lines.push(vcardFold(`TEL;TYPE=CELL:${vcardEscape(p.phone)}`));
+    const site = p.website || p.linkedin || p.github || seo.siteUrl || "";
+    if (site) lines.push(vcardFold(`URL:${vcardEscape(site)}`));
+    if (p.location) lines.push(vcardFold(`ADR;TYPE=WORK:;;${vcardEscape(p.location)};;;;`));
+    if (p.bio) lines.push(vcardFold(`NOTE:${vcardEscape(p.bio)}`));
+    if (p.linkedin) lines.push(vcardFold(`X-SOCIALPROFILE;TYPE=linkedin:${vcardEscape(p.linkedin)}`));
+    if (p.github) lines.push(vcardFold(`X-SOCIALPROFILE;TYPE=github:${vcardEscape(p.github)}`));
+    if (p.twitter) lines.push(vcardFold(`X-SOCIALPROFILE;TYPE=twitter:${vcardEscape(p.twitter)}`));
+    lines.push("END:VCARD");
+    return lines.join("\r\n") + "\r\n";
+  };
+
+  const vcardFileName = () => {
+    const slug = String(p.name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    return `${slug || "contact"}.vcf`;
+  };
+
+  const initVCard = () => {
+    const buttons = qa("[data-vcard-download]");
+    if (!buttons.length) return;
+    // With nothing to save the button is hidden, rather than offering an empty
+    // contact card.
+    const hasDetails = Boolean(String(p.name || p.email || p.phone).trim());
+    buttons.forEach((btn) => {
+      setHidden(btn, !hasDetails);
+      if (!hasDetails) return;
+      btn.addEventListener("click", () => {
+        const blob = new Blob([buildVCard()], { type: "text/vcard;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = vcardFileName();
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        // Release the address once the browser has taken the file.
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    });
+  };
+
+  /* 5. Site chrome — nav, scroll-spy, smooth scroll, reveal */
   const setupChrome = () => {
+    // Copyright year — kept here so neither page needs an inline script.
+    const yearEl = document.getElementById("footer-year");
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
     const sections = qa("section[id]");
     const navLinks = qa("nav a");
     const navbar = q(".navbar");
@@ -644,31 +837,36 @@
       });
     });
 
-    // Reveal-on-scroll — collected AFTER hydration so dynamic cards animate too
-    const revealEls = qa(
-      ".experience-card, .project-card, .achievement-card, .cert-card, .reason-card, .pillar-box, .skill-card"
-    );
-    if (revealEls.length && "IntersectionObserver" in window) {
-      const reveal = new IntersectionObserver(
-        (entries, observer) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          });
-        },
-        { threshold: 0.12 }
+    // Reveal-on-scroll — collected AFTER hydration so dynamic cards animate too.
+    // Cards are visible by default; the entrance animation is a progressive
+    // enhancement that only runs when the browser can observe scroll position
+    // and the visitor has not asked for reduced motion. Nothing is ever hidden
+    // while waiting, so a card keeps its content even if it is never scrolled
+    // to (and a screenshot taken without scrolling is never blank).
+    const reduceMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if ("IntersectionObserver" in window && !reduceMotion) {
+      const revealEls = qa(
+        ".experience-card, .project-card, .achievement-card, .cert-card, .reason-card, .pillar-box, .skill-card"
       );
-      revealEls.forEach((el) => {
-        el.classList.add("hidden");
-        reveal.observe(el);
-      });
+      if (revealEls.length) {
+        const reveal = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("reveal");
+              observer.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.12 }
+        );
+        revealEls.forEach((el) => reveal.observe(el));
+      }
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     6. AI ASSISTANT — rule-based, fully built from config.js
-     ══════════════════════════════════════════════════════════════ */
+  /* 6. AI assistant — rule-based, fully built from config.js */
   const initChatbot = () => {
     const chatbot = document.getElementById("chatbot");
     const toggle = document.getElementById("chatbotToggle");
@@ -681,8 +879,6 @@
 
     if (!chatbot || !toggle || !win || !messages || !form || !input) return;
 
-    const engineLabel = chat.assistantName || "AI Engine";
-    let isGenerating = false;
     let lastTopic = null;
 
     const formatMarkdown = (text) =>
@@ -696,7 +892,7 @@
         .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
         .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1">$1</a>');
 
-    /* ---------- 6a. Knowledge, built from config ---------- */
+    /* 6a. Knowledge, built from config */
     const skillsText = () => {
       const cats = arr(cfg.skills && cfg.skills.categories);
       if (!cats.length) return "My tech stack isn't configured yet.";
@@ -758,15 +954,15 @@
 
     const brain = {
       templateGuide:
-        "**How this site works — one config, two websites:**\n\n" +
-        "1. **Edit `config.js`** — your name, projects, skills, contact details and company identity all live in one file.\n" +
-        "2. **`index.html`** renders your personal portfolio and **`studio.html`** renders your company page. Both read the same config.\n" +
-        "3. **Zero dependencies** — no build step, no npm install, no framework.\n" +
-        "4. **I'm config-aware** — I answer questions using the data in `config.js`, with no external AI service.\n\n" +
+        "**How this site works:**\n\n" +
+        "1. **One set of details, two pages** — the personal portfolio and the company page read the same information, so they never drift apart.\n" +
+        "2. **Built to be filled in** — a short form turns the owner's details into a finished website they can download and host for free.\n" +
+        "3. **No frameworks, no build step, no plugins** — plain HTML, CSS and JavaScript.\n" +
+        "4. **I answer from those details** — this is keyword matching, not a language model. No network call, no external service.\n\n" +
         "Try asking about **skills**, **projects** or **experience**.",
 
-      greeting: chat.greeting || `Hello! I'm ${p.name || "the portfolio owner"}'s AI assistant. Ask me about their projects, skills or experience.`,
-      studioGreeting: chat.studioGreeting || `Welcome to ${co.name || "the studio"}! Ask me about our products, capabilities or how to collaborate.`,
+      greeting: chat.greeting || `I answer questions about ${p.name || "the portfolio owner"}'s projects, skills and background, using the details on this page.`,
+      studioGreeting: chat.studioGreeting || `Welcome to ${co.name || "the studio"}. Ask me about our products, capabilities and how to work with us.`,
 
       summary: `**${p.name || "Portfolio Owner"}** — ${p.role || "Developer"}.\n\n${p.bio || ""}\n\n**Location:** ${p.location || "—"} | **Availability:** ${p.availability || "—"}`,
       skills: skillsText(),
@@ -794,10 +990,10 @@
       hobbies: custom.hobbies ||
         `${p.name || "The portfolio owner"} enjoys building things and learning new technology.`,
       fallback: custom.fallback ||
-        `I'm trained on ${p.name || "this"}'s portfolio. Ask about **skills**, **projects**, **experience**, **research** or **how to get in touch**.`,
-      joke: "Why do programmers prefer dark mode? Because light attracts bugs!",
-      thanks: "You're welcome! Ask anything else about the portfolio.",
-      bot: `I'm ${p.name || "the portfolio owner"}'s AI assistant, running entirely on this site's config — no external AI service.`,
+        `I answer from ${p.name || "this"}'s own details. Ask about **skills**, **projects**, **experience**, **research** or **how to get in touch**.`,
+      joke: "Why do programmers prefer dark mode? Because light attracts bugs.",
+      thanks: "You're welcome. Ask anything else about the portfolio.",
+      bot: `I'm a keyword assistant built into this site. I answer from the details on this page, with no language model and no network call.`,
     };
 
     // Deep-dive answers become first-class topics
@@ -805,7 +1001,7 @@
       if (d && d.key) brain[d.key] = d.answer || "";
     });
 
-    /* ---------- 6b. Intent matching ---------- */
+    /* 6b. Intent matching */
     const coreRules = [
       { key: "templateGuide", words: ["template", "how does this work", "how to use", "how to edit", "config.js", "customize", "how to launch", "how to deploy", "clone", "fork"] },
       { key: "resume", words: ["resume", "cv", "curriculum vitae", "download resume", "view resume"] },
@@ -847,12 +1043,12 @@
 
     const getAnswer = (key) => (brain[key] !== undefined ? brain[key] : brain.fallback);
 
-    /* ---------- 6c. In-chat action buttons ---------- */
+    /* 6c. In-chat action buttons */
     const projectButtons = () =>
       projects.slice(0, 3).filter((pr) => pr.liveUrl || pr.githubUrl).map((pr) =>
         pr.liveUrl
-          ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🚀 ${esc(pr.name)}</a>`
-          : `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 ${esc(pr.name)}</a>`
+          ? `<a href="${esc(pr.liveUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">${esc(pr.name)}</a>`
+          : `<a href="${esc(pr.githubUrl)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">${esc(pr.name)}</a>`
       ).join("\n            ");
 
     const getActions = (key) => {
@@ -866,19 +1062,19 @@
       switch (key) {
         case "resume":
           return `<div class="chat-actions">
-            <button type="button" class="chat-action-btn primary" data-action="resume">📄 Open Resume</button>
-            <a href="${esc(resumeFile)}" download class="chat-action-btn">⬇️ Download PDF</a>
-            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn">✉️ Get in Touch</a>` : ""}
+            <button type="button" class="chat-action-btn primary" data-action="resume">Open Resume</button>
+            <a href="${esc(resumeFile)}" download class="chat-action-btn">Download PDF</a>
+            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn">Get in Touch</a>` : ""}
           </div>`;
 
         case "hiring":
         case "contact":
         case "location":
           return `<div class="chat-actions">
-            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn primary">✉️ Send Email</a>` : ""}
-            ${phone ? `<a href="${esc(phoneHref)}" class="chat-action-btn">📞 Call</a>` : ""}
-            <button type="button" class="chat-action-btn" data-action="resume">📄 View Resume</button>
-            ${linkedin ? `<a href="${esc(linkedin)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🔗 LinkedIn</a>` : ""}
+            ${email ? `<a href="mailto:${esc(email)}" class="chat-action-btn primary">Send Email</a>` : ""}
+            ${phone ? `<a href="${esc(phoneHref)}" class="chat-action-btn">Call</a>` : ""}
+            <button type="button" class="chat-action-btn" data-action="resume">View Resume</button>
+            ${linkedin ? `<a href="${esc(linkedin)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">LinkedIn</a>` : ""}
           </div>`;
 
         case "projects":
@@ -887,13 +1083,13 @@
         case "whyHire":
           return `<div class="chat-actions">
             ${projectButtons()}
-            ${github ? `<a href="${esc(github)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">🐙 GitHub</a>` : ""}
-            <button type="button" class="chat-action-btn" data-action="resume">📄 Resume</button>
+            ${github ? `<a href="${esc(github)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn">GitHub</a>` : ""}
+            <button type="button" class="chat-action-btn" data-action="resume">Resume</button>
           </div>`;
 
         case "research": {
           const links = research.filter((r) => r.url).slice(0, 2).map((r, i) =>
-            `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn ${i === 0 ? "primary" : ""}">📚 ${esc(r.publisher || "Paper")}</a>`
+            `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" class="chat-action-btn ${i === 0 ? "primary" : ""}">${esc(r.publisher || "Paper")}</a>`
           ).join("\n            ");
           return links ? `<div class="chat-actions">${links}</div>` : "";
         }
@@ -903,9 +1099,9 @@
           return co.name
             ? `<div class="chat-actions">
                 ${isStudio
-                  ? `<a href="index.html" class="chat-action-btn primary">👤 ${esc((p.name || "Founder").split(" ")[0])}'s Portfolio</a>`
-                  : `<a href="${esc(studioHref)}" class="chat-action-btn primary">🏢 ${esc(co.name)}</a>`}
-                <button type="button" class="chat-action-btn" data-q="projects">🚀 Products</button>
+                  ? `<a href="index.html" class="chat-action-btn primary">${esc((p.name || "Founder").split(" ")[0])}'s Portfolio</a>`
+                  : `<a href="${esc(studioHref)}" class="chat-action-btn primary">${esc(co.name)}</a>`}
+                <button type="button" class="chat-action-btn" data-q="projects">Products</button>
               </div>`
             : "";
 
@@ -914,7 +1110,7 @@
       }
     };
 
-    /* ---------- 6d. Quick-reply chips ---------- */
+    /* 6d. Quick-reply chips */
     const chip = (key, label) => ({ key, label });
 
     const baseChips = () => {
@@ -945,7 +1141,7 @@
         .join("");
     };
 
-    /* ---------- 6e. Streaming renderer ---------- */
+    /* 6e. Answer renderer */
     const scrollToBottom = () => { messages.scrollTop = messages.scrollHeight; };
 
     const addBubble = (sender) => {
@@ -956,86 +1152,49 @@
       return bubble;
     };
 
-    const streamBotResponse = (fullText, intentKey, callback) => {
-      const latencyMs = Math.floor(Math.random() * 65) + 110;
-      const startTime = performance.now();
-
-      const typing = document.createElement("div");
-      typing.className = "chat-msg bot typing-dots";
-      typing.innerHTML = `<span class="typing-label">${esc(engineLabel)}</span>` +
-        `<span class="latency-badge">${latencyMs}ms</span>` +
-        `<span class="dot"></span><span class="dot"></span><span class="dot"></span>`;
-      messages.appendChild(typing);
+    // Answers are matched from config.js by keyword and rendered at once. There
+    // is no model and no network call, so there is nothing to wait for.
+    const renderBotResponse = (fullText, intentKey, callback) => {
+      const botBubble = addBubble("bot");
+      botBubble.innerHTML = formatMarkdown(fullText) + getActions(intentKey);
       scrollToBottom();
-
-      const thinkTime = latencyMs + Math.floor(Math.random() * 120);
-
-      setTimeout(() => {
-        typing.remove();
-        const botBubble = addBubble("bot");
-        const words = String(fullText).split(" ");
-        let accumulated = "";
-        let i = 0;
-
-        const typeNext = () => {
-          if (i < words.length) {
-            accumulated += (i === 0 ? "" : " ") + words[i];
-            botBubble.innerHTML = formatMarkdown(accumulated) + '<span class="chat-cursor"></span>';
-            scrollToBottom();
-            i++;
-            setTimeout(typeNext, 12 + Math.random() * 14);
-          } else {
-            const totalSec = ((performance.now() - startTime) / 1000).toFixed(2);
-            const tokenCount = Math.round(words.length * 1.35);
-
-            let html = formatMarkdown(fullText);
-            html += getActions(intentKey);
-            html += `<div class="chat-telemetry"><span>⚡ ${totalSec}s response · ~${tokenCount} tokens</span><span>${latencyMs}ms latency</span></div>`;
-            botBubble.innerHTML = html;
-            scrollToBottom();
-            isGenerating = false;
-            updateQuickChips(intentKey);
-            if (callback) callback();
-          }
-        };
-        typeNext();
-      }, thinkTime);
+      updateQuickChips(intentKey);
+      if (callback) callback();
     };
 
     const ask = (key, label) => {
-      if (isGenerating) return;
       const userBubble = addBubble("user");
       userBubble.textContent = label;
-      isGenerating = true;
       lastTopic = key;
-      streamBotResponse(getAnswer(key), key, () => {
-        if (key === "resume") setTimeout(openResumeModal, 400);
+      renderBotResponse(getAnswer(key), key, () => {
+        if (key === "resume") openResumeModal();
       });
     };
 
     const handleUserMessage = (text) => {
-      if (isGenerating) return;
       const clean = String(text).trim();
       if (!clean) return;
       const userBubble = addBubble("user");
       userBubble.textContent = clean;
-      isGenerating = true;
       const intent = matchQuery(clean);
       lastTopic = intent;
-      streamBotResponse(getAnswer(intent), intent, () => {
-        if (intent === "resume") setTimeout(openResumeModal, 400);
+      renderBotResponse(getAnswer(intent), intent, () => {
+        if (intent === "resume") openResumeModal();
       });
     };
 
-    /* ---------- 6f. Open / close & wiring ---------- */
+    /* 6f. Open / close & wiring */
     const openChat = () => {
       chatbot.classList.add("open");
       toggle.setAttribute("aria-expanded", "true");
       win.setAttribute("aria-hidden", "false");
+      // The closed window is inert so its controls are not focusable while it is
+      // out of sight and out of the screen reader's reach.
+      win.inert = false;
       if (!messages.dataset.greeted) {
         messages.dataset.greeted = "true";
         updateQuickChips(null);
-        streamBotResponse(isStudio ? brain.studioGreeting : brain.greeting, "greeting");
+        renderBotResponse(isStudio ? brain.studioGreeting : brain.greeting, "greeting");
       }
       input.focus();
     };
@@ -1044,6 +1203,7 @@
       chatbot.classList.remove("open");
       toggle.setAttribute("aria-expanded", "false");
       win.setAttribute("aria-hidden", "true");
+      win.inert = true;
     };
 
     toggle.addEventListener("click", () => (chatbot.classList.contains("open") ? closeChat() : openChat()));
@@ -1082,12 +1242,11 @@
     updateQuickChips(null);
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     7. BOOT
-     ══════════════════════════════════════════════════════════════ */
+  /* 7. Boot */
   const boot = () => {
     hydrate();
     setupChrome();
+    initVCard();
     initChatbot();
   };
 

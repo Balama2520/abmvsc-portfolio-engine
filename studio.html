@@ -4,6 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Header-less hosts (GitHub Pages, a plain folder) still get the policy.
+       frame-ancestors is left out because a meta tag cannot carry it. -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'" />
   <title>Studio</title>
 
   <!-- Favicon -->
@@ -12,13 +16,6 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="icon" href="favicon.ico" />
   <link rel="manifest" href="site.webmanifest" />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
 
@@ -31,7 +28,12 @@
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- Shown only while config.js is still the ABMVSC demo (theme.showDemoNotice) -->
+  <!-- Sample-content strip with one clear action. Shown only while config.js is
+       still the shipped demo (theme.showDemoNotice); a generated site never
+       renders it. -->
+  <div class="demo-banner" data-demo-banner hidden></div>
+
+  <!-- Shown only while config.js is still the shipped demo (theme.showDemoNotice) -->
   <div class="demo-notice" data-demo-notice hidden></div>
 
   <!-- NAVBAR -->
@@ -56,7 +58,7 @@
         <!-- Link back to the founder's personal portfolio -->
         <a href="index.html" class="company-switch-btn" data-section="company-founder"
           title="View the founder's portfolio">
-          👤 <span data-bind="personal.name">Founder</span> ↗
+          <span data-bind="personal.name">Founder</span> ↗
         </a>
         <a href="#contact" class="resume-btn" style="background:var(--navy);">
           Get in Touch
@@ -71,11 +73,11 @@
     <section class="hero" id="overview">
       <div class="container hero-flex">
         <div class="hero-content">
-          <p class="eyebrow" style="color:var(--orange);" data-bind="company.eyebrow">Technology Studio</p>
+          <p class="eyebrow" data-bind="company.eyebrow"></p>
 
           <h1>
-            <span data-bind="company.titleLine1">Engineering Ideas.</span><br>
-            <span style="color:var(--accent);" data-bind="company.titleLine2">Empowering Tomorrow.</span>
+            <span data-bind="company.titleLine1"></span><br>
+            <span style="color:var(--accent);" data-bind="company.titleLine2"></span>
           </h1>
 
           <p class="hero-description" data-bind="company.heroParagraph"></p>
@@ -91,7 +93,7 @@
 
         <div class="hero-photo-wrap" style="max-width: 280px; width: 100%;" data-section="company-logo">
           <img src="" alt="" data-bind="company.logo.card"
-            style="border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-md);" />
+            style="border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow);" />
         </div>
       </div>
     </section>
@@ -122,7 +124,7 @@
         <div class="about-grid">
           <div class="about-narrative">
             <div data-list="purpose-paragraphs" data-list-host></div>
-            <p class="about-vision" style="border-left-color: var(--orange);"
+            <p class="about-vision" style="border-left-color: var(--accent);"
               data-bind="company.purposeVision"></p>
           </div>
 
@@ -161,10 +163,9 @@
         <div class="company-feature-banner" style="grid-template-columns: 0.8fr 1.2fr;">
           <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
             <img src="" alt="" data-bind="personal.photo"
-              style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: var(--shadow-md); margin-bottom: 14px;" />
-            <h4 style="font-size: 18px; font-weight: 700; color: var(--navy);" data-bind="personal.name">Founder</h4>
-            <p style="font-size: 13px; color: var(--text-soft); font-weight: 500;" data-bind="company.founderRole">
-              Founder</p>
+              style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: var(--shadow); margin-bottom: 14px;" />
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--brand-ink);" data-bind="personal.name"></h4>
+            <p style="font-size: 13px; color: var(--text-soft); font-weight: 500;" data-bind="company.founderRole"></p>
           </div>
 
           <div>
@@ -188,11 +189,10 @@
       <div class="container">
         <div class="contact-grid">
           <div class="contact-left">
-            <p class="section-label" style="color: var(--orange);">Collaborate</p>
+            <p class="section-label" style="color: var(--accent);">Collaborate</p>
             <h2>Start a conversation</h2>
             <p class="contact-desc" data-bind="company.contactDescription"></p>
-            <a class="btn-primary" href="mailto:" style="background: var(--orange);"
-              data-bind="company.email">Contact</a>
+            <a class="btn-primary" href="mailto:" data-bind="company.email">Contact</a>
             <p class="contact-phone" data-bind="company.phone"></p>
           </div>
           <div class="contact-right" data-list="contact-links" data-list-host></div>
@@ -207,7 +207,7 @@
     <div class="resume-modal-backdrop" data-resume-close></div>
     <div class="resume-modal-panel" role="dialog" aria-modal="true" aria-label="Resume preview">
       <div class="resume-modal-bar">
-        <span>Founder's Resume</span>
+        <span>Resume</span>
         <div class="resume-modal-actions">
           <a href="resume.pdf" download data-resume-download>Download</a>
           <button type="button" data-resume-close aria-label="Close resume preview">✕</button>
@@ -220,27 +220,26 @@
   <footer>
     <p>© <span id="footer-year"></span> <span data-bind="company.name">Studio</span> —
       <span data-bind="company.descriptor">Technology Studio</span> · <a href="index.html"
-        style="color:var(--accent); text-decoration:underline;">Founder Portfolio</a></p>
+        style="color:var(--accent-text); text-decoration:underline;">Founder Portfolio</a></p>
     <p class="built-by" data-built-by></p>
   </footer>
 
-  <!-- AI CHATBOT -->
+  <!-- CHAT ASSISTANT -->
   <div class="chatbot" id="chatbot">
-    <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open AI chat assistant" aria-expanded="false">
-      <span class="chatbot-toggle-icon-open">💬</span>
+    <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat assistant" aria-expanded="false">
+      <svg class="chatbot-toggle-icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+        focusable="false">
+        <path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.9 8.9 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
+      </svg>
       <span class="chatbot-toggle-icon-close">✕</span>
-      <span class="chatbot-pulse-ring"></span>
     </button>
 
-    <div class="chatbot-window" id="chatbotWindow" aria-hidden="true">
+    <div class="chatbot-window" id="chatbotWindow" aria-hidden="true" inert>
       <div class="chatbot-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="chat-status-dot"></span>
-          <div>
-            <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">AI Assistant</span>
-              <span class="chat-ai-pill">AI</span></p>
-            <p class="chatbot-header-sub">Online · answers from config.js</p>
-          </div>
+        <div>
+          <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">Assistant</span></p>
+          <p class="chatbot-header-sub">Answers from the content on this site</p>
         </div>
         <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Close chat">✕</button>
       </div>
@@ -253,15 +252,15 @@
       <form class="chatbot-input-row" id="chatbotForm">
         <input type="text" id="chatbotInput" placeholder="Ask about the studio, products or research…"
           autocomplete="off" />
-        <button type="submit" aria-label="Send message">➤</button>
+        <button type="submit">Send</button>
       </form>
     </div>
   </div>
 
-  <!-- ✏️ Edit config.js — this page renders itself from it -->
+  <!-- Edit config.js — this page renders itself from it -->
   <script src="config.js"></script>
+  <script src="url-allowlist.js"></script>
   <script src="script.js" defer></script>
-  <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
 </body>
 
 </html>

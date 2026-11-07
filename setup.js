@@ -1,101 +1,111 @@
-/**
- * ABMVSC Portfolio Engine — config generator (setup.html)
- * ------------------------------------------------------------------
- * A zero-dependency form that writes a ready-to-use config.js for the
- * ABMVSC Portfolio Engine. It is schema-driven: SCHEMA below is the
- * single description of the config shape, and everything else
- * (rendering, import, export, preview) is derived from it.
- *
- * Keep SCHEMA in sync with config.js — that file is the contract.
- */
+/* Portfolio Engine — config generator (setup.html) */
+// A zero-dependency form that writes a ready-to-deploy website from
+// config.js. It is schema-driven: SCHEMA below is the single
+// description of the config shape, and everything else
+// (rendering, import, export, preview) is derived from it.
+//
+// Keep SCHEMA in sync with config.js — that file is the contract.
 (() => {
   "use strict";
 
-  /* ══════════════════════════════════════════════════════════════
-     1. REUSABLE FIELD SETS
-     ══════════════════════════════════════════════════════════════ */
+  const sanitizeUrl = (typeof UrlAllowlist !== "undefined" && UrlAllowlist.sanitizeUrl)
+    ? UrlAllowlist.sanitizeUrl
+    : (typeof require === "function" ? require("./url-allowlist.js").sanitizeUrl : (u) => u);
+
+  /* 1. Reusable field sets */
   const PROJECT_FIELDS = [
-    { key: "name", label: "Project name", placeholder: "Project One" },
-    { key: "category", label: "Category / tag", placeholder: "Web Application" },
-    { key: "description", label: "Description", type: "textarea", placeholder: "What it does and who it is for." },
-    { key: "tech", label: "Tech stack", type: "csv", placeholder: "React, Node.js, PostgreSQL" },
-    { key: "liveUrl", label: "Live URL", placeholder: "https://your-project.netlify.app" },
-    { key: "githubUrl", label: "GitHub URL", placeholder: "https://github.com/you/project" },
-    { key: "result", label: "Measurable result", placeholder: "A number, percentage or milestone" },
-    { key: "status", label: "Status chip", placeholder: "In Development", help: "Only shown when there are no links" },
+    { key: "name", label: "Project name", placeholder: "Recipe Finder", help: "Short and clear — this becomes the card heading." },
+    { key: "category", label: "Category / tag", placeholder: "Web Application", help: "One or two words shown as a small tag on the card." },
+    { key: "description", label: "Description", type: "textarea", placeholder: "A web app that suggests recipes from the ingredients you already have.", help: "One or two sentences on what it does and who it is for." },
+    { key: "problem", label: "The problem it solves", type: "textarea", placeholder: "People buy food they forget about and end up throwing it away.", help: "Optional. One sentence on the problem, to turn the card into a short case study." },
+    { key: "built", label: "What you built", type: "textarea", placeholder: "I built an app that reads what is in the kitchen and suggests meals with it.", help: "Optional. What did you build, and what happened?" },
+    { key: "tech", label: "Tech stack", type: "csv", placeholder: "React, Node.js, PostgreSQL", help: "Separate each tool with a comma." },
+    { key: "liveUrl", label: "Live URL", placeholder: "https://recipe-finder.netlify.app", help: "The address of the running project. Leave blank if there is none." },
+    { key: "githubUrl", label: "GitHub URL", placeholder: "https://github.com/yourname/recipe-finder", help: "The code repository link. Leave blank if it is private." },
+    { key: "result", label: "Measurable result", placeholder: "Cut recipe search from 5 minutes to under 30 seconds", help: "A number, percentage or clear outcome if you have one." },
+    { key: "status", label: "Status chip", placeholder: "In Development", help: "Only shown when there are no links." },
   ];
 
   const RESEARCH_FIELDS = [
-    { key: "title", label: "Paper title", placeholder: "Your Research Paper Title" },
-    { key: "publisher", label: "Publisher", placeholder: "IEEE Xplore" },
-    { key: "docId", label: "Document ID", placeholder: "11042387" },
-    { key: "url", label: "Paper URL", placeholder: "https://doi.org/..." },
-    { key: "year", label: "Year", placeholder: "2025" },
-    { key: "summary", label: "Summary", type: "textarea", placeholder: "One sentence on what the paper contributed." },
-    { key: "metrics", label: "Metrics", type: "csv", placeholder: "92% accuracy, 5,000 images evaluated" },
+    { key: "title", label: "Paper title", placeholder: "Detecting Plant Disease from Leaf Photos", help: "The full title as published." },
+    { key: "publisher", label: "Publisher", placeholder: "IEEE Xplore", help: "Where it appeared — a journal, conference or site." },
+    { key: "docId", label: "Document ID", placeholder: "11042387", help: "The publisher's own number for the paper, if there is one." },
+    { key: "url", label: "Paper URL", placeholder: "https://doi.org/10.1109/1234567", help: "A link people can open to read it." },
+    { key: "year", label: "Year", placeholder: "2025", help: "The year it was published." },
+    { key: "summary", label: "Summary", type: "textarea", placeholder: "A model that finds leaf disease from a phone photo with 92% accuracy.", help: "One sentence on what the paper contributed." },
+    { key: "metrics", label: "Metrics", type: "csv", placeholder: "92% accuracy, 5,000 images evaluated", help: "Separate each figure with a comma." },
   ];
 
   const STAT_FIELDS = [
-    { key: "value", label: "Value", placeholder: "5+" },
-    { key: "label", label: "Label", placeholder: "Production Apps" },
+    { key: "value", label: "Value", placeholder: "12", help: "The big number — keep it short." },
+    { key: "label", label: "Label", placeholder: "Projects shipped", help: "What the number counts." },
   ];
 
   const TITLE_TEXT_FIELDS = [
-    { key: "title", label: "Title", placeholder: "Delivery" },
-    { key: "text", label: "Text", type: "textarea", placeholder: "One or two sentences." },
+    { key: "title", label: "Title", placeholder: "Clear communication", help: "A short heading." },
+    { key: "text", label: "Text", type: "textarea", placeholder: "I keep you updated at every step, in plain language.", help: "One or two sentences." },
   ];
 
-  /* ══════════════════════════════════════════════════════════════
-     2. SCHEMA — the description of config.js
-     ══════════════════════════════════════════════════════════════ */
+  /* 2. Schema — the description of config.js */
   const SCHEMA = [
     {
-      id: "personal", icon: "👤", title: "You", page: "portfolio", chapter: "you",
+      id: "personal", title: "You", page: "portfolio", chapter: "you",
       help: "Drives the navbar, hero, about, contact, footer and the chatbot.",
       fields: [
-        { key: "name", label: "Full name", placeholder: "Alex Rivera", required: true },
-        { key: "initials", label: "Logo badge", placeholder: "AR", help: "1–3 characters" },
-        { key: "role", label: "Professional role", placeholder: "Full-Stack Developer & AI Engineer" },
-        { key: "tagline", label: "Tagline", placeholder: "Engineering Ideas Into Real-World Impact.", wide: true },
-        { key: "bio", label: "Short bio", type: "textarea", wide: true, placeholder: "2–3 sentences about you." },
-        { key: "photo", label: "Profile photo path", placeholder: "assets/engineer-avatar.svg" },
-        { key: "resume", label: "Resume PDF path", placeholder: "resume.pdf" },
-        { key: "location", label: "Location", placeholder: "San Francisco, CA · Open to Remote" },
-        { key: "availability", label: "Availability", placeholder: "Open to full-time roles — immediate start", wide: true },
-        { key: "email", label: "Email", placeholder: "hello@you.dev" },
-        { key: "phone", label: "Phone", placeholder: "+1 (555) 019-2834" },
-        { key: "linkedin", label: "LinkedIn URL", placeholder: "https://linkedin.com/in/you" },
-        { key: "github", label: "GitHub URL", placeholder: "https://github.com/you" },
-        { key: "twitter", label: "Twitter / X URL" },
-        { key: "website", label: "Personal website" },
-        { key: "huggingface", label: "Hugging Face URL" },
-        { key: "researchgate", label: "ResearchGate URL" },
+        { key: "name", label: "Full name", placeholder: "Alex Rivera", required: true, help: "Shown in the navbar, the hero and the footer." },
+        { key: "initials", label: "Logo badge", placeholder: "AR", help: "1–3 characters shown in the round logo." },
+        { key: "role", label: "Professional role", placeholder: "Full-Stack Developer & AI Engineer", help: "Your job title in one line." },
+        { key: "tagline", label: "Tagline", placeholder: "Engineering Ideas Into Real-World Impact.", wide: true, help: "A short line under your name." },
+        { key: "bio", label: "Short bio", type: "textarea", wide: true, placeholder: "I build web apps and machine-learning tools that solve everyday problems.", help: "Two or three sentences about you." },
+        {
+          key: "photo", label: "Profile photo", type: "file", upload: "photo",
+          accept: "image/jpeg,image/png,image/webp", placeholder: "assets/engineer-avatar.svg",
+          help: "JPG, PNG or WebP, up to 2 MB. It is cropped to a square and shrunk to 800 px in this browser, then written into the ZIP you download.",
+        },
+        {
+          key: "resume", label: "Resume", type: "file", upload: "resume",
+          accept: "application/pdf,.pdf", placeholder: "resume.pdf",
+          help: "PDF, up to 5 MB. Stays in this browser — it is written into the ZIP you download.",
+        },
+        { key: "location", label: "Location", placeholder: "Bengaluru, India · Open to Remote", help: "Where you are based, and whether you work remotely." },
+        { key: "availability", label: "Availability", placeholder: "Open to full-time roles — immediate start", wide: true, help: "Your current status, shown under your role." },
+        { key: "email", label: "Email", placeholder: "hello@alexrivera.dev", help: "The address people should write to." },
+        { key: "phone", label: "Phone", placeholder: "+91 90000 00000", help: "Optional. Leave blank to hide it." },
+        { key: "linkedin", label: "LinkedIn URL", placeholder: "https://linkedin.com/in/alexrivera", help: "Your full profile link." },
+        { key: "github", label: "GitHub URL", placeholder: "https://github.com/alexrivera", help: "Your GitHub profile link." },
+        { key: "twitter", label: "Twitter / X URL", placeholder: "https://x.com/alexrivera", help: "Optional. Shown in your links." },
+        { key: "website", label: "Personal website", placeholder: "https://alexrivera.dev", help: "Optional. Any other site of your own." },
+        { key: "huggingface", label: "Hugging Face URL", group: "more", placeholder: "https://huggingface.co/alexrivera", help: "Optional. Shown under More links." },
+        { key: "researchgate", label: "ResearchGate URL", group: "more", placeholder: "https://researchgate.net/profile/Alex-Rivera", help: "Optional. Shown under More links." },
+      ],
+      groups: [
+        { id: "more", title: "More links", help: "Optional. Shown in your contact cards and in the page's structured data." },
       ],
     },
 
     {
-      id: "seo", icon: "🔍", title: "SEO & social preview", page: "both", chapter: "launch",
+      id: "seo", title: "SEO & social preview", page: "both", chapter: "launch",
       help: "Written straight into <head> at runtime: title, description, canonical, Open Graph, Twitter Card and JSON-LD. No HTML editing.",
       fields: [
-        { key: "siteUrl", label: "Public site URL", placeholder: "https://your-site.netlify.app", wide: true, help: "No trailing slash — the canonical URL and social tags are built from it" },
-        { key: "title", label: "Browser tab title", placeholder: "Alex Rivera — Full-Stack & AI Engineer", wide: true },
-        { key: "description", label: "Meta description", type: "textarea", wide: true, placeholder: "One sentence for search results and link previews." },
-        { key: "ogImage", label: "Social preview image", placeholder: "og-image.png", help: "1200 × 630 px works best" },
-        { key: "locale", label: "Locale", placeholder: "en_US" },
-        { key: "twitterHandle", label: "Twitter / X handle", placeholder: "@yourhandle" },
-        { key: "themeColor", label: "Mobile browser colour", type: "color", default: "#10264b" },
-        { key: "googleVerification", label: "Google verification token", placeholder: "AbC-1a2b3c4d5e", help: "The HTML-tag token from Search Console — no file needed" },
+        { key: "siteUrl", label: "Your website address", placeholder: "https://alexrivera.netlify.app", wide: true, help: "The live address of your finished site, once you have one, so shared links point at the real pages and use the right preview image." },
+        { key: "title", label: "Browser tab title", placeholder: "Alex Rivera — Full-Stack Developer", wide: true, help: "The text in the browser tab and in search results." },
+        { key: "description", label: "Meta description", type: "textarea", wide: true, placeholder: "Full-stack developer building web apps and AI tools.", help: "One sentence for search results and link previews." },
+        { key: "ogImage", label: "Social preview image", placeholder: "og-image.png", help: "The picture shown when your link is shared. 1200 × 630 px works best." },
+        { key: "locale", label: "Locale", placeholder: "en_GB", help: "The language and region of your site." },
+        { key: "twitterHandle", label: "Twitter / X handle", placeholder: "@alexrivera", help: "Optional. Used on the Twitter Card." },
+        { key: "themeColor", label: "Mobile browser colour", type: "color", default: "#10264b", placeholder: "#10264B", help: "The address-bar colour on phones." },
+        { key: "googleVerification", label: "Google verification token", placeholder: "AbC-1a2b3c4d5e", help: "The HTML-tag token from Search Console — no file needed." },
       ],
     },
 
     {
-      id: "hero", icon: "🎯", title: "Hero", page: "portfolio", chapter: "look",
+      id: "hero", title: "Hero", page: "portfolio", chapter: "look",
       help: "Leave these blank and the hero builds itself from your name, role and availability.",
       fields: [
-        { key: "eyebrow", label: "Eyebrow line", placeholder: "Open to work", wide: true, help: "Falls back to personal.availability" },
-        { key: "badge", label: "Studio badge", placeholder: "Founder @ Your Studio", wide: true, help: "Falls back to “Founder @ <company name>”" },
-        { key: "titleLine1", label: "Headline line 1", placeholder: "Full-Stack Developer", help: "Falls back to your role, split on “&”" },
-        { key: "titleLine2", label: "Headline line 2", placeholder: "& AI Engineer" },
+        { key: "eyebrow", label: "Eyebrow line", placeholder: "Available for full-time work", wide: true, help: "The small line above your headline. Falls back to your availability." },
+        { key: "badge", label: "Studio badge", placeholder: "Founder @ River Studio", wide: true, help: "The pill next to your name. Falls back to “Founder @ <company name>”." },
+        { key: "titleLine1", label: "Headline line 1", placeholder: "Full-Stack Developer", help: "The first line of your headline. Falls back to your role." },
+        { key: "titleLine2", label: "Headline line 2", placeholder: "& AI Engineer", help: "The second line, if you want two." },
       ],
       lists: [
         { key: "stats", title: "Headline numbers", kind: "object", fields: STAT_FIELDS, addLabel: "number", itemTitle: (o) => o.value || o.label },
@@ -104,10 +114,10 @@
     },
 
     {
-      id: "about", icon: "📝", title: "About / why work with me", page: "portfolio", chapter: "look",
+      id: "about", title: "About / why work with me", page: "portfolio", chapter: "look",
       help: "The “Why work with me” section on the portfolio page.",
       fields: [
-        { key: "vision", label: "Highlighted call-out", type: "textarea", wide: true, placeholder: "What you're looking for next." },
+        { key: "vision", label: "Highlighted call-out", type: "textarea", wide: true, placeholder: "I am looking for a team where I can build products people use every day.", help: "One sentence shown in a coloured box." },
       ],
       lists: [
         { key: "paragraphs", title: "Body paragraphs", kind: "string", addLabel: "paragraph", multiline: true },
@@ -116,17 +126,17 @@
     },
 
     {
-      id: "skills", icon: "🧰", title: "Skills", page: "portfolio", chapter: "work",
+      id: "skills", title: "Skills", page: "portfolio", chapter: "work",
       help: "Each category becomes a card and also feeds the chatbot's skills answer.",
       fields: [
-        { key: "summary", label: "Skills summary", type: "textarea", wide: true, placeholder: "One line describing your stack." },
+        { key: "summary", label: "Skills summary", type: "textarea", wide: true, placeholder: "I work across the front end, the back end and machine learning.", help: "One line describing your stack." },
       ],
       lists: [
         {
           key: "categories", title: "Skill categories", kind: "object", addLabel: "category",
           fields: [
-            { key: "name", label: "Category name", placeholder: "Frontend" },
-            { key: "items", label: "Items", type: "csv", wide: true, placeholder: "React, TypeScript, CSS3" },
+            { key: "name", label: "Category name", placeholder: "Frontend", help: "A group such as Frontend, Backend or Tools." },
+            { key: "items", label: "Items", type: "csv", wide: true, placeholder: "React, TypeScript, CSS3", help: "Separate each skill with a comma." },
           ],
           itemTitle: (o) => o.name,
         },
@@ -134,103 +144,104 @@
     },
 
     {
-      id: "projects", icon: "🚀", title: "Projects", page: "portfolio", chapter: "work",
-      help: "Shown on the portfolio page and reused as the studio's product ecosystem when you don't define separate products. The chatbot can answer questions about each one by name.",
+      id: "projects", title: "Projects", page: "portfolio", chapter: "work",
+      help: "Shown on the portfolio page and reused as the studio's product ecosystem when you don't define separate products. The chatbot can answer questions about each one by name. Fill in the problem and what you built to show each one as a short case study.",
       lists: [{ key: "projects", title: "Project cards", kind: "object", fields: PROJECT_FIELDS, addLabel: "project", itemTitle: (o) => o.name }],
     },
 
     {
-      id: "experience", icon: "💼", title: "Experience", page: "portfolio", chapter: "work",
+      id: "experience", title: "Experience", page: "portfolio", chapter: "work",
       help: "Most recent role first — the page renders them in this order.",
       lists: [{
         key: "experience", title: "Roles", kind: "object", addLabel: "role", itemTitle: (o) => o.role,
         fields: [
-          { key: "role", label: "Job title", placeholder: "Full-Stack Developer" },
-          { key: "company", label: "Company", placeholder: "Company Name" },
+          { key: "role", label: "Job title", placeholder: "Junior Software Engineer", help: "The title on your contract." },
+          { key: "company", label: "Company", placeholder: "Northwind Software", help: "The employer's name." },
           { key: "type", label: "Type", placeholder: "Full-Time", help: "Full-Time · Internship · Contract · Freelance · Research" },
-          { key: "duration", label: "Duration", placeholder: "Jan 2025 – Present" },
-          { key: "location", label: "Location", placeholder: "Remote" },
-          { key: "description", label: "Summary", type: "textarea", wide: true },
-          { key: "highlights", label: "Highlights", type: "csv", wide: true, placeholder: "Shipped X, Improved Y by 40%" },
+          { key: "duration", label: "Duration", placeholder: "Jan 2025 – Present", help: "When you started, and whether you are still there." },
+          { key: "location", label: "Location", placeholder: "Remote", help: "The city, or Remote." },
+          { key: "description", label: "Summary", type: "textarea", wide: true, placeholder: "Built and maintained the customer dashboard used by 4,000 people.", help: "One or two sentences on the role." },
+          { key: "highlights", label: "Highlights", type: "csv", wide: true, placeholder: "Shipped the new checkout, Cut load time by 40%", help: "Separate each achievement with a comma." },
         ],
       }],
     },
 
     {
-      id: "education", icon: "🎓", title: "Education", page: "portfolio", chapter: "work",
+      id: "education", title: "Education", page: "portfolio", chapter: "work",
       help: "Leave every field blank to hide the Education section entirely.",
       fields: [
-        { key: "degree", label: "Degree", placeholder: "B.S. in Computer Science & Engineering", wide: true },
-        { key: "branch", label: "Branch / major", placeholder: "Computer Science & Engineering" },
-        { key: "university", label: "University", placeholder: "University of Technology" },
-        { key: "location", label: "Location", placeholder: "San Francisco, CA" },
-        { key: "duration", label: "Years", placeholder: "2020 – 2024" },
-        { key: "gpa", label: "Grade", placeholder: "First Class with Distinction" },
-        { key: "description", label: "Note", type: "textarea", wide: true, placeholder: "Focus, thesis or honours." },
+        { key: "degree", label: "Degree", placeholder: "B.Tech in Computer Science & Engineering", wide: true, help: "The full name of the qualification." },
+        { key: "branch", label: "Branch / major", placeholder: "Computer Science & Engineering", help: "Your main subject." },
+        { key: "university", label: "University", placeholder: "State Institute of Technology", help: "The school or university name." },
+        { key: "location", label: "Location", placeholder: "Pune, India", help: "Where the school is." },
+        { key: "duration", label: "Years", placeholder: "2021 – 2025", help: "The years you studied." },
+        { key: "gpa", label: "Grade", placeholder: "First Class with Distinction", help: "Your grade, if you want to show it." },
+        { key: "description", label: "Note", type: "textarea", wide: true, placeholder: "Final-year project on real-time sign language recognition.", help: "Anything else worth mentioning." },
       ],
     },
 
     {
-      id: "research", icon: "📄", title: "Research & publications", page: "both", chapter: "extras",
+      id: "research", title: "Research & publications", page: "both", chapter: "extras",
       help: "Papers, theses and preprints. Leave the list empty to hide the section.",
       lists: [{ key: "research", title: "Publications", kind: "object", fields: RESEARCH_FIELDS, addLabel: "paper", itemTitle: (o) => o.title }],
     },
 
     {
-      id: "achievements", icon: "🏆", title: "Achievements", page: "portfolio", chapter: "extras",
+      id: "achievements", title: "Achievements", page: "portfolio", chapter: "extras",
       help: "Awards, hackathon results and honours.",
       lists: [{
         key: "achievements", title: "Awards", kind: "object", addLabel: "award", itemTitle: (o) => o.title,
         fields: [
-          { key: "title", label: "Award name", placeholder: "Hackathon / Award Name" },
-          { key: "issuer", label: "Issued by", placeholder: "Organisation or Platform" },
-          { key: "year", label: "Year", placeholder: "2024" },
-          { key: "detail", label: "Detail", type: "textarea", wide: true, placeholder: "National Finalist — Top 5% of 10,000+ teams." },
-          { key: "url", label: "Proof URL", placeholder: "https://..." },
+          { key: "title", label: "Award name", placeholder: "Smart India Hackathon", help: "The name of the award or event." },
+          { key: "issuer", label: "Issued by", placeholder: "Ministry of Education", help: "Who gave it." },
+          { key: "year", label: "Year", placeholder: "2024", help: "The year you received it." },
+          { key: "detail", label: "Detail", type: "textarea", wide: true, placeholder: "National finalist — top 5% of 10,000 teams.", help: "One line on what it was for." },
+          { key: "url", label: "Proof URL", placeholder: "https://example.com/result", help: "A link that shows the award, if you have one." },
         ],
       }],
     },
 
     {
-      id: "certifications", icon: "📜", title: "Certifications", page: "portfolio", chapter: "extras",
+      id: "certifications", title: "Certifications", page: "portfolio", chapter: "extras",
       help: "Professional certificates and course completions.",
       lists: [{
         key: "certifications", title: "Certificates", kind: "object", addLabel: "certificate", itemTitle: (o) => o.title,
         fields: [
-          { key: "title", label: "Certification name", placeholder: "Certification Name" },
-          { key: "issuer", label: "Issuer", placeholder: "Platform / Organisation" },
-          { key: "year", label: "Year", placeholder: "2025" },
-          { key: "url", label: "Verify URL", placeholder: "https://..." },
+          { key: "title", label: "Certification name", placeholder: "Google Data Analytics", help: "The name of the certificate." },
+          { key: "issuer", label: "Issuer", placeholder: "Google", help: "Who issued it." },
+          { key: "year", label: "Year", placeholder: "2025", help: "The year you earned it." },
+          { key: "url", label: "Verify URL", placeholder: "https://coursera.org/verify/XXXX", help: "The link that proves it, if you have one." },
         ],
       }],
     },
 
     {
-      id: "company", icon: "🏢", title: "Company / studio", page: "studio", chapter: "company",
+      id: "company", title: "Company / studio", page: "studio", chapter: "company",
       help: "Powers the entire studio.html page, the studio banner on the portfolio page and the chatbot's studio answers. Leave the name blank to remove the studio page entirely.",
       fields: [
-        { key: "name", label: "Company name", placeholder: "ABMVSC Studio" },
-        { key: "descriptor", label: "Descriptor", placeholder: "Technology & Innovation Studio" },
-        { key: "tagline", label: "Tagline", placeholder: "Engineering Ideas. Empowering Tomorrow.", wide: true, help: "Split into the studio hero headline on each full stop" },
-        { key: "philosophy", label: "Philosophy strip", placeholder: "Build • Research • Innovate • Scale • Impact", wide: true },
-        { key: "description", label: "Description", type: "textarea", wide: true },
-        { key: "heroParagraph", label: "Hero paragraph", type: "textarea", wide: true, help: "Falls back to the description above" },
-        { key: "founded", label: "Founded", placeholder: "2025" },
-        { key: "founderRole", label: "Your role", placeholder: "Founder & Principal Engineer" },
-        { key: "email", label: "Studio email", placeholder: "contact@yourstudio.com" },
-        { key: "phone", label: "Studio phone", placeholder: "+1 (555) 000-0000" },
-        { key: "contactDescription", label: "Contact line", type: "textarea", wide: true },
-        { key: "purposeVision", label: "Purpose call-out", type: "textarea", wide: true, help: "The highlighted line under your purpose paragraphs" },
+        { key: "name", label: "Company name", placeholder: "River Studio", help: "Leave blank to remove the studio page entirely." },
+        { key: "descriptor", label: "Descriptor", placeholder: "Technology & Innovation Studio", help: "A few words describing what the studio is." },
+        { key: "tagline", label: "Tagline", placeholder: "Engineering ideas, shipped.", wide: true, help: "Split into the studio hero headline on each full stop." },
+        { key: "philosophy", label: "Philosophy strip", placeholder: "Build • Research • Innovate • Scale • Impact", wide: true, help: "A short strip of words under the hero." },
+        { key: "description", label: "Description", type: "textarea", wide: true, placeholder: "A small studio that designs and ships software and AI tools.", help: "A paragraph on what the studio does." },
+        { key: "heroParagraph", label: "Hero paragraph", type: "textarea", wide: true, placeholder: "We turn early ideas into working products.", help: "Shown on the studio hero. Falls back to the description." },
+        { key: "founded", label: "Founded", placeholder: "2024", help: "The year the studio started." },
+        { key: "founderRole", label: "Your role", placeholder: "Founder & Principal Engineer", help: "Your title at the studio." },
+        { key: "email", label: "Studio email", placeholder: "contact@riverstudio.dev", help: "Where enquiries should go." },
+        { key: "phone", label: "Studio phone", placeholder: "+91 90000 00000", help: "Optional. Leave blank to hide it." },
+        { key: "contactDescription", label: "Contact line", type: "textarea", wide: true, placeholder: "Tell us what you are building and we will reply within a day.", help: "A line above the contact details." },
+        { key: "purposeVision", label: "Purpose call-out", type: "textarea", wide: true, placeholder: "We build tools that save people time.", help: "The highlighted line under your purpose paragraphs." },
       ],
       subs: [{
         key: "logo", title: "Logo files",
+        help: "Optional. Leave blank to show no logo anywhere. Name files you have added to your project folder.",
         fields: [
-          { key: "primary", label: "Primary", placeholder: "assets/logo/logo-primary.svg" },
-          { key: "white", label: "White", placeholder: "assets/logo/logo-white.svg" },
-          { key: "mono", label: "Monochrome", placeholder: "assets/logo/logo-mono.svg" },
-          { key: "symbol", label: "Symbol", placeholder: "assets/logo/symbol.svg" },
-          { key: "avatar", label: "Avatar", placeholder: "assets/logo/avatar.svg" },
-          { key: "card", label: "Card image", placeholder: "assets/logo-card.jpg", help: "Shown in the portfolio's studio banner" },
+          { key: "primary", label: "Primary", placeholder: "logo.png", help: "Your main logo file." },
+          { key: "white", label: "White", placeholder: "logo-white.png", help: "A white version for dark backgrounds." },
+          { key: "mono", label: "Monochrome", placeholder: "logo-mono.png", help: "A single-colour version." },
+          { key: "symbol", label: "Symbol", placeholder: "symbol.png", help: "A small mark on its own." },
+          { key: "avatar", label: "Avatar", placeholder: "avatar.png", help: "A square version for small spots." },
+          { key: "card", label: "Card image", placeholder: "studio-card.png", help: "Shown in the portfolio's studio banner and the studio hero." },
         ],
       }],
       lists: [
@@ -240,9 +251,8 @@
         {
           key: "pillars", title: "Capability pillars", kind: "object", addLabel: "pillar", itemTitle: (o) => o.title,
           fields: [
-            { key: "icon", label: "Icon", placeholder: "🥞", help: "An emoji or short symbol" },
-            { key: "title", label: "Title", placeholder: "AI & Automation" },
-            { key: "text", label: "Text", type: "textarea", wide: true },
+            { key: "title", label: "Title", placeholder: "AI & Automation", help: "The pillar heading." },
+            { key: "text", label: "Text", type: "textarea", wide: true, placeholder: "We build data pipelines and models that cut manual work.", help: "One or two sentences on the pillar." },
           ],
         },
         { key: "research", title: "Studio research", kind: "object", fields: RESEARCH_FIELDS, addLabel: "paper", itemTitle: (o) => o.title, help: "Leave empty to reuse your personal research." },
@@ -251,65 +261,72 @@
     },
 
     {
-      id: "contact", icon: "🔗", title: "Contact links", page: "both", chapter: "launch",
+      id: "contact", title: "Contact links", page: "both", chapter: "launch",
       help: "The stack of link cards in the contact section. Leave empty and the cards build themselves from your email, LinkedIn, GitHub and resume.",
       lists: [{
         key: "links", title: "Link cards", kind: "object", addLabel: "link", itemTitle: (o) => o.label,
         fields: [
-          { key: "icon", label: "Icon", placeholder: "cv" },
-          { key: "label", label: "Label", placeholder: "Resume" },
-          { key: "sub", label: "Sub-label", placeholder: "Download the PDF" },
-          { key: "url", label: "URL", placeholder: "resume.pdf" },
+          { key: "icon", label: "Mark", placeholder: "cv", help: "One or two letters shown in the card." },
+          { key: "label", label: "Label", placeholder: "Resume", help: "The main text on the card." },
+          { key: "sub", label: "Sub-label", placeholder: "Download the PDF", help: "A short line under the label." },
+          { key: "url", label: "URL", placeholder: "resume.pdf", help: "Where the card links — a web address or a file name." },
         ],
       }],
     },
 
     {
-      id: "chatbot", icon: "🤖", title: "AI assistant", page: "both", chapter: "look",
+      id: "chatbot", title: "Assistant", page: "both", chapter: "look",
       help: "Tune the assistant's name and greetings. Everything else it knows is generated automatically from the sections above. Supports **bold**, *italic* and `code`.",
       fields: [
-        { key: "assistantName", label: "Assistant name", placeholder: "Alex's AI Assistant", wide: true },
-        { key: "greeting", label: "Portfolio greeting", type: "textarea", wide: true },
-        { key: "studioGreeting", label: "Studio greeting", type: "textarea", wide: true },
+        { key: "assistantName", label: "Assistant name", placeholder: "Alex's Assistant", wide: true, help: "The name shown in the chat window." },
+        { key: "greeting", label: "Portfolio greeting", type: "textarea", wide: true, placeholder: "Hi, I can answer questions about Alex's work.", help: "The first message on your portfolio page." },
+        { key: "studioGreeting", label: "Studio greeting", type: "textarea", wide: true, placeholder: "Hi, ask me anything about the studio.", help: "The first message on the studio page." },
       ],
       subs: [{
         key: "customResponses", title: "Custom answers",
         fields: [
-          { key: "whyHire", label: "Why hire me", type: "textarea", wide: true, help: "Leave blank to auto-generate" },
-          { key: "pricing", label: "Pricing", type: "textarea", wide: true },
-          { key: "hobbies", label: "Hobbies", type: "textarea", wide: true },
-          { key: "fallback", label: "Fallback answer", type: "textarea", wide: true, help: "Used when nothing matches" },
+          { key: "whyHire", label: "Why hire me", type: "textarea", wide: true, placeholder: "I ship working features and explain my choices clearly.", help: "Leave blank to auto-generate." },
+          { key: "pricing", label: "Pricing", type: "textarea", wide: true, placeholder: "Projects start from a fixed quote after a short call.", help: "What the assistant says about cost." },
+          { key: "hobbies", label: "Hobbies", type: "textarea", wide: true, placeholder: "I run, read science fiction and play the guitar.", help: "What the assistant says about free time." },
+          { key: "fallback", label: "Fallback answer", type: "textarea", wide: true, placeholder: "I did not catch that — try asking about projects or skills.", help: "Used when nothing matches." },
         ],
       }],
       lists: [{
         key: "deepDives", title: "Deep-dive topics", kind: "object", addLabel: "topic", itemTitle: (o) => o.label,
         fields: [
-          { key: "key", label: "Key", placeholder: "systemDesign", help: "A short unique id" },
-          { key: "label", label: "Label", placeholder: "System Design" },
-          { key: "words", label: "Trigger keywords", type: "csv", wide: true, placeholder: "system design, architecture, scalability" },
-          { key: "answer", label: "Answer", type: "textarea", wide: true },
+          { key: "key", label: "Key", placeholder: "systemDesign", help: "A short unique id, letters only." },
+          { key: "label", label: "Label", placeholder: "System Design", help: "The topic name shown to you." },
+          { key: "words", label: "Trigger keywords", type: "csv", wide: true, placeholder: "system design, architecture, scalability", help: "Words that make the assistant pick this answer." },
+          { key: "answer", label: "Answer", type: "textarea", wide: true, placeholder: "I start from the data flow, then pick the simplest tools that scale.", help: "What the assistant replies with for this topic." },
         ],
       }],
     },
 
     {
-      id: "theme", icon: "🎨", title: "Theme", page: "both", chapter: "look",
-      help: "Colours and fonts, applied at runtime as CSS custom properties. No CSS editing needed.",
+      id: "theme", title: "Theme", page: "both", chapter: "look",
+      help: "Mode, colours and fonts. Applied at runtime as CSS custom properties, so no CSS editing is needed.",
       fields: [
-        { key: "primaryColor", label: "Primary (navy)", type: "color", default: "#10264B" },
-        { key: "accentColor", label: "Accent (orange)", type: "color", default: "#FF7900" },
-        { key: "blueColor", label: "Blue (links)", type: "color", default: "#2563EB" },
-        { key: "fontHeading", label: "Heading font", placeholder: "'Space Grotesk', sans-serif", wide: true },
-        { key: "fontBody", label: "Body font", placeholder: "'Inter', sans-serif", wide: true },
-        { key: "fontMono", label: "Mono font", placeholder: "'IBM Plex Mono', monospace", wide: true },
-        { key: "showBuiltBy", label: "Show the “Built with the ABMVSC Portfolio Engine” footer credit", type: "bool", default: true, wide: true },
+        {
+          key: "mode", label: "Mode", type: "select", default: "light", wide: true,
+          options: [
+            { value: "light", label: "Light" },
+            { value: "dark", label: "Dark" },
+            { value: "minimal", label: "Minimal" },
+          ],
+          help: "Light and dark are the tuned themes. Minimal strips the shadows and softens the palette.",
+        },
+        { key: "primaryColor", label: "Primary (navy)", type: "color", default: "#10264B", placeholder: "#10264B", help: "Used for headings and the dark sections." },
+        { key: "accentColor", label: "Accent", type: "color", default: "#FF7900", placeholder: "#FF7900", help: "The highlight colour used for links and buttons." },
+        { key: "fontHeading", label: "Heading font", placeholder: "'Space Grotesk', sans-serif", wide: true, help: "The font for headings." },
+        { key: "fontBody", label: "Body font", placeholder: "'Inter', sans-serif", wide: true, help: "The font for paragraphs." },
+        { key: "fontMono", label: "Mono font", placeholder: "'IBM Plex Mono', monospace", wide: true, help: "The font for code and small labels." },
+        { key: "showBuiltBy", label: "Show a small “Made with ABMVSC Portfolio Engine” credit in the footer", type: "bool", default: false, wide: true, help: "Off by default. It is plain text with no link." },
+        { key: "showDemoNotice", label: "Show floating demo notice", type: "bool", default: false, wide: true, help: "Shows the floating demo notice on index and studio pages." },
       ],
     },
   ];
 
-  /* ══════════════════════════════════════════════════════════════
-     2b. CHAPTERS — the order the questions are asked in
-     ══════════════════════════════════════════════════════════════ */
+  /* 2b. Chapters — the order the questions are asked in */
   // Every section above belongs to exactly one chapter. The wizard shows one
   // chapter at a time, so a first-time user answers a handful of related
   // questions instead of facing all fifteen sections at once. "Show everything"
@@ -323,10 +340,16 @@
     { id: "launch", title: "Launch", hint: "Search settings, contact links — and going live." },
   ];
 
-  /* ══════════════════════════════════════════════════════════════
-     3. HELPERS
-     ══════════════════════════════════════════════════════════════ */
-  const $ = (sel, root = document) => root.querySelector(sel);
+  /* 3. Helpers */
+  // Async work (ZIP generation and preview rendering) can finish after a test
+  // closes its window. Keep the page objects from startup instead of looking
+  // up browser globals again after an await.
+  const win = typeof window === "undefined" ? null : window;
+  const doc = typeof document === "undefined" ? null : document;
+  const nav = typeof navigator === "undefined" ? null : navigator;
+  const pageLocation = win && win.location;
+  const $ = (sel, root = doc) => root.querySelector(sel);
+  const pageIsOpen = () => !!doc && doc.defaultView === win && !win.closed;
 
   const str = (v) => (v === undefined || v === null ? "" : String(v));
 
@@ -357,12 +380,262 @@
     el.innerHTML = msg;
     el.classList.add("is-visible");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove("is-visible"), 4200);
+    toastTimer = setTimeout(() => el.classList.remove("is-visible"), 4000);
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     4. STATE — normalize (config → form) and buildConfig (form → config)
-     ══════════════════════════════════════════════════════════════ */
+  /* 3b. Uploads — files the visitor picks, kept in this tab only */
+  // A picked file is read into memory and sent nowhere. The bytes feed the ZIP
+  // download; a path string goes into the config so the preview and the
+  // generated config.js agree on where the file will end up.
+  const uploads = { photo: null, resume: null };
+
+  // Finds the config field an upload feeds, so the two never drift apart.
+  const uploadField = (kind) => {
+    for (const sec of SCHEMA) {
+      const field = (sec.fields || []).find((f) => f.type === "file" && f.upload === kind);
+      if (field) return { section: sec.id, key: field.key, path: `${sec.id}.${field.key}` };
+    }
+    return null;
+  };
+
+  // Turns bytes into the shape the rest of the generator expects: a display
+  // name, a MIME type, the raw bytes for the ZIP, a path for config.js, and a
+  // data URL the live preview can show without another read.
+  const uploadEntry = (name, type, bytes, path) => {
+    let binary = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    }
+    return { name, type, bytes, path, dataUrl: `data:${type};base64,${btoa(binary)}` };
+  };
+
+  const readUpload = (kind, file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("The file could not be read."));
+      reader.onload = () => {
+        const bytes = new Uint8Array(reader.result);
+        resolve(uploadEntry(file.name, file.type, bytes, Pack.uploadPath(kind, file)));
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+  /* Photos are cropped to a square, scaled down and re-encoded before they go
+     into the ZIP, so a large phone photo becomes a small, square file. */
+  const PHOTO_EDGE = 800;
+  const PHOTO_QUALITY = 0.85;
+
+  // Decoded through a data URL, not an object URL: the page's Content Security
+  // Policy allows data: images but not blob: ones.
+  const loadImageFile = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("The photo could not be read."));
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("The photo could not be read."));
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+  const canvasToBlob = (canvas, type, quality) =>
+    new Promise((resolve) => {
+      if (!canvas.toBlob) { resolve(null); return; }
+      canvas.toBlob((blob) => resolve(blob), type, quality);
+    });
+
+  // Returns { bytes, type, originalSize, newSize }, or null when the browser
+  // cannot do the work — the caller then keeps the raw file.
+  const preparePhoto = async (file) => {
+    const img = await loadImageFile(file);
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    if (!w || !h) return null;
+    const side = Math.min(w, h);
+    const edge = Math.max(1, Math.min(side, PHOTO_EDGE));
+    const canvas = doc.createElement("canvas");
+    canvas.width = edge;
+    canvas.height = edge;
+    const ctx = canvas.getContext && canvas.getContext("2d");
+    if (!ctx) return null;
+    // Centre crop to a square, then scale to the target edge.
+    ctx.drawImage(img, (w - side) / 2, (h - side) / 2, side, side, 0, 0, edge, edge);
+    let blob = await canvasToBlob(canvas, "image/webp", PHOTO_QUALITY);
+    if (!blob || blob.type !== "image/webp") blob = await canvasToBlob(canvas, "image/jpeg", PHOTO_QUALITY);
+    if (!blob) return null;
+    const buffer = await blob.arrayBuffer();
+    return { bytes: new Uint8Array(buffer), type: blob.type || "image/jpeg", originalSize: file.size, newSize: buffer.byteLength };
+  };
+
+  /* Brand images: a social preview card and initials favicons, drawn here with
+     the canvas rather than shipped as the sample artwork. If the browser cannot
+     draw them the files on disk are used unchanged, so a ZIP is never lost. */
+  const OG_FILE = "og-image.png";
+  const OG_WIDTH = 1200;
+  const OG_HEIGHT = 630;
+  const BRAND_FONT = "'Space Grotesk', 'Inter', system-ui, sans-serif";
+
+  const ICON_FILES = [
+    { file: "favicon-16x16.png", size: 16 },
+    { file: "favicon-32x32.png", size: 32 },
+    { file: "apple-touch-icon.png", size: 180 },
+    { file: "android-chrome-192x192.png", size: 192 },
+    { file: "android-chrome-512x512.png", size: 512 },
+  ];
+
+  const hexColor = (value, fallback) =>
+    /^#[0-9a-f]{6}$/i.test(str(value).trim()) ? str(value).trim() : fallback;
+
+  // WCAG relative luminance, used only to choose a readable text colour.
+  const luminance = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    const parts = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+      const c = v / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * parts[0] + 0.7152 * parts[1] + 0.0722 * parts[2];
+  };
+
+  const contrast = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+
+  // Picks white or near-black, whichever reads better on the given colour.
+  const readableText = (bg) =>
+    contrast(luminance(bg), luminance("#FFFFFF")) >= contrast(luminance(bg), luminance("#0B1729"))
+      ? "#FFFFFF"
+      : "#0B1729";
+
+  const initialsOf = (name, initials) => {
+    const given = str(initials).trim();
+    if (given) return given.slice(0, 3).toUpperCase();
+    const words = str(name).trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return "AB";
+    return words.slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  };
+
+  // Sets the font at a starting size and shrinks it until the text fits.
+  const fitText = (ctx, text, maxWidth, weight, size, family) => {
+    let at = size;
+    for (;;) {
+      ctx.font = `${weight} ${at}px ${family}`;
+      if (ctx.measureText(text).width <= maxWidth || at <= 16) break;
+      at -= 2;
+    }
+    return at;
+  };
+
+  const newCanvas = (w, h) => {
+    const canvas = doc.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext && canvas.getContext("2d");
+    return ctx ? { canvas, ctx } : null;
+  };
+
+  const canvasBytes = async (canvas) => {
+    const blob = await canvasToBlob(canvas, "image/png", 1);
+    if (!blob) return null;
+    return new Uint8Array(await blob.arrayBuffer());
+  };
+
+  // A 1200 x 630 card: dark background, an accent bar and monogram, the name
+  // and role in large type. Sized for the social preview images crawlers read.
+  const drawSocialCard = async (config, accent, primary, initials) => {
+    const frame = newCanvas(OG_WIDTH, OG_HEIGHT);
+    if (!frame) return null;
+    const { ctx } = frame;
+    const p = (config && config.personal) || {};
+    const name = str(p.name).trim() || "Your Name";
+    const role = str(p.role).trim();
+
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, OG_WIDTH, OG_HEIGHT);
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, OG_HEIGHT - 18, OG_WIDTH, 18);
+
+    const badge = 132;
+    const bx = 96;
+    const by = 88;
+    ctx.fillStyle = accent;
+    if (ctx.arc) {
+      ctx.beginPath();
+      ctx.arc(bx + badge / 2, by + badge / 2, badge / 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillRect(bx, by, badge, badge);
+    }
+    ctx.fillStyle = readableText(accent);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    fitText(ctx, initials, badge * 0.8, 700, 64, BRAND_FONT);
+    ctx.fillText(initials, bx + badge / 2, by + badge / 2 + 4);
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    const left = 96;
+    const maxWidth = OG_WIDTH - left * 2;
+
+    const nameSize = fitText(ctx, name, maxWidth, 700, 76, BRAND_FONT);
+    ctx.font = `700 ${nameSize}px ${BRAND_FONT}`;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(name, left, 372);
+
+    ctx.fillStyle = accent;
+    ctx.fillRect(left, 400, 128, 8);
+
+    if (role) {
+      const roleSize = fitText(ctx, role, maxWidth, 500, 34, BRAND_FONT);
+      ctx.font = `500 ${roleSize}px ${BRAND_FONT}`;
+      ctx.fillStyle = "#C7D2E0";
+      ctx.fillText(role, left, 468);
+    }
+
+    return canvasBytes(frame.canvas);
+  };
+
+  // A square tile carrying the initials, for every favicon size.
+  const drawMonogram = async (size, initials, accent) => {
+    const frame = newCanvas(size, size);
+    if (!frame) return null;
+    const { ctx } = frame;
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = readableText(accent);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const seed = initials.length > 2 ? Math.round(size * 0.42) : Math.round(size * 0.58);
+    const glyph = fitText(ctx, initials, size * 0.82, 700, seed, BRAND_FONT);
+    ctx.fillText(initials, size / 2, size / 2 + Math.max(1, glyph * 0.04));
+    return canvasBytes(frame.canvas);
+  };
+
+  // Returns the generated files keyed by name, or {} when the browser cannot
+  // draw them and the files on disk should be kept.
+  const renderBrandAssets = async (config) => {
+    if (!doc || !doc.createElement) return {};
+    const theme = (config && config.theme) || {};
+    const accent = hexColor(theme.accentColor, "#FF7900");
+    const primary = hexColor(theme.primaryColor, "#10264B");
+    const p = (config && config.personal) || {};
+    const initials = initialsOf(p.name, p.initials);
+
+    const out = {};
+    try {
+      const social = await drawSocialCard(config, accent, primary, initials);
+      if (social) out[OG_FILE] = social;
+      for (const icon of ICON_FILES) {
+        const bytes = await drawMonogram(icon.size, initials, accent);
+        if (bytes) out[icon.file] = bytes;
+      }
+      if (out["favicon-32x32.png"]) out["favicon.ico"] = Pack.pngToIco(out["favicon-32x32.png"], 32);
+    } catch (err) {
+      return {};
+    }
+    return out;
+  };
+
+  /* 4. State — normalize (config → form) and buildConfig (form → config) */
   const emptyItem = (list) => {
     if (list.kind === "string") return "";
     const o = {};
@@ -463,17 +736,48 @@
     // key has to be present.)
     if (out.theme) out.theme.showDemoNotice = false;
 
+    // A blank social image is filled with the card the generator draws, so a
+    // shared link always has a picture to show.
+    if (out.seo && !str(out.seo.ogImage).trim()) out.seo.ogImage = OG_FILE;
+
     return out;
   };
 
   let state = emptyState();
 
-  /* ══════════════════════════════════════════════════════════════
-     5. RENDERING
-     ══════════════════════════════════════════════════════════════ */
+  /* 5. Rendering */
+  const renderUpload = (path, f, value) => {
+    const id = uid();
+    const picked = uploads[f.upload];
+
+    return `<div class="gen-field is-wide">
+        <span class="gen-label">${esc(f.label)}</span>
+        <div class="gen-upload">
+          <label class="gen-upload-pick">
+            <input class="gen-file-input" type="file" id="${id}" data-upload="${esc(f.upload)}"
+              accept="${esc(f.accept || "")}" aria-label="${esc(f.label)}" />
+            <span class="gen-btn gen-btn-sm">Choose a file</span>
+          </label>
+          <span class="gen-upload-name" data-upload-name="${esc(f.upload)}">${picked ? esc(picked.name) : "No file chosen"}</span>
+          <button type="button" class="gen-btn gen-btn-sm gen-btn-ghost" data-upload-clear="${esc(f.upload)}"
+            ${picked ? "" : "hidden"}>Remove</button>
+        </div>
+        <p class="gen-upload-error" data-upload-error="${esc(f.upload)}" hidden></p>
+        <p class="gen-upload-note" data-upload-note="${esc(f.upload)}" hidden></p>
+        <details class="gen-advanced">
+          <summary>Use a file path instead</summary>
+          <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}"
+            placeholder="${esc(f.placeholder || "")}" aria-label="${esc(f.label)} path" />
+        </details>
+        ${f.help ? `<span class="gen-help">${esc(f.help)}</span>` : ""}
+      </div>`;
+  };
+
   const renderField = (path, f, value) => {
     const id = uid();
     let control;
+
+    if (f.type === "file") return renderUpload(path, f, value);
 
     if (f.type === "bool") {
       control = `<label class="gen-check">
@@ -485,10 +789,18 @@
     }
 
     if (f.type === "color") {
+      // The swatch and the text box share one value. The label points at the
+      // swatch, so the text box needs its own name for a screen reader.
       control = `<div class="gen-colour-row">
           <input type="color" data-path="${esc(path)}" id="${id}" value="${esc(value || f.default || "#000000")}" />
-          <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}" placeholder="${esc(f.placeholder || "#10264B")}" />
+          <input class="gen-input" type="text" data-path="${esc(path)}" value="${esc(value)}"
+            placeholder="${esc(f.placeholder || "#10264B")}" aria-label="${esc(f.label)} value" />
         </div>`;
+    } else if (f.type === "select") {
+      const options = (f.options || []).map((o) =>
+        `<option value="${esc(o.value)}"${str(value) === str(o.value) ? " selected" : ""}>${esc(o.label)}</option>`
+      ).join("");
+      control = `<select class="gen-select" data-path="${esc(path)}" id="${id}">${options}</select>`;
     } else if (f.type === "textarea") {
       control = `<textarea class="gen-textarea" data-path="${esc(path)}" id="${id}"
         placeholder="${esc(f.placeholder || "")}">${esc(value)}</textarea>`;
@@ -515,8 +827,10 @@
 
     const body = list.kind === "string"
       ? (list.multiline
-        ? `<textarea class="gen-textarea" data-path="${esc(base)}" placeholder="Write it here…">${esc(item)}</textarea>`
-        : `<input class="gen-input" type="text" data-path="${esc(base)}" value="${esc(item)}" placeholder="Add a value…" />`)
+        ? `<textarea class="gen-textarea" data-path="${esc(base)}" aria-label="${esc(title)}"
+            placeholder="Write it here…">${esc(item)}</textarea>`
+        : `<input class="gen-input" type="text" data-path="${esc(base)}" value="${esc(item)}"
+            aria-label="${esc(title)}" placeholder="Add a value…" />`)
       : `<div class="gen-grid">${list.fields.map((f) => renderField(`${base}.${f.key}`, f, item[f.key])).join("")}</div>`;
 
     return `<div class="gen-item" data-item="${esc(base)}">
@@ -558,18 +872,37 @@
   };
 
   const renderSection = (sec) => {
+    const allFields = sec.fields || [];
+    const groups = sec.groups || [];
+    const inGroup = new Set(groups.flatMap((g) => allFields.filter((f) => f.group === g.id).map((f) => f.key)));
+
+    const grid = (fields) =>
+      fields.length
+        ? `<div class="gen-grid">${fields.map((f) => renderField(`${sec.id}.${f.key}`, f, state[sec.id][f.key])).join("")}</div>`
+        : "";
+
+    // A group is a collapsed block of secondary fields. It only changes how
+    // they are shown — state, import and export still read sec.fields.
+    const groupBlock = (g) => {
+      const fields = allFields.filter((f) => f.group === g.id);
+      if (!fields.length) return "";
+      return `<details class="gen-group">
+          <summary>${esc(g.title)}</summary>
+          ${g.help ? `<p class="gen-help">${esc(g.help)}</p>` : ""}
+          ${grid(fields)}
+        </details>`;
+    };
+
     const body = [
       sec.help ? `<p class="gen-card-help">${esc(sec.help)}</p>` : "",
-      sec.fields && sec.fields.length
-        ? `<div class="gen-grid">${sec.fields.map((f) => renderField(`${sec.id}.${f.key}`, f, state[sec.id][f.key])).join("")}</div>`
-        : "",
+      grid(allFields.filter((f) => !inGroup.has(f.key))),
       (sec.subs || []).map((sub) => renderSub(sec, sub)).join(""),
       (sec.lists || []).map((list) => renderList(sec, list)).join(""),
+      groups.map(groupBlock).join(""),
     ].join("");
 
     return `<section class="gen-card" data-section-id="${esc(sec.id)}" data-chapter="${esc(sec.chapter || "")}">
         <div class="gen-card-head" data-toggle="${esc(sec.id)}">
-          <span class="gen-icon">${esc(sec.icon)}</span>
           <h2>${esc(sec.title)}</h2>
           <span class="gen-count" data-section-count="${esc(sec.id)}"></span>
           <span class="gen-chevron">▾</span>
@@ -584,14 +917,12 @@
     applyChapter();
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     5b. WIZARD — ask one chapter at a time
-     ══════════════════════════════════════════════════════════════ */
+  /* 5b. Wizard — ask one chapter at a time */
   const LAST_CHAPTER = CHAPTERS.length - 1;
   let chapterIndex = 0;
   let showEverything = false;
 
-  // How much of one chapter is filled in — drives the ✓ in the step rail.
+  // How much of one chapter is filled in — drives the step rail's done state.
   const chapterProgress = (chapterId) => {
     let filled = 0;
     SCHEMA.filter((s) => s.chapter === chapterId).forEach((sec) => {
@@ -617,9 +948,14 @@
     rail.innerHTML = CHAPTERS.map((c, i) => {
       const done = chapterProgress(c.id) > 0;
       const active = !showEverything && i === chapterIndex;
+      // The done state is a filled badge, not a colour change alone, so it is
+      // still readable without colour; the label says the same thing in words.
+      // The label starts with the number and title shown on the button, so the
+      // spoken name matches the visible text.
       return `<button type="button" class="gen-rail-step${active ? " is-active" : ""}${done ? " is-done" : ""}"
-          data-goto="${i}" aria-current="${active ? "step" : "false"}">
-          <span class="gen-rail-num">${done ? "✓" : i + 1}</span>
+          data-goto="${i}" aria-current="${active ? "step" : "false"}"
+          aria-label="${i + 1} ${esc(c.title)} ${esc(c.hint)}${done ? " (started)" : ""}">
+          <span class="gen-rail-num">${i + 1}</span>
           <span class="gen-rail-text"><b>${esc(c.title)}</b><small>${esc(c.hint)}</small></span>
         </button>`;
     }).join("");
@@ -690,25 +1026,70 @@
     updateCounts();
   };
 
-  const filledCount = () => {
-    // Flat scalar fields (including sub-objects) that hold a value.
-    let total = 0;
-    let filled = 0;
-    SCHEMA.forEach((sec) => {
-      const s = state[sec.id] || {};
-      (sec.fields || []).forEach((f) => {
-        if (f.type === "bool") return;
-        total++;
-        if (str(s[f.key]).trim()) filled++;
-      });
-      (sec.subs || []).forEach((sub) => {
-        sub.fields.forEach((f) => {
-          total++;
-          if (str((s[sub.key] || {})[f.key]).trim()) filled++;
-        });
-      });
-    });
-    return { total, filled };
+  // The recruiter checklist is computed from the current answers. Nothing is
+  // sent anywhere and nothing is stored. It lists the things a hiring manager
+  // looks for, and every missing item can jump straight to its field.
+  const recruiterItems = () => {
+    const p = state.personal || {};
+    const projects = (state.projects && state.projects.projects) || [];
+    const linked = projects.filter((pr) => str(pr.liveUrl).trim() || str(pr.githubUrl).trim());
+    const bioLen = str(p.bio).trim().length;
+    return [
+      { label: "Your full name", done: !!str(p.name).trim(), path: "personal.name" },
+      { label: "Your role in one line", done: !!str(p.role).trim(), path: "personal.role" },
+      {
+        label: "A short bio of 150 to 400 characters",
+        done: bioLen >= 150 && bioLen <= 400,
+        path: "personal.bio",
+        hint: bioLen ? `${bioLen} characters so far` : "Add a sentence or two about you",
+      },
+      { label: "A profile photo", done: !!(uploads.photo || str(p.photo).trim()), section: "personal", upload: "photo" },
+      { label: "Your resume as a PDF", done: !!(uploads.resume || str(p.resume).trim()), section: "personal", upload: "resume" },
+      {
+        label: "Three or more projects with a link",
+        done: linked.length >= 3,
+        section: "projects",
+        hint: `${linked.length} with a link`,
+      },
+      { label: "An email address", done: !!str(p.email).trim(), path: "personal.email" },
+      { label: "A LinkedIn or GitHub profile", done: !!str(p.linkedin).trim() || !!str(p.github).trim(), path: "personal.linkedin" },
+    ];
+  };
+
+  // Jump to whichever field, upload or card a checklist item is about.
+  const revealCheck = (item) => {
+    if (!item) return;
+    const sectionId = item.section || (item.path || "").split(".")[0];
+    const sec = SCHEMA.find((s) => s.id === sectionId);
+    if (!sec) return;
+    if (!showEverything) {
+      const ci = CHAPTERS.findIndex((c) => c.id === sec.chapter);
+      if (ci >= 0) goToChapter(ci);
+    }
+    const card = document.querySelector(`[data-section-id="${sectionId}"]`);
+    if (card) {
+      card.classList.remove("is-collapsed");
+      if (card.scrollIntoView) card.scrollIntoView({ block: "start" });
+    }
+    const selector = item.upload
+      ? `[data-upload="${item.upload}"]`
+      : item.path ? `[data-path="${item.path}"]` : "";
+    const field = selector ? document.querySelector(selector) : null;
+    if (field && field.focus) field.focus();
+  };
+
+  const renderChecklist = () => {
+    const host = $("#genChecklist");
+    if (!host) return;
+    const items = recruiterItems();
+    host.innerHTML = items.map((it, i) =>
+      `<li class="gen-check-item${it.done ? " is-done" : ""}">
+          <span class="gen-check-label">${esc(it.label)}${it.hint ? ` <small>${esc(it.hint)}</small>` : ""}</span>
+          ${it.done
+            ? '<span class="gen-check-tag">Done</span>'
+            : `<button type="button" class="gen-linkbtn" data-check-go="${i}">Go to this field</button>`}
+        </li>`
+    ).join("");
   };
 
   const updateCounts = () => {
@@ -720,57 +1101,132 @@
       el.textContent = items ? `${items} item${items === 1 ? "" : "s"}` : hasScalar ? "filled" : "empty";
     });
 
-    const { total, filled } = filledCount();
-    const pct = total ? Math.round((filled / total) * 100) : 0;
-    $("#genMeterBar").style.width = pct + "%";
-    $("#genMeterText").textContent = filled
-      ? `${filled} of ${total} detail fields filled in (${pct}%).`
-      : "Nothing filled in yet.";
+    renderChecklist();
+    const items = recruiterItems();
+    const ready = items.filter((it) => it.done).length;
+    const meter = $("#genMeterBar");
+    if (meter) meter.style.width = Math.round((ready / items.length) * 100) + "%";
+    const text = $("#genMeterText");
+    if (text) {
+      text.textContent = ready === items.length
+        ? "All checks done — your site is ready to share."
+        : `${ready} of ${items.length} checks done.`;
+    }
 
     updateOutput();
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     6. OUTPUT — config.js source
-     ══════════════════════════════════════════════════════════════ */
-  const OUTPUT_HEADER = `/**
- * ╔══════════════════════════════════════════════════════════════════╗
- * ║          ABMVSC PORTFOLIO ENGINE — config.js                     ║
- * ║          Generated with the ABMVSC config generator              ║
- * ╚══════════════════════════════════════════════════════════════════╝
- *
- *  This is the ONLY file your website reads. Drop it into your project
- *  folder (replacing the existing config.js) and both index.html and
- *  studio.html rebuild themselves from it.
- *
- *  • Empty any field ("") and that element hides itself.
- *  • Empty any array ([]) and that whole section disappears.
- *  • Nothing here is required — the site degrades gracefully.
- *
- *  ABMVSC Portfolio Engine · MIT License
- */
-
-`;
-
-  const buildConfigSource = () => {
-    const json = JSON.stringify(buildConfig(), null, 2).replace(/</g, "\\u003c");
-    return `${OUTPUT_HEADER}window.PORTFOLIO_CONFIG = ${json};\n`;
+  /* 6. Output — config.js source */
+  // The file starts with the assignment. No header banner: the first thing a
+  // reader sees should be the config, and a test locks that in.
+  const configSource = (config) => {
+    const json = JSON.stringify(config, null, 2).replace(/</g, "\\u003c");
+    return `window.PORTFOLIO_CONFIG = ${json};\n`;
   };
+  const buildConfigSource = () => configSource(buildConfig());
 
   const updateOutput = () => {
     const out = $("#genOutput");
     if (out) out.value = buildConfigSource();
   };
 
-  const parseConfigSource = (src) => {
-    // The config file only ever assigns window.PORTFOLIO_CONFIG.
-    const fn = new Function("window", `${src}\n;return window.PORTFOLIO_CONFIG;`);
-    return fn({});
+  const BARE_ARRAY_SECTIONS = new Set(["projects", "experience", "research", "achievements", "certifications"]);
+  const URL_FIELD_NAMES = new Set([
+    "siteUrl", "liveUrl", "githubUrl", "url", "linkedin", "github", "twitter", "website", "huggingface", "researchgate", "photo", "resume", "ogImage"
+  ]);
+
+  const validateConfig = (config) => {
+    if (!config || typeof config !== "object" || Array.isArray(config)) {
+      throw new Error("Invalid config: expected a JSON object at root.");
+    }
+    const knownSections = new Set(SCHEMA.map((s) => s.id));
+    for (const key of Object.keys(config)) {
+      if (!knownSections.has(key)) {
+        throw new Error(`Invalid field: unknown section "${key}".`);
+      }
+    }
+    for (const sec of SCHEMA) {
+      const val = config[sec.id];
+      if (val === undefined || val === null) continue;
+      if (BARE_ARRAY_SECTIONS.has(sec.id)) {
+        if (!Array.isArray(val)) {
+          throw new Error(`Invalid field: "${sec.id}" must be an array.`);
+        }
+        val.forEach((item, idx) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) {
+            throw new Error(`Invalid field: "${sec.id}[${idx}]" must be an object.`);
+          }
+          for (const k of Object.keys(item)) {
+            if (URL_FIELD_NAMES.has(k) && typeof item[k] === "string" && item[k].trim()) {
+              if (!sanitizeUrl(item[k], "link")) {
+                throw new Error(`Invalid field: "${sec.id}[${idx}].${k}" has an unsafe URL.`);
+              }
+            }
+          }
+        });
+      } else {
+        if (typeof val !== "object" || Array.isArray(val)) {
+          throw new Error(`Invalid field: "${sec.id}" must be an object.`);
+        }
+        if (sec.fields) {
+          const knownFields = new Set(sec.fields.map((f) => f.key));
+          if (sec.lists) sec.lists.forEach((l) => knownFields.add(l.key));
+          if (sec.id === "chatbot") {
+            knownFields.add("customResponses");
+            knownFields.add("extraRules");
+          }
+          if (sec.id === "company") {
+            knownFields.add("logo");
+          }
+          for (const fKey of Object.keys(val)) {
+            if (!knownFields.has(fKey)) {
+              throw new Error(`Invalid field: unknown field "${sec.id}.${fKey}".`);
+            }
+            if (URL_FIELD_NAMES.has(fKey) && typeof val[fKey] === "string" && val[fKey].trim()) {
+              const kind = fKey === "photo" || fKey === "ogImage" ? "image" : "link";
+              if (!sanitizeUrl(val[fKey], kind)) {
+                throw new Error(`Invalid field: "${sec.id}.${fKey}" has an unsafe URL.`);
+              }
+            }
+          }
+        }
+      }
+    }
+    return true;
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     7. LIVE PREVIEW
-     ══════════════════════════════════════════════════════════════ */
+  const parseConfigSource = (src) => {
+    if (typeof src !== "string") {
+      throw new Error("Config source must be a string.");
+    }
+    const trimmed = src.trim();
+    const hasComments = /(\/\*|\/\/)/.test(trimmed);
+    const hasUnquotedKeys = /([{,]\s*)[a-zA-Z_$][a-zA-Z0-9_$]*(\s*:)/.test(trimmed);
+
+    const prefixMatch = trimmed.match(/^(?:window\.)?PORTFOLIO_CONFIG\s*=\s*([\s\S]*?);?\s*$/);
+    if (!prefixMatch) {
+      if (hasComments || hasUnquotedKeys || trimmed.includes("PORTFOLIO_CONFIG")) {
+        throw new Error("This file uses the old format. Re-export it from the generator.");
+      }
+      throw new Error("This file does not set window.PORTFOLIO_CONFIG.");
+    }
+
+    const rawJson = prefixMatch[1].trim();
+    let parsed;
+    try {
+      parsed = JSON.parse(rawJson);
+    } catch (err) {
+      if (hasComments || hasUnquotedKeys || /[{,]\s*[a-zA-Z_$]/.test(rawJson)) {
+        throw new Error("This file uses the old format. Re-export it from the generator.");
+      }
+      throw new Error("Invalid JSON: " + err.message);
+    }
+
+    validateConfig(parsed);
+    return parsed;
+  };
+
+  /* 7. Live preview */
   const PREVIEW_FILES = { portfolio: "index.html", studio: "studio.html" };
   let previewPage = "portfolio";
   let previewTimer = null;
@@ -784,19 +1240,38 @@
       : "Preview unavailable right now. Your settings are still saved and the download works normally.";
   };
 
+  // In the preview the uploaded bytes are not on disk yet, so the config points
+  // at the file itself instead of the path the ZIP will use. Without this the
+  // preview shows a broken image for a photo the visitor just picked.
+  const previewConfig = () => {
+    const config = buildConfig();
+    Object.keys(uploads).forEach((kind) => {
+      const upload = uploads[kind];
+      const field = uploadField(kind);
+      if (upload && field) config[field.section][field.key] = upload.dataUrl;
+    });
+    return config;
+  };
+
   const buildPreviewHtml = async () => {
     const file = PREVIEW_FILES[previewPage];
     const res = await fetch(file, { cache: "no-store" });
     if (!res.ok) throw new Error("HTTP " + res.status);
     const html = await res.text();
 
-    const base = new URL(".", location.href).href;
-    const configSrc = "window.PORTFOLIO_CONFIG = " +
-      JSON.stringify(buildConfig(), null, 2).replace(/</g, "\\u003c") + ";";
+    const base = new URL(".", pageLocation.href).href;
+    // A strict Content-Security-Policy blocks an inline <script>, and the
+    // preview runs under the page's policy (an iframe inherits it). A JSON
+    // block is not executable, so it is allowed; script.js reads it instead of
+    // config.js. "<" is escaped so the JSON cannot close the script tag.
+    const configJson = JSON.stringify(previewConfig(), null, 2).replace(/</g, "\\u003c");
 
     return html
       .replace(/<head>/i, `<head>\n    <base href="${base}">`)
-      .replace(/<script\s+src=["']config\.js["']\s*><\/script>/i, `<script>${configSrc}</script>`);
+      .replace(
+        /<script\s+src=["']config\.js["']\s*><\/script>/i,
+        `<script type="application/json" id="pf-inline-config">${configJson}</script>`
+      );
   };
 
   const refreshPreview = async (immediate) => {
@@ -807,7 +1282,8 @@
     }
     const frame = $("#genPreview");
     try {
-      frame.srcdoc = await buildPreviewHtml();
+      localStorage.setItem("pf-live-preview", JSON.stringify(previewConfig()));
+      frame.src = `${PREVIEW_FILES[previewPage]}?preview=1`;
       $("#genPreviewNotice").hidden = true;
     } catch (err) {
       previewFetchable = false;
@@ -819,24 +1295,35 @@
     try {
       const html = await buildPreviewHtml();
       const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      window.open(url, "_blank", "noopener");
+      win.open(url, "_blank", "noopener");
       setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (err) {
       toast("Open the site from a local server to preview it in a new tab.");
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     8. DRAFT (localStorage)
-     ══════════════════════════════════════════════════════════════ */
-  const DRAFT_KEY = "abmvsc-portfolio-draft-v1";
+  /* 8. Draft (localStorage) */
+  const DRAFT_KEY = "portfolio-engine-draft-v1";
   let draftTimer = null;
+  let savedNoteTimer = null;
+
+  // A small, honest status line: the draft really is written to this browser
+  // and nowhere else. It hides itself again so it never becomes clutter.
+  const noteSaved = (message) => {
+    const el = $("#genSaved");
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = false;
+    clearTimeout(savedNoteTimer);
+    savedNoteTimer = setTimeout(() => { el.hidden = true; }, 4000);
+  };
 
   const saveDraft = () => {
     clearTimeout(draftTimer);
     draftTimer = setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(buildConfig()));
+        noteSaved("Saved on this device");
       } catch (err) {
         /* storage full or blocked — drafts are a convenience, not a requirement */
       }
@@ -852,9 +1339,7 @@
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     9. EVENTS
-     ══════════════════════════════════════════════════════════════ */
+  /* 9. Events */
   const findList = (sectionId, listKey) => {
     const sec = SCHEMA.find((s) => s.id === sectionId);
     return sec && (sec.lists || []).find((l) => l.key === listKey);
@@ -867,10 +1352,107 @@
     });
   };
 
+  const showUploadState = (kind) => {
+    const picked = uploads[kind];
+    const name = document.querySelector(`[data-upload-name="${kind}"]`);
+    if (name) name.textContent = picked ? picked.name : "No file chosen";
+    const clear = document.querySelector(`[data-upload-clear="${kind}"]`);
+    if (clear) clear.hidden = !picked;
+  };
+
+  const setUploadError = (kind, message) => {
+    const el = document.querySelector(`[data-upload-error="${kind}"]`);
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = !message;
+  };
+
+  const setUploadNote = (kind, message) => {
+    const el = document.querySelector(`[data-upload-note="${kind}"]`);
+    if (!el) return;
+    el.textContent = message || "";
+    el.hidden = !message;
+  };
+
+  const kb = (bytes) => {
+    const k = bytes / 1024;
+    return k >= 1000 ? `${(k / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(k))} KB`;
+  };
+
+  const acceptUpload = (kind, file) => {
+    const problem = Pack.checkUpload(kind, file);
+    setUploadError(kind, problem);
+    if (problem) return;
+
+    const finish = (upload, note) => {
+      const field = uploadField(kind);
+      uploads[kind] = upload;
+      if (field) {
+        state[field.section][field.key] = upload.path;
+        writeToInput(field.path, upload.path);
+      }
+      setUploadNote(kind, note);
+      showUploadState(kind);
+      saveDraft();
+      updateCounts();
+      refreshPreview();
+    };
+
+    const keepRawFile = () => readUpload(kind, file).then((upload) => finish(upload, ""));
+
+    if (kind === "photo") {
+      preparePhoto(file)
+        .then((made) => {
+          if (!made) return keepRawFile();
+          const path = Pack.uploadPath("photo", { type: made.type });
+          const entry = uploadEntry(file.name, made.type, made.bytes, path);
+          return finish(entry, `Saved as ${path} (${kb(made.newSize)}, down from ${kb(made.originalSize)}).`);
+        })
+        .catch(() => keepRawFile());
+      return;
+    }
+
+    keepRawFile();
+  };
+
+  const clearUpload = (kind) => {
+    const field = uploadField(kind);
+    const picked = uploads[kind];
+    // A path written by this upload would point at a file the ZIP no longer
+    // carries, so clear it. A path typed by hand is left alone.
+    if (field && picked && str(state[field.section][field.key]) === picked.path) {
+      state[field.section][field.key] = "";
+      writeToInput(field.path, "");
+    }
+    uploads[kind] = null;
+    setUploadError(kind, "");
+    setUploadNote(kind, "");
+    showUploadState(kind);
+    saveDraft();
+    updateCounts();
+    refreshPreview();
+  };
+
   const onFormEvent = (e) => {
     const t = e.target;
 
-    // ── text / colour / checkbox edits
+    // File uploads
+    const uploadKind = t.dataset && t.dataset.upload;
+    if (uploadKind) {
+      const file = t.files && t.files[0];
+      // Reset so picking the same file twice fires change again.
+      t.value = "";
+      if (file) acceptUpload(uploadKind, file);
+      return;
+    }
+
+    const clearBtn = t.closest && t.closest("[data-upload-clear]");
+    if (clearBtn) {
+      clearUpload(clearBtn.dataset.uploadClear);
+      return;
+    }
+
+    // Text / colour / checkbox edits
     if (t.dataset && t.dataset.path) {
       const path = t.dataset.path;
       const value = t.type === "checkbox" ? t.checked : t.value;
@@ -892,7 +1474,7 @@
       return;
     }
 
-    // ── add / remove / move
+    // Add / remove / move
     const addTarget = t.dataset && t.dataset.add;
     if (addTarget) {
       const [sectionId, listKey] = addTarget.split("|");
@@ -938,7 +1520,7 @@
       return;
     }
 
-    // ── collapse / expand a section
+    // Collapse / expand a section
     const toggle = t.dataset && t.dataset.toggle;
     if (toggle) {
       const card = document.querySelector(`[data-section-id="${toggle}"]`);
@@ -946,56 +1528,247 @@
     }
   };
 
-  const download = () => {
-    const blob = new Blob([buildConfigSource()], { type: "text/javascript" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "config.js";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  const saveFile = (data, filename, type) => {
+    const url = URL.createObjectURL(new Blob([data], { type }));
+    const link = doc.createElement("a");
+    link.href = url;
+    link.download = filename;
+    doc.body.appendChild(link);
+    link.click();
+    link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
+  };
+
+  const download = () => {
+    saveFile(buildConfigSource(), "config.js", "text/javascript");
     toast("Downloaded <strong>config.js</strong> — drop it into your project folder, replacing the existing one.");
+  };
+
+  /* The whole website, as a ZIP */
+
+  // Text extensions in this project are safe to read as strings; everything
+  // else (images, the resume PDF) has to stay bytes or the file arrives corrupt.
+  const TEXT_FILE = /\.(?:html|css|js|json|txt|xml|toml|webmanifest|svg)$/i;
+
+  const fetchSiteFile = async (path) => {
+    const res = await fetch(path, { cache: "no-store" });
+    if (!res.ok) throw new Error(`${path} returned HTTP ${res.status}`);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    return TEXT_FILE.test(path) ? new TextDecoder().decode(bytes) : bytes;
+  };
+
+  const zipName = () => {
+    const slug = str(buildConfig().personal.name)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    return `${slug || "portfolio"}-website.zip`;
+  };
+
+  // Plain deploy steps that travel inside the ZIP, so the folder explains
+  // itself once it is unzipped. Named in the brand rules.
+  const buildDeployReadme = () => `ABMVSC Portfolio Engine
+A product of ABMVSC Technology & Innovation Studio.
+
+Your website is ready
+
+This folder is a finished website. Nothing needs to be built or installed.
+Pick one host below and follow the steps. All three are free to start.
+
+What is in this folder
+- index.html    your personal portfolio page
+- studio.html   your company page
+- style.css     the look of the site
+- script.js     the script that fills in your details
+- config.js     the file that holds every detail you typed
+- your photo and resume, if you added them
+- .nojekyll     a blank file that tells GitHub Pages to serve every file
+
+Netlify Drop (quickest)
+1. Open https://app.netlify.com/drop
+2. Drag this whole folder onto the page.
+3. After a few seconds Netlify shows your live address.
+4. Sign in to keep the site (a free account).
+
+GitHub Pages
+1. Create a repository on GitHub.
+2. Upload every file in this folder to the repository.
+3. Open Settings, then Pages.
+4. Under Source, choose the main branch and the root folder, then Save.
+5. Your site appears at https://yourname.github.io/repository-name.
+   The blank .nojekyll file keeps every file served as it is.
+
+Cloudflare Pages
+1. Open https://pages.cloudflare.com and sign in (a free account).
+2. Choose Upload assets and upload this folder.
+3. Cloudflare shows your live address.
+
+Where this came from
+Built with ABMVSC Portfolio Engine. Nothing was uploaded while you made it.
+`;
+
+  // The archive is built from the files the pages name, so an unzipped copy
+  // opens without a single missing request. The list is worked out to a fixed
+  // point: a file the pages name can name more files of its own (the web
+  // manifest names its icons), so we load what the manifest asks for until it
+  // stops growing. Anything still absent is reported instead of shipped.
+  const collectSite = async (config, generated = []) => {
+    const readRequired = async (path) => {
+      try {
+        return await fetchSiteFile(path);
+      } catch (err) {
+        console.error(err);
+        throw new Error(`Could not read ${path}. Reload the page and try again.`);
+      }
+    };
+    const files = {
+      "index.html": await readRequired("index.html"),
+      "studio.html": await readRequired("studio.html"),
+    };
+    const optionalMissing = new Set();
+    const supplied = new Set([
+      "config.js",
+      ".nojekyll",
+      "README-DEPLOY.txt",
+      // Files the generator writes itself take the place of the copies on disk.
+      ...generated,
+      ...[uploads.photo, uploads.resume].filter(Boolean).map((file) => file.path),
+    ]);
+    const skip = (path) =>
+      supplied.has(path) || Object.prototype.hasOwnProperty.call(files, path);
+
+    for (;;) {
+      const manifest = Pack.buildManifest({ files, config, extra: [...supplied] });
+      const next = manifest.include.concat(manifest.missing).find((path) => !skip(path));
+      if (!next) return { files, manifest, optionalMissing };
+      try {
+        files[next] = await fetchSiteFile(next);
+      } catch (err) {
+        if (Pack.COPIED_FILES.includes(next)) {
+          console.error(err);
+          throw new Error(`Could not read ${next}. Reload the page and try again.`);
+        }
+        optionalMissing.add(next);
+        supplied.add(next);
+      }
+    }
+  };
+
+  const buildZip = async () => {
+    const config = Pack.withUploadPaths(buildConfig(), uploads);
+
+    // The social card and favicons are drawn here, and robots.txt and
+    // sitemap.xml are rewritten with the site's address, so the archive carries
+    // the owner's own artwork and address instead of the sample ones.
+    const generated = {
+      ...(await renderBrandAssets(config)),
+      "robots.txt": Pack.staticRobots(config),
+      "sitemap.xml": Pack.staticSitemap(config),
+      ...Pack.HOST_FILES,
+    };
+
+    const { files, manifest, optionalMissing } = await collectSite(config, Object.keys(generated));
+
+    // A crawler fetches the HTML and stops; it never runs script.js. Bake the
+    // title, social tags, structured data and hero text into the two pages so
+    // the shared link shows the owner's name instead of a generic placeholder.
+    Pack.PAGES.forEach((page) => {
+      if (typeof files[page] === "string") {
+        files[page] = Pack.prerenderPage(files[page], config, page);
+      }
+    });
+
+    const wanted = [...new Set([...manifest.include, ...manifest.missing, ...manifest.generated])]
+      .filter((path) => !optionalMissing.has(path))
+      .sort();
+
+    const entries = [];
+    const absent = [];
+    for (const path of wanted) {
+      if (Object.prototype.hasOwnProperty.call(generated, path)) {
+        entries.push({ path, data: generated[path] });
+        continue;
+      }
+      if (Object.prototype.hasOwnProperty.call(files, path)) {
+        entries.push({ path, data: files[path] });
+        continue;
+      }
+      if (path === "config.js") {
+        entries.push({ path, data: configSource(config) });
+        continue;
+      }
+      if (path === "README-DEPLOY.txt") {
+        entries.push({ path, data: buildDeployReadme() });
+        continue;
+      }
+      const upload = [uploads.photo, uploads.resume].find((file) => file && file.path === path);
+      if (upload) {
+        entries.push({ path, data: upload.bytes });
+        continue;
+      }
+      absent.push(path);
+    }
+
+    if (absent.length) throw new Error(`these files are missing: ${absent.join(", ")}`);
+    return Pack.writeZip(entries);
+  };
+
+  const showWhatNow = () => {
+    const panel = $("#genWhatNow");
+    if (!panel) return;
+    panel.hidden = false;
+    if (panel.scrollIntoView) panel.scrollIntoView({ block: "nearest" });
+  };
+
+  const downloadZip = async () => {
+    const btn = $("#genZipBtn");
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Building the ZIP…";
+    try {
+      const archive = await buildZip();
+      if (!pageIsOpen()) return;
+      saveFile(archive, zipName(), "application/zip");
+      showWhatNow();
+      toast("Downloaded your website. Unzip it, then drag the folder onto Netlify Drop.");
+    } catch (err) {
+      if (!pageIsOpen()) return;
+      const message = err && /^Could not read /.test(err.message)
+        ? err.message
+        : previewFetchable
+          ? "Could not build your website file. Refresh the page and try again."
+          : "Building your website file needs the page served over http(s). Run npx serve . and open the address it prints.";
+      const notice = $("#genToast");
+      notice.textContent = message;
+      notice.classList.add("is-visible");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => notice.classList.remove("is-visible"), 4000);
+    } finally {
+      if (!pageIsOpen()) return;
+      btn.disabled = false;
+      btn.textContent = label;
+    }
   };
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(buildConfigSource());
+      await nav.clipboard.writeText(buildConfigSource());
       toast("Copied <strong>config.js</strong> to your clipboard.");
     } catch (err) {
       const out = $("#genOutput");
       out.removeAttribute("readonly");
       out.select();
-      document.execCommand("copy");
+      doc.execCommand("copy");
       out.setAttribute("readonly", "readonly");
       toast("Copied config.js to your clipboard.");
     }
   };
 
-  // Copy any string (used by the launch snippets) and flash the button.
-  const copyText = async (text, btn) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-    }
-    if (btn) {
-      const original = btn.textContent;
-      btn.textContent = "Copied ✓";
-      setTimeout(() => { btn.textContent = original; }, 1600);
-    }
-  };
-
   const applyImported = (raw, message) => {
     state = normalize(raw);
+    // A config brought in from outside replaces everything, uploads included —
+    // keeping a file whose path the new config no longer names would be a lie.
+    Object.keys(uploads).forEach((kind) => (uploads[kind] = null));
     renderAll();
     saveDraft();
     refreshPreview(true);
@@ -1009,6 +1782,8 @@
     form.addEventListener("click", onFormEvent);
 
     $("#genDownloadBtn").addEventListener("click", download);
+    $("#genZipBtn").addEventListener("click", downloadZip);
+    $("#genWhatNowDismiss").addEventListener("click", () => $("#genWhatNow").hidden = true);
     $("#genCopyBtn").addEventListener("click", copy);
     $("#genRefreshCode").addEventListener("click", updateOutput);
     $("#genRefreshPreview").addEventListener("click", () => refreshPreview(true));
@@ -1028,8 +1803,8 @@
       reader.onload = () => {
         try {
           applyImported(parseConfigSource(String(reader.result)), `Imported <strong>${esc(file.name)}</strong>.`);
-        } catch (err) {
-          toast("That file could not be read as a config.js.");
+        } catch {
+          toast("That file is not a saved website from this page. Pick the file you downloaded here, or start from scratch.");
         }
       };
       reader.readAsText(file);
@@ -1040,8 +1815,8 @@
       try {
         const src = await fetch("config.js", { cache: "no-store" }).then((r) => r.text());
         applyImported(parseConfigSource(src), "Loaded the project's current config.js.");
-      } catch (err) {
-        toast("Could not load config.js — open this page from a local server.");
+      } catch {
+        toast("Could not load the template's details. Open this page from a local server (<code>npx serve .</code>) and try again.");
       }
     });
 
@@ -1069,7 +1844,7 @@
       e.target.textContent = mobile ? "Toggle mobile width" : "Toggle full width";
     });
 
-    // ── wizard: step rail, Back/Next and the "show everything" escape hatch
+    // Wizard: step rail, Back/Next and the "show everything" escape hatch
     const rail = $("#genRail");
     if (rail) {
       rail.addEventListener("click", (e) => {
@@ -1087,22 +1862,22 @@
     const showAll = $("#genShowAll");
     if (showAll) showAll.addEventListener("click", setShowEverything);
 
-    // ── launch panel: extra download button and the copyable snippets
-    const launchDownload = $("#genLaunchDownload");
-    if (launchDownload) launchDownload.addEventListener("click", download);
-
-    const launch = $("#genLaunch");
-    if (launch) {
-      launch.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-copy]");
-        if (btn) copyText(btn.dataset.copy, btn);
+    // Recruiter checklist: "Go to this field" opens the chapter and focuses
+    // the field the missing item is about.
+    const checklist = $("#genChecklist");
+    if (checklist) {
+      checklist.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-check-go]");
+        if (btn) revealCheck(recruiterItems()[Number(btn.dataset.checkGo)]);
       });
     }
+
+    // Launch panel: the same ZIP download, next to the deployment steps
+    const launchZip = $("#genLaunchZip");
+    if (launchZip) launchZip.addEventListener("click", downloadZip);
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     10. BOOT
-     ══════════════════════════════════════════════════════════════ */
+  /* 10. Boot */
   const boot = () => {
     const draft = loadDraft();
     state = draft ? normalize(draft) : emptyState();
@@ -1110,6 +1885,7 @@
     renderAll();
     wireEvents();
     refreshPreview(true);
+    if (draft) noteSaved("Loaded the draft saved on this device");
 
     // When served over http(s) we can offer the project's own config as a
     // starting point. On file:// the fetch is blocked, so the form simply
@@ -1126,9 +1902,19 @@
       .catch(() => { /* file:// or missing — expected */ });
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
-  } else {
-    boot();
+  if (typeof window !== "undefined") {
+    window.parseConfigSource = parseConfigSource;
+    window.validateConfig = validateConfig;
+  }
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = { parseConfigSource, validateConfig, SCHEMA };
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", boot);
+    } else {
+      boot();
+    }
   }
 })();

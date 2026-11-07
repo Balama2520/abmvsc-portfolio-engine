@@ -1,6 +1,4 @@
-# ──────────────────────────────────────────
-# ABMVSC Portfolio Template — .gitignore
-# ──────────────────────────────────────────
+# Portfolio Engine — .gitignore
 
 # Backup folders (never commit backups)
 _backup*/
@@ -42,4 +40,7 @@ node_modules/
 *.temp
 *.swp
 *~
+
+# Screenshots written by `SHOT_DIR=… npm test` for design review only
+screenshots/
 

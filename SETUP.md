@@ -10,7 +10,15 @@
 2. Fill in your details
 3. Deploy
 
-That's it. `index.html`, `studio.html`, `style.css` and `script.js` read everything from `config.js` — you never need to open them.
+`config.js` uses strict JSON assigned to `window.PORTFOLIO_CONFIG`:
+```javascript
+window.PORTFOLIO_CONFIG = {
+  // strict JSON: quoted keys, double-quoted strings, no comments, no trailing commas
+};
+```
+Every section is optional. Leave an array empty (`[]`) or a string empty (`""`) and the related element hides automatically.
+
+`index.html`, `studio.html`, `style.css` and `script.js` read everything from `config.js` — you never need to open them.
 
 ---
 
@@ -20,7 +28,7 @@ The template includes a **config generator** at `setup.html` — a form that wri
 
 The generator asks its questions in **six chapters** — You → Your work → Extras → Your company → Look & feel → Launch — and shows one at a time. Use the step rail to jump to any chapter, or click **Show everything** to see the whole form at once.
 
-1. Open `setup.html` (from your copy, or the live demo at `/setup.html`)
+1. Open `setup.html` in your copy of the template
 2. Answer the chapters — every field is optional
 3. Watch both sites update in the live preview as you type
 4. Click **Download config.js**
@@ -109,7 +117,7 @@ Each of these is an array — copy an existing entry and edit it. Empty array �
 company: {
   name:         "Your Studio",
   descriptor:   "Technology & Innovation Studio",
-  tagline:      "Engineering Ideas. Empowering Tomorrow.",
+  tagline:      "Engineering ideas, shipped.",
   philosophy:   "Build • Research • Innovate • Scale • Impact",
   description:  "What your studio does.",
   heroParagraph: "",            // optional — falls back to description
@@ -136,9 +144,9 @@ If `products` is empty, the Ecosystem section reuses your personal projects so t
 
 ```js
 chatbot: {
-  assistantName: "Your AI Assistant",
-  greeting:      "Hello! Ask me about my projects, skills or experience.",
-  studioGreeting: "Welcome to the studio!",
+  assistantName: "Your assistant",
+  greeting:      "Ask me about my projects, skills or experience.",
+  studioGreeting: "Welcome to the studio. Ask about our products or capabilities.",
   customResponses: {
     whyHire: "",
     pricing: "…",
@@ -156,13 +164,13 @@ All other answers are generated automatically from the sections you already fill
 
 ```js
 theme: {
+  mode:         "light",        // "light", "dark" or "minimal"
   primaryColor: "#10264B",
   accentColor:  "#FF7900",
-  blueColor:    "#2563EB",
   fontHeading:  "'Space Grotesk', 'Inter', sans-serif",
   fontBody:     "'Inter', -apple-system, sans-serif",
   fontMono:     "'IBM Plex Mono', monospace",
-  showBuiltBy:  true,           // false ⇒ remove the ABMVSC footer credit
+  showBuiltBy:  false,          // true ⇒ add a small "Made with the Portfolio Engine" credit
   showDemoNotice: true,         // false ⇒ hide the floating "this is the demo" notice
 }
 ```
@@ -175,11 +183,12 @@ theme: {
 
 | File | Replace with |
 |---|---|
-| `assets/engineer-avatar.svg` | Your own profile photo |
+| `assets/engineer-avatar.svg` | Your own profile photo (this file is a neutral placeholder) |
 | `resume.pdf` | Your own resume PDF |
 | `og-image.png` | Your own 1200×630 social preview |
 | `favicon.*`, `apple-touch-icon.png`, `android-chrome-*` | Your own icons ([favicon.io](https://favicon.io/favicon-converter/)) |
-| `assets/abmvsc-hero-banner.jpg`, `assets/abmvsc-logo-card.jpg` | Your own studio imagery (or leave the placeholders) |
+
+The studio card image and logo files are optional: name them in `company.logo` and drop them in the project folder, or leave `company.logo.card` empty and the studio card is hidden.
 
 Then update `site.webmanifest` with your brand name and theme colour.
 
@@ -211,7 +220,7 @@ And set `seo.siteUrl` in `config.js` to the same domain.
 ```
 1. app.netlify.com → Add new site → Deploy manually
 2. Drag your folder onto the page
-3. Live in seconds ✓
+3. Live in seconds
 ```
 
 **GitHub Pages:**
@@ -219,7 +228,7 @@ And set `seo.siteUrl` in `config.js` to the same domain.
 ```
 1. Push to GitHub
 2. Settings → Pages → Deploy from main branch → / (root)
-3. Live at: https://yourusername.github.io/repo-name ✓
+3. Live at: https://yourusername.github.io/repo-name
 ```
 
 No build step. No environment variables. No dependencies to install.
@@ -229,7 +238,7 @@ No build step. No environment variables. No dependencies to install.
 ## The Checklist — before you deploy
 
 Work down this list once. Skip it and the most likely outcome is that your site
-goes live still showing the ABMVSC demo content.
+goes live still showing the demo content.
 
 **Content — `config.js`**
 
@@ -278,6 +287,5 @@ goes live still showing the ABMVSC demo content.
 
 ## Need Help?
 
-- **Email:** contact@abmvsc.studio
-- **GitHub:** [github.com/Balama2520](https://github.com/Balama2520)
-- **Studio:** [abms-portfolio.netlify.app/studio.html](https://abms-portfolio.netlify.app/studio.html)
+- **Questions and bug reports:** [github.com/Balama2520/abmvsc-portfolio-template/issues](https://github.com/Balama2520/abmvsc-portfolio-template/issues)
+- **Studio:** `your-site.netlify.app/studio.html` once you deploy your own copy

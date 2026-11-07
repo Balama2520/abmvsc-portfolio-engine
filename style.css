@@ -1,30 +1,131 @@
-/* ==========================================================================
-   Clean, Professional Portfolio & Studio Design System
-   Human-crafted, readable, high-contrast, zero AI-template bloat
-   ========================================================================== */
+/* Self-hosted fonts (Latin subset). Non-Latin characters fall back to the
+   system stack below, so a name in another script still renders. */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/inter-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/inter-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/inter-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/inter-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("assets/fonts/inter-800.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/space-grotesk-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/space-grotesk-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/space-grotesk-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/ibm-plex-mono-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/ibm-plex-mono-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Design tokens. One accent, one neutral scale, one shadow, one spacing
+   scale. Every rule below reads from these, so a theme is a token swap. */
 
 :root {
+  /* Neutrals. --navy is the brand dark; config.theme.primaryColor overrides it
+     at runtime, and the rest of the scale stays put. */
+  --navy: #10264b;
   --bg: #f8fafc;
   --bg-alt: #f1f5f9;
   --surface: #ffffff;
+  --bar-bg: rgba(248, 250, 252, 0.95);
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
   --text: #0f172a;
   --text-muted: #475569;
   --text-soft: #64748b;
-  --primary: #0f172a;
-  --navy: #10264b;
-  --blue: #2563eb;
-  --accent: var(--blue);
-  --accent-soft: #dbeafe;
-  --accent-dark: #1d4ed8;
-  --orange: #ff7900;
-  --orange-soft: #fff3e6;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --radius: 14px;
+  /* Brand ink: the dark brand colour used for a few headings and figures on a
+     light background. It flips to the normal text colour in the dark theme,
+     where the brand colour would be invisible. */
+  --brand-ink: var(--navy);
+
+  /* Accent — orange. Fills carry navy text. Text on a light background uses
+     --accent-text, a darker shade that clears 4.5:1 against --bg and --surface. */
+  --accent: #ff7900;
+  --accent-hover: #e06b00;
+  --accent-text: #c2410c;
+  --accent-soft: #fff3e6;
+  --on-accent: #10264b;
+
+  /* Spacing — 4px base */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+
+  --radius: 12px;
   --radius-sm: 8px;
   --max-width: 1100px;
-  --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.10);
+  --shadow: 0 1px 2px rgba(16, 38, 75, 0.06), 0 10px 30px rgba(16, 38, 75, 0.08);
 
   /* Fonts — overwritten at runtime by config.theme.font* */
   --font-heading: "Space Grotesk", "Inter", sans-serif;
@@ -32,9 +133,65 @@
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 }
 
+:root[data-theme="dark"] {
+  --bg: #0b1220;
+  --bg-alt: #0f1830;
+  --surface: #121c31;
+  --bar-bg: rgba(11, 18, 32, 0.9);
+  --border: #22304a;
+  --border-strong: #33445f;
+  --text: #e8eef7;
+  --text-muted: #b3c0d4;
+  --text-soft: #8fa0b8;
+  --accent-text: #ffa64d;
+  --accent-soft: #2a1c0a;
+  /* On a dark surface the brand colour is too dark to read, so the brand ink
+     becomes the normal light text colour. */
+  --brand-ink: var(--text);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Minimal keeps the light palette but removes depth: no shadows, tighter
+   corners, heavier rules. A quieter page for people who want the content to
+   carry it. */
+:root[data-theme="minimal"] {
+  --bg: #ffffff;
+  --bg-alt: #fafafa;
+  --surface: #ffffff;
+  --bar-bg: rgba(255, 255, 255, 0.96);
+  --border: #d8d8d8;
+  --border-strong: #b8b8b8;
+  --text: #111111;
+  --text-muted: #4a4a4a;
+  --text-soft: #6b6b6b;
+  --accent-soft: #f3f3f3;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --shadow: none;
+}
+
 /* The [hidden] attribute must always win over component display rules */
 [hidden] {
   display: none !important;
+}
+
+/* One visible focus ring for every control, so keyboard use is never guesswork. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 * {
@@ -94,10 +251,10 @@ strong {
   width: 1px;
   height: 1px;
   overflow: hidden;
-  background: var(--primary);
+  background: var(--navy);
   color: #fff;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   z-index: 2000;
 }
 
@@ -114,14 +271,14 @@ strong {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(248, 250, 252, 0.95);
+  background: var(--bar-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   transition: box-shadow 0.2s ease;
 }
 
 .navbar.scrolled {
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .navbar .container {
@@ -136,7 +293,7 @@ strong {
 .logo {
   font-size: 20px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.5px;
   display: flex;
   align-items: center;
@@ -144,11 +301,7 @@ strong {
 }
 
 .logo-accent {
-  color: var(--accent);
-}
-
-.brand-v {
-  color: var(--orange);
+  color: var(--accent-text);
 }
 
 nav {
@@ -166,7 +319,7 @@ nav a {
 
 nav a:hover,
 nav a.active {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .nav-actions {
@@ -179,8 +332,8 @@ nav a.active {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #ffffff;
-  color: var(--navy);
+  background: var(--surface);
+  color: var(--text);
   border: 1px solid var(--border-strong);
   padding: 8px 14px;
   border-radius: var(--radius-sm);
@@ -190,16 +343,16 @@ nav a.active {
 }
 
 .company-switch-btn:hover {
-  border-color: var(--orange);
-  color: var(--orange);
-  background: var(--orange-soft);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  background: var(--accent-soft);
   transform: translateY(-1px);
 }
 
 .resume-btn {
   display: inline-flex;
   align-items: center;
-  background: var(--primary);
+  background: var(--navy);
   color: #fff;
   padding: 9px 16px;
   border-radius: var(--radius-sm);
@@ -245,14 +398,14 @@ nav a.active {
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid var(--surface);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -267,20 +420,14 @@ nav a.active {
   height: 8px;
   background: #22c55e;
   border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.3); }
 }
 
 .studio-pill-tag {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--orange-soft);
-  color: var(--orange);
+  background: var(--accent-soft);
+  color: var(--accent-text);
   border: 1px solid rgba(255, 121, 0, 0.25);
   font-size: 12px;
   font-weight: 600;
@@ -294,13 +441,13 @@ nav a.active {
   font-size: clamp(40px, 5.5vw, 64px);
   line-height: 1.08;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   margin-bottom: 20px;
   letter-spacing: -1.5px;
 }
 
 .hero-accent {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .hero-description {
@@ -337,7 +484,7 @@ nav a.active {
   display: block;
   font-size: 22px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.5px;
 }
 
@@ -368,7 +515,7 @@ nav a.active {
   display: inline-flex;
   align-items: center;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   padding: 12px 22px;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -379,7 +526,7 @@ nav a.active {
 }
 
 .btn-primary:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -393,12 +540,13 @@ nav a.active {
   border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 15px;
+  cursor: pointer;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
 
 .btn-secondary:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-soft);
 }
 
@@ -417,13 +565,13 @@ nav a.active {
 
 .btn-studio:hover {
   background: #091730;
-  border-color: var(--orange);
+  border-color: var(--accent);
   transform: translateY(-1px);
 }
 
 /* SKILLS BAR MARQUEE */
 .skills-bar {
-  background: var(--primary);
+  background: var(--navy);
   padding: 14px 0;
   overflow: hidden;
 }
@@ -441,14 +589,15 @@ nav a.active {
 }
 
 .skills-scroll span {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 13px;
   font-weight: 500;
   flex-shrink: 0;
 }
 
+/* The alternating dimmer words still clear 4.5:1 on the brand bar. */
 .skills-scroll span:nth-child(odd) {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 @keyframes marquee {
@@ -473,20 +622,20 @@ nav a.active {
   display: block;
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   margin-bottom: 8px;
 }
 
 .section-label-orange {
-  color: var(--orange);
+  color: var(--accent-text);
 }
 
 .section h2 {
   font-size: 32px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.5px;
 }
 
@@ -507,7 +656,7 @@ nav a.active {
 .company-feature-banner h3 {
   font-size: 24px;
   font-weight: 800;
-  color: var(--navy);
+  color: var(--text);
   margin-bottom: 8px;
 }
 
@@ -522,13 +671,19 @@ nav a.active {
   font-size: 16px;
   font-weight: 700;
   font-style: italic;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 12px;
 }
 
 .company-feature-banner img {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
+}
+
+/* With no studio card configured the banner has a single child. Collapsing the
+   grid keeps the text on its own instead of leaving an empty column. */
+.company-feature-banner:has(> [data-section="company-logo"][hidden]) {
+  grid-template-columns: 1fr;
 }
 
 /* ABOUT / WHY HIRE ME */
@@ -571,7 +726,7 @@ nav a.active {
 .reason-title {
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
   margin-bottom: 6px;
 }
 
@@ -604,16 +759,10 @@ nav a.active {
   border-color: var(--accent);
 }
 
-.pillar-box-icon {
-  font-size: 26px;
-  margin-bottom: 10px;
-  color: var(--orange);
-}
-
 .pillar-box h4 {
   font-size: 14px;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--text);
   line-height: 1.3;
 }
 
@@ -626,12 +775,12 @@ nav a.active {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: var(--navy);
+  color: var(--text);
   margin-top: 24px;
 }
 
 .philosophy-banner span {
-  color: var(--orange);
+  color: var(--accent-text);
 }
 
 /* PROJECTS GRID */
@@ -654,7 +803,7 @@ nav a.active {
 }
 
 .project-card:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   transform: translateY(-2px);
 }
 
@@ -672,7 +821,7 @@ nav a.active {
 .project-tag {
   display: inline-block;
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -684,7 +833,7 @@ nav a.active {
 .project-card h3 {
   font-size: 20px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.3px;
 }
 
@@ -697,11 +846,35 @@ nav a.active {
 .project-metric {
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-soft);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   display: inline-block;
+}
+
+.project-study {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-left: 2px solid var(--border);
+  padding-left: 12px;
+}
+
+.project-study p {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.study-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 2px;
 }
 
 .tech-stack {
@@ -717,7 +890,7 @@ nav a.active {
 }
 
 .project-links a {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 13px;
   font-weight: 600;
   transition: opacity 0.2s;
@@ -737,12 +910,6 @@ nav a.active {
   justify-content: space-between;
   gap: 24px;
   flex-wrap: wrap;
-}
-
-.section-footer-text {
-  color: var(--text-muted);
-  font-size: 14px;
-  max-width: 480px;
 }
 
 .section-footer-links {
@@ -777,11 +944,11 @@ nav a.active {
 .exp-header h3 {
   font-size: 20px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
 }
 
 .exp-company {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 14px;
   font-weight: 600;
   margin-top: 4px;
@@ -827,17 +994,20 @@ nav a.active {
 }
 
 .achievement-highlight {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--navy);
+  border-color: var(--navy);
 }
 
-.achievement-highlight h3,
-.achievement-highlight p {
+/* The highlight card is dark, so its text has to be light. These selectors are
+   doubled up with .achievement-card so they beat the base rules further down. */
+.achievement-card.achievement-highlight h3,
+.achievement-card.achievement-highlight p,
+.achievement-card.achievement-highlight .metric-list {
   color: rgba(255, 255, 255, 0.9);
 }
 
-.achievement-highlight .achievement-tag {
-  color: rgba(255, 255, 255, 0.6);
+.achievement-card.achievement-highlight .achievement-tag {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .achievement-tag {
@@ -851,7 +1021,7 @@ nav a.active {
 .achievement-card h3 {
   font-size: 18px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
 }
 
 .achievement-card p {
@@ -861,7 +1031,7 @@ nav a.active {
 }
 
 .achievement-link {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 13px;
   font-weight: 600;
   margin-top: 4px;
@@ -869,6 +1039,11 @@ nav a.active {
 
 .achievement-link:hover {
   text-decoration: underline;
+}
+
+/* On the dark highlight card the light accent is the readable one. */
+.achievement-highlight .achievement-link {
+  color: var(--accent);
 }
 
 /* CERTIFICATIONS */
@@ -890,7 +1065,7 @@ nav a.active {
 .cert-issuer {
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 6px;
@@ -899,7 +1074,7 @@ nav a.active {
 .cert-card h3 {
   font-size: 15px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
   line-height: 1.4;
 }
 
@@ -909,25 +1084,9 @@ nav a.active {
   margin-top: 4px;
 }
 
-.inline-links {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.inline-links a {
-  color: var(--accent);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.inline-links a:hover {
-  text-decoration: underline;
-}
-
 /* CONTACT */
 .contact-section {
-  background: var(--primary);
+  background: var(--navy);
 }
 
 .contact-section .section-label {
@@ -960,7 +1119,7 @@ nav a.active {
 }
 
 .contact-section .btn-primary:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
 }
 
 .contact-phone {
@@ -994,7 +1153,7 @@ nav a.active {
   width: 36px;
   height: 36px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1012,7 +1171,7 @@ nav a.active {
 }
 
 .contact-link-sub {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.62);
   font-size: 12px;
   margin-top: 2px;
 }
@@ -1049,7 +1208,7 @@ nav a.active {
   margin: 6vh auto 0;
   background: var(--surface);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1064,7 +1223,7 @@ nav a.active {
   border-bottom: 1px solid var(--border);
   font-size: 14px;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--text);
   flex-shrink: 0;
 }
 
@@ -1075,7 +1234,7 @@ nav a.active {
 }
 
 .resume-modal-actions a {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1116,9 +1275,7 @@ nav a.active {
   }
 }
 
-/* ==========================================================================
-   ADVANCED REAL AI CHATBOT WIDGET
-   ========================================================================== */
+/* CHAT ASSISTANT */
 .chatbot {
   position: fixed;
   right: 20px;
@@ -1132,9 +1289,9 @@ nav a.active {
   border-radius: 50%;
   border: none;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 22px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1144,23 +1301,8 @@ nav a.active {
 }
 
 .chatbot-toggle:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
   transform: translateY(-2px);
-}
-
-.chatbot-pulse-ring {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 2px solid rgba(37, 99, 235, 0.4);
-  animation: pulse-ring 2.5s infinite;
-  pointer-events: none;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.15); opacity: 0; }
-  100% { transform: scale(0.95); opacity: 0; }
 }
 
 .chatbot-toggle-icon-close {
@@ -1175,10 +1317,6 @@ nav a.active {
   display: inline;
 }
 
-.chatbot.open .chatbot-pulse-ring {
-  display: none;
-}
-
 .chatbot-window {
   position: absolute;
   right: 0;
@@ -1190,7 +1328,7 @@ nav a.active {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1212,24 +1350,9 @@ nav a.active {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 18px;
-  background: linear-gradient(135deg, #10264b 0%, #0b1220 100%);
+  background: var(--navy);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
-}
-
-.chat-status-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
-  display: inline-block;
-  animation: pulse-dot 2s infinite ease-in-out;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.85); }
 }
 
 .chatbot-header-title {
@@ -1239,17 +1362,6 @@ nav a.active {
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.chat-ai-pill {
-  font-size: 9px;
-  font-weight: 700;
-  background: var(--orange);
-  color: #ffffff;
-  padding: 2px 7px;
-  border-radius: 999px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .chatbot-header-sub {
@@ -1292,14 +1404,14 @@ nav a.active {
 .chat-msg {
   max-width: 88%;
   padding: 11px 15px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   font-size: 13px;
   line-height: 1.55;
   word-break: break-word;
 }
 
 .chat-msg a {
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: underline;
   font-weight: 600;
 }
@@ -1315,7 +1427,7 @@ nav a.active {
   background: var(--bg-alt);
   border: 1px solid var(--border);
   padding: 2px 5px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .chat-msg.bot {
@@ -1323,99 +1435,16 @@ nav a.active {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
-  border-bottom-left-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
 
 .chat-msg.user {
   align-self: flex-end;
   background: var(--accent);
-  color: #fff;
-  border-bottom-right-radius: 2px;
+  color: var(--on-accent);
 }
 
 .chat-msg.user strong {
-  color: #fff;
-}
-
-/* Typing & Real-time Latency indicator */
-.typing-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  border-bottom-left-radius: 2px;
-}
-
-.typing-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.latency-badge {
-  font-family: var(--font-mono, monospace);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--orange);
-  background: var(--orange-soft);
-  border: 1px solid rgba(255, 121, 0, 0.2);
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-}
-
-.chat-telemetry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-soft);
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px dashed var(--border);
-  font-family: var(--font-mono, monospace);
-}
-
-.typing-dots span.dot {
-  width: 5px;
-  height: 5px;
-  background: var(--text-soft);
-  border-radius: 50%;
-  animation: typing-jump 1.4s infinite ease-in-out both;
-}
-
-.typing-dots span.dot:nth-child(2) { animation-delay: -0.32s; }
-.typing-dots span.dot:nth-child(3) { animation-delay: -0.16s; }
-.typing-dots span.dot:nth-child(4) { animation-delay: 0s; }
-
-@keyframes typing-jump {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-  40% { transform: scale(1.1); opacity: 1; }
-}
-
-/* Streaming blinking cursor */
-.chat-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 13px;
-  background-color: var(--accent);
-  vertical-align: middle;
-  margin-left: 2px;
-  animation: chat-cursor-blink 0.8s infinite;
-}
-
-@keyframes chat-cursor-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  color: var(--on-accent);
 }
 
 /* Action buttons inside bot messages */
@@ -1435,7 +1464,7 @@ nav a.active {
   font-size: 11px;
   font-weight: 600;
   padding: 5px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-strong);
   background: var(--bg);
   color: var(--text) !important;
@@ -1448,18 +1477,18 @@ nav a.active {
 .chat-action-btn:hover {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent) !important;
+  color: var(--accent-text) !important;
   transform: translateY(-1px);
 }
 
 .chat-action-btn.primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff !important;
+  color: var(--on-accent) !important;
 }
 
 .chat-action-btn.primary:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
 }
 
 .chatbot-quick-replies {
@@ -1488,7 +1517,7 @@ nav a.active {
 
 .chatbot-quick-replies button:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-soft);
 }
 
@@ -1513,28 +1542,27 @@ nav a.active {
 }
 
 .chatbot-input-row input:focus {
-  outline: none;
   border-color: var(--accent);
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .chatbot-input-row button {
   border: none;
   background: var(--accent);
-  color: #fff;
-  width: 38px;
+  color: var(--on-accent);
+  min-height: 38px;
+  padding: 0 16px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .chatbot-input-row button:hover {
-  background: var(--accent-dark);
+  background: var(--accent-hover);
 }
 
 /* FOOTER */
@@ -1547,29 +1575,44 @@ footer {
   background: var(--surface);
 }
 
-/* "Built with the ABMVSC Portfolio Engine" credit — removable via
-   theme.showBuiltBy in config.js */
+/* Opt-in "Made with the Portfolio Engine" credit — rendered only when
+   theme.showBuiltBy is true in config.js. Plain text, no link. */
 .built-by {
   margin-top: 8px;
   font-size: 12px;
 }
 
-.built-by a {
-  color: var(--accent);
-  font-weight: 600;
-  text-decoration: none;
+/* Sample-content strip at the top of the demo site, carrying one clear action.
+   Shown only while config.js is still the shipped sample
+   (theme.showDemoNotice === true). A generated site never renders it. It sits
+   in normal flow, so it scrolls away with the page and cannot cover content. */
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
 }
 
-.built-by a:hover {
-  text-decoration: underline;
+.demo-banner-cta {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
-.built-by-sep {
-  margin: 0 8px;
-  opacity: 0.5;
+.demo-banner-cta:focus-visible {
+  outline-color: #fff;
 }
 
-/* "This is the demo" notice — shown only while config.js is still the ABMVSC
+/* "This is the demo" notice — shown only while config.js is still the shipped
    sample (theme.showDemoNotice === true in config.js). Removable via config. */
 .demo-notice {
   position: fixed;
@@ -1584,15 +1627,15 @@ footer {
   background: var(--navy);
   color: #fff;
   border-radius: 999px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   font-size: 12.5px;
   line-height: 1.4;
 }
 
 .demo-notice-tag {
   flex: 0 0 auto;
-  background: var(--orange);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -1601,17 +1644,9 @@ footer {
   border-radius: 999px;
 }
 
-.demo-notice code {
-  background: rgba(255, 255, 255, 0.16);
-  padding: 1px 5px;
-  border-radius: 5px;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-}
-
 .demo-notice a {
   flex: 0 0 auto;
-  color: var(--orange);
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
@@ -1628,20 +1663,35 @@ footer {
     right: 12px;
     bottom: 84px;
     max-width: none;
-    border-radius: 14px;
+    border-radius: var(--radius);
   }
 }
 
 /* REVEAL ON SCROLL */
-.hidden {
-  opacity: 0;
-  transform: translateY(16px);
+/* Content is fully visible by default. When the browser has the observer and
+   the visitor has not asked for reduced motion, a card plays a short entrance
+   animation the first time it reaches the viewport. Nothing is ever hidden
+   while waiting — a card that is never scrolled to is simply already shown. */
+@keyframes pf-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+.reveal {
+  animation: pf-reveal 0.5s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
 }
 
 section:focus {
@@ -1709,6 +1759,10 @@ section:focus {
   .stat-row {
     width: 100%;
   }
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
   .project-grid,
   .achievement-grid,
   .cert-grid,
@@ -1730,10 +1784,7 @@ section:focus {
   }
 }
 
-
-/* ==========================================================================
-   SKILLS GRID — rendered by script.js from config.skills.categories
-   ========================================================================== */
+/* Skills grid, rendered by script.js from config.skills.categories */
 .skill-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1751,7 +1802,7 @@ section:focus {
 .skill-card h3 {
   font-size: 16px;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--text);
   margin-bottom: 12px;
 }
 
@@ -1799,5 +1850,97 @@ section:focus {
 @media (max-width: 600px) {
   .skill-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* PRINT */
+/* Ctrl+P and "Save as PDF" should give a clean CV. The page furniture that
+   only works with a mouse or a screen is removed, the palette becomes black on
+   white whatever theme is active, and the entrance animation is switched off so
+   a card can never be caught half-faded on the sheet. */
+@media print {
+  :root,
+  :root[data-theme="dark"],
+  :root[data-theme="minimal"] {
+    --bg: #ffffff;
+    --bg-alt: #ffffff;
+    --surface: #ffffff;
+    --text: #000000;
+    --text-muted: #1a1a1a;
+    --text-soft: #333333;
+    --border: #b3b3b3;
+    --border-strong: #808080;
+    --shadow: none;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Furniture with no meaning on paper. */
+  .skip-link,
+  .demo-banner,
+  .demo-notice,
+  .navbar,
+  .skills-bar,
+  .hero-buttons,
+  .section-footer,
+  .resume-modal,
+  .chatbot,
+  .built-by {
+    display: none !important;
+  }
+
+  /* Show every card as it is: no entrance animation, no drop shadow. */
+  .reveal {
+    animation: none !important;
+  }
+
+  .hero,
+  .section {
+    min-height: auto;
+    padding: 0 0 20px;
+  }
+
+  .hero-photo,
+  .stat-row,
+  .skill-card,
+  .project-card,
+  .experience-card,
+  .achievement-card,
+  .cert-card,
+  .reason-card,
+  .pillar-box,
+  .contact-link-card {
+    box-shadow: none;
+    background: #ffffff;
+    border-color: #b3b3b3;
+  }
+
+  footer {
+    background: #ffffff;
+    border-color: #b3b3b3;
+  }
+
+  /* Keep a heading with the text under it, and keep a card on one sheet. */
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  .project-card,
+  .experience-card,
+  .skill-card,
+  .achievement-card,
+  .cert-card {
+    break-inside: avoid;
+  }
+
+  a {
+    color: #000000;
   }
 }

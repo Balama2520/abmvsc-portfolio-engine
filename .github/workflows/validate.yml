@@ -18,13 +18,25 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dev dependencies
         run: npm ci
 
-      # Covers both the hydration contract (test/hydration.test.mjs) and the
-      # zero-dependency / no-build-step guardrails (test/guardrails.test.mjs).
+      # Every engine the smoke test can drive is installed so the browser
+      # checks below can run in all three.
+      - name: Install browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      # Covers the watertight contract tests (hydration, config parsing, the
+      # zero-dependency / no-build-step guardrails, the malicious-input ZIP
+      # test and the Chromium end-to-end smoke test).
       - name: Run the full test suite
         run: npm test
+
+      - name: Smoke test in Firefox
+        run: SMOKE_BROWSER=firefox node --test test/browser-smoke.test.mjs
+
+      - name: Smoke test in WebKit
+        run: SMOKE_BROWSER=webkit node --test test/browser-smoke.test.mjs

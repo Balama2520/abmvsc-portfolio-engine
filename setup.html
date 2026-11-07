@@ -4,21 +4,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- The generator is served with the same header. This copy covers someone
+       who opens setup.html straight from a folder with no server headers.
+       frame-ancestors is left out because a meta tag cannot carry it. -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'" />
   <title>Set Up Your Portfolio — ABMVSC Portfolio Engine</title>
   <meta name="description"
-    content="Fill in your details, preview both sites live, and download a ready-to-use config.js for the ABMVSC Portfolio Engine." />
+    content="Fill in your details, preview both pages live, and download a ready-to-deploy website as a ZIP." />
   <meta name="robots" content="noindex" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="icon" href="favicon.ico" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="setup.css" />
@@ -31,17 +30,23 @@
   <header class="gen-topbar">
     <div class="gen-topbar-inner">
       <div class="gen-brand">
-        <strong>ABMVSC</strong> Portfolio Engine
+        ABMVSC Portfolio Engine
         <span>· config generator</span>
       </div>
 
       <div class="gen-actions">
-        <button type="button" class="gen-btn gen-btn-ghost" id="genLoadCurrent" hidden>Load current config.js</button>
-        <button type="button" class="gen-btn" id="genImportBtn">Import config.js</button>
-        <button type="button" class="gen-btn" id="genResetBtn">Start from scratch</button>
-        <button type="button" class="gen-btn gen-btn-dark" id="genCopyBtn">Copy</button>
-        <button type="button" class="gen-btn gen-btn-primary" id="genDownloadBtn">Download config.js</button>
-        <input type="file" id="genImportInput" accept=".js,text/javascript" hidden />
+        <details class="gen-adv" id="genAdvanced">
+          <summary class="gen-btn">Advanced</summary>
+          <div class="gen-adv-panel" role="group" aria-label="Advanced actions">
+            <button type="button" class="gen-btn gen-btn-ghost" id="genLoadCurrent" hidden>Load current config.js</button>
+            <button type="button" class="gen-btn" id="genImportBtn">Import config.js</button>
+            <button type="button" class="gen-btn" id="genResetBtn">Start from scratch</button>
+            <button type="button" class="gen-btn" id="genCopyBtn">Copy config.js</button>
+            <button type="button" class="gen-btn" id="genDownloadBtn">Download config.js</button>
+            <input type="file" id="genImportInput" accept=".js,text/javascript" hidden />
+          </div>
+        </details>
+        <button type="button" class="gen-btn gen-btn-primary" id="genZipBtn">Download website (ZIP)</button>
       </div>
     </div>
   </header>
@@ -52,23 +57,20 @@
       <div class="gen-banner">
         <h1>Build your portfolio in one pass</h1>
         <p>
-          Fill in what you have, skip the rest. This page writes a <code>config.js</code> for the
-          <strong>ABMVSC Portfolio Engine</strong> — drop it into your project folder and both
-          <code>index.html</code> and <code>studio.html</code> rebuild themselves from it.
+          Fill in your details, download your website, upload it to a free host.
+          Everything you type stays in this tab until you download it, and nothing is sent anywhere.
         </p>
       </div>
+
+      <p class="gen-saved" id="genSaved" role="status" aria-live="polite" hidden></p>
 
       <!-- GUIDED WIZARD: one chapter of questions at a time -->
       <nav class="gen-wizard" aria-label="Guided setup">
         <div class="gen-wizard-top">
           <p class="gen-step-label" id="genStepLabel">Step 1 of 6 · You</p>
-          <button type="button" class="gen-btn gen-btn-sm gen-btn-ghost" id="genShowAll">Show everything</button>
+          <button type="button" class="gen-linkbtn" id="genShowAll">Show everything</button>
         </div>
         <div class="gen-rail" id="genRail"></div>
-        <div class="gen-steps-nav">
-          <button type="button" class="gen-btn" id="genBack">← Back</button>
-          <button type="button" class="gen-btn gen-btn-primary" id="genNext">Next →</button>
-        </div>
       </nav>
 
       <div id="genSections"></div>
@@ -76,49 +78,67 @@
       <!-- LAUNCH: shown on the final step (or with "Show everything") -->
       <section class="gen-launch" id="genLaunch" hidden>
         <h2>Launch your website</h2>
-        <p class="gen-launch-lead">Four steps from here to a live site. No code, no hosting bill, no build tools.</p>
+        <p class="gen-launch-lead">
+          Everything you filled in is already written into the site. Download it as one ZIP, unzip it, and
+          put the folder online. There is nothing to install and no build step.
+        </p>
 
         <ol class="gen-launch-steps">
           <li>
-            <b>Download your <code>config.js</code></b>
-            <p>Everything you just typed is packed into that one file.</p>
-            <button type="button" class="gen-btn gen-btn-sm gen-btn-primary" id="genLaunchDownload">Download config.js</button>
+            <b>Download your website (ZIP)</b>
+            <p>The archive holds the pages, the styles, the script, your photo, your resume and a small settings file.</p>
+            <button type="button" class="gen-btn gen-btn-sm gen-btn-primary" id="genLaunchZip">Download website (ZIP)</button>
           </li>
           <li>
-            <b>Take your own copy of the engine</b>
-            <p>Open the template repository and click <strong>Use this template</strong>, or clone it.</p>
-            <div class="gen-copy-row">
-              <code class="gen-code">https://github.com/Balama2520/abmvsc-portfolio-template</code>
-              <button type="button" class="gen-btn gen-btn-sm"
-                data-copy="https://github.com/Balama2520/abmvsc-portfolio-template">Copy</button>
-            </div>
-            <div class="gen-copy-row">
-              <code class="gen-code">git clone https://github.com/Balama2520/abmvsc-portfolio-template.git my-site</code>
-              <button type="button" class="gen-btn gen-btn-sm"
-                data-copy="git clone https://github.com/Balama2520/abmvsc-portfolio-template.git my-site">Copy</button>
-            </div>
+            <b>Unzip the folder</b>
+            <p>Double-click the ZIP, or right-click it and choose Extract.</p>
           </li>
           <li>
-            <b>Drop in the <code>config.js</code> you downloaded</b>
-            <p>Replace the file the engine shipped with. Both <code>index.html</code> and <code>studio.html</code> now read your details.</p>
-            <p class="gen-launch-warn">The file in the repo is ABMVSC's demo data — replacing it is the step that makes the site yours.</p>
+            <b>Drag the folder onto Netlify Drop</b>
+            <p>Open <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">app.netlify.com/drop</a> and drop the folder in. An account is optional.</p>
           </li>
           <li>
-            <b>Put it online — free</b>
-            <p>Drag your project folder onto <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Netlify Drop</a>, or push to GitHub and switch on Pages. Live in about a minute.</p>
+            <b>Copy the address Netlify gives you</b>
+            <p>That address is your live site. GitHub Pages and Cloudflare Pages work the same way — the README has the steps for both.</p>
           </li>
         </ol>
 
         <div class="gen-launch-foot">
           <a class="gen-btn gen-btn-dark" href="https://github.com/Balama2520/abmvsc-portfolio-template"
-            target="_blank" rel="noopener noreferrer">Open the template on GitHub ↗</a>
-          <a class="gen-btn" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Deploy on Netlify ↗</a>
+            target="_blank" rel="noopener noreferrer">Open the template on GitHub</a>
+          <a class="gen-btn" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Open Netlify Drop</a>
         </div>
       </section>
+
+      <div class="gen-steps-nav">
+        <button type="button" class="gen-btn" id="genBack">← Back</button>
+        <button type="button" class="gen-btn gen-btn-primary" id="genNext">Next →</button>
+      </div>
     </main>
 
     <!-- RIGHT: PREVIEW + EXPORT -->
     <aside class="gen-side">
+      <section class="gen-panel gen-whatnow" id="genWhatNow" hidden>
+        <div class="gen-panel-head">
+          <h2>What now?</h2>
+          <button type="button" class="gen-btn gen-btn-sm gen-btn-ghost" id="genWhatNowDismiss">Dismiss</button>
+        </div>
+        <div class="gen-panel-body">
+          <ol class="gen-whatnow-steps">
+            <li><b>Unzip the folder.</b><p>Double-click the ZIP, or right-click it and choose Extract. The folder holds your whole site.</p></li>
+            <li><b>Open Netlify Drop.</b><p><a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">app.netlify.com/drop</a> — an account is optional.</p></li>
+            <li><b>Drag the unzipped folder onto the page.</b><p>Netlify uploads it and shows a live address in a few seconds.</p></li>
+            <li><b>Copy that address.</b><p>It is your site. You can rename it under Netlify's site settings.</p></li>
+          </ol>
+          <p class="gen-help">Prefer GitHub Pages or Cloudflare Pages? The README has the steps for both.</p>
+          <div class="gen-launch-foot">
+            <a class="gen-btn gen-btn-sm gen-btn-dark"
+              href="https://github.com/Balama2520/abmvsc-portfolio-template#deploy" target="_blank"
+              rel="noopener noreferrer">Read the deploy guide</a>
+          </div>
+        </div>
+      </section>
+
       <section class="gen-panel">
         <div class="gen-panel-head">
           <h2>Live preview</h2>
@@ -141,13 +161,14 @@
 
       <section class="gen-panel">
         <div class="gen-panel-head">
-          <h2>Completeness</h2>
+          <h2>Ready for recruiters</h2>
         </div>
         <div class="gen-panel-body">
           <div class="gen-meter"><i id="genMeterBar"></i></div>
           <p class="gen-meter-text" id="genMeterText">Nothing filled in yet.</p>
+          <ul class="gen-checklist" id="genChecklist"></ul>
           <p class="gen-help" style="margin-top:10px;">
-            Empty sections disappear from your site automatically — nothing breaks.
+            This list is just a guide. Empty sections disappear from your site automatically — nothing breaks.
           </p>
         </div>
       </section>
@@ -168,12 +189,14 @@
 
   <p class="gen-foot">
     Your draft is saved in this browser only — nothing is uploaded anywhere.
-    Built by <a href="https://abms-portfolio.netlify.app/studio.html" target="_blank"
-      rel="noopener noreferrer">ABMVSC Technology &amp; Innovation Studio</a> · MIT licensed.
+    Built with the <a href="https://github.com/Balama2520/abmvsc-portfolio-template"
+      target="_blank" rel="noopener noreferrer">ABMVSC Portfolio Engine</a> · MIT licensed.
   </p>
 
   <div class="gen-toast" id="genToast" role="status" aria-live="polite"></div>
 
+  <script src="url-allowlist.js"></script>
+  <script src="pack.js"></script>
   <script src="setup.js"></script>
 </body>
 

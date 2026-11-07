@@ -4,6 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Header-less hosts (GitHub Pages, a plain folder) still get the policy.
+       frame-ancestors is left out because a meta tag cannot carry it. -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'" />
   <title>Portfolio</title>
 
   <!-- Favicon -->
@@ -12,13 +16,6 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="icon" href="favicon.ico" />
   <link rel="manifest" href="site.webmanifest" />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
 
@@ -31,7 +28,12 @@
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- Shown only while config.js is still the ABMVSC demo (theme.showDemoNotice) -->
+  <!-- Sample-content strip with one clear action. Shown only while config.js is
+       still the shipped demo (theme.showDemoNotice); a generated site never
+       renders it. -->
+  <div class="demo-banner" data-demo-banner hidden></div>
+
+  <!-- Shown only while config.js is still the shipped demo (theme.showDemoNotice) -->
   <div class="demo-notice" data-demo-notice hidden></div>
 
   <!-- NAVBAR -->
@@ -57,7 +59,7 @@
       <div class="nav-actions">
         <!-- Link to the company / studio page (hides when no company is configured) -->
         <a href="studio.html" class="company-switch-btn" data-section="company" title="View the studio website">
-          🏢 <span data-bind="company.name">Studio</span> ↗
+          <span data-bind="company.name">Studio</span> ↗
         </a>
         <button class="resume-btn" type="button" data-resume-trigger>
           View Resume
@@ -72,14 +74,14 @@
     <section class="hero">
       <div class="container hero-flex">
         <div class="hero-content">
-          <p class="eyebrow" data-bind="hero.eyebrow">Available for work</p>
+          <p class="eyebrow" data-bind="hero.eyebrow"></p>
           <a href="studio.html" class="studio-pill-tag" data-section="company">
-            <span data-bind="hero.badge">Founder</span> ↗
+            <span data-bind="hero.badge"></span> ↗
           </a>
 
           <h1>
-            <span data-bind="hero.titleLine1">Full-Stack Developer</span><br>
-            <span class="hero-accent" data-bind="hero.titleLine2">&amp; AI Engineer</span>
+            <span data-bind="hero.titleLine1"></span><br>
+            <span class="hero-accent" data-bind="hero.titleLine2"></span>
           </h1>
 
           <p class="hero-description" data-bind="personal.bio"></p>
@@ -93,6 +95,9 @@
               data-bind="personal.linkedin">LinkedIn ↗</a>
             <a class="btn-secondary" href="" target="_blank" rel="noopener noreferrer"
               data-bind="personal.github">GitHub ↗</a>
+            <!-- Builds a vCard (.vcf) in the browser from config.js so a
+                 visitor can save the owner as a contact. See script.js. -->
+            <button class="btn-secondary" type="button" data-vcard-download>Save contact</button>
           </div>
         </div>
 
@@ -278,23 +283,22 @@
     <p class="built-by" data-built-by></p>
   </footer>
 
-  <!-- AI CHATBOT -->
+  <!-- CHAT ASSISTANT -->
   <div class="chatbot" id="chatbot">
-    <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open AI chat assistant" aria-expanded="false">
-      <span class="chatbot-toggle-icon-open">💬</span>
+    <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat assistant" aria-expanded="false">
+      <svg class="chatbot-toggle-icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+        focusable="false">
+        <path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.9 8.9 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
+      </svg>
       <span class="chatbot-toggle-icon-close">✕</span>
-      <span class="chatbot-pulse-ring"></span>
     </button>
 
-    <div class="chatbot-window" id="chatbotWindow" aria-hidden="true">
+    <div class="chatbot-window" id="chatbotWindow" aria-hidden="true" inert>
       <div class="chatbot-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="chat-status-dot"></span>
-          <div>
-            <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">AI Assistant</span>
-              <span class="chat-ai-pill">AI</span></p>
-            <p class="chatbot-header-sub">Online · answers from config.js</p>
-          </div>
+        <div>
+          <p class="chatbot-header-title"><span data-bind="chatbot.assistantName">Assistant</span></p>
+          <p class="chatbot-header-sub">Answers from the content on this site</p>
         </div>
         <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Close chat">✕</button>
       </div>
@@ -306,15 +310,15 @@
 
       <form class="chatbot-input-row" id="chatbotForm">
         <input type="text" id="chatbotInput" placeholder="Type a question…" autocomplete="off" />
-        <button type="submit" aria-label="Send message">➤</button>
+        <button type="submit">Send</button>
       </form>
     </div>
   </div>
 
   <!-- The page renders itself from config.js -->
   <script src="config.js"></script>
+  <script src="url-allowlist.js"></script>
   <script src="script.js" defer></script>
-  <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
 </body>
 
 </html>

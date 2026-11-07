@@ -4,8 +4,8 @@
 
 | Version | Supported |
 | ------- | --------- |
-| 3.x     | ✅        |
-| < 3.0   | ❌        |
+| 3.x     | Yes       |
+| < 3.0   | No        |
 
 ## What this project is
 
@@ -35,17 +35,18 @@ The following are **not** security issues:
 
 ## Reporting a vulnerability
 
-**Please do not open a public issue.**
+Report privately, not in a public issue.
 
-Use GitHub's private reporting instead:
+Use GitHub's private reporting:
 
 1. Go to the **Security** tab of this repository.
 2. Click **Report a vulnerability**.
 3. Include: what you found, the steps to reproduce, the impact, and any
    suggested fix.
 
-If you cannot use GitHub's advisory form, email **contact@abmvsc.studio** with
-`SECURITY` in the subject line.
+If you cannot use GitHub's advisory form, open a minimal issue asking a
+maintainer to contact you privately. Do not put any details of the vulnerability
+in a public issue.
 
 ## What to expect
 
