@@ -2,163 +2,207 @@
 
 # ABMVSC Portfolio Engine
 
-**Free portfolio website generator. Fill in your details, download your site, go live. No code, no account.**
+### Free, open-source portfolio website generator
 
-Released for Diwali 2026. Free to use, no account, nothing uploaded.
+Fill in your details, download your site, go live.<br>
+No code, no account, nothing uploaded.
 
-A product of ABMVSC Technology & Innovation Studio.
+[![Validate](https://github.com/Balama2520/abmvsc-portfolio-engine/actions/workflows/validate.yml/badge.svg)](https://github.com/Balama2520/abmvsc-portfolio-engine/actions/workflows/validate.yml)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+[![Runtime dependencies: 0](https://img.shields.io/badge/runtime%20dependencies-0-brightgreen.svg)](package.json)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 
-[![License](https://img.shields.io/badge/License-MIT-10264B?style=for-the-badge)](LICENSE)
-[![No Build Step](https://img.shields.io/badge/Build%20Step-none-FF7900?style=for-the-badge)](.)
-[![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-10264B?style=for-the-badge)](.)
-[![Use This Template](https://img.shields.io/badge/Use%20this-template-10264B?style=for-the-badge)](../../generate)
+[**Create your portfolio**](https://abmvsc-portfolio-engine.netlify.app/setup.html) &nbsp;|&nbsp;
+[Sample portfolio](https://abmvsc-portfolio-engine.netlify.app/) &nbsp;|&nbsp;
+[Sample company page](https://abmvsc-portfolio-engine.netlify.app/studio.html) &nbsp;|&nbsp;
+[Report a bug](https://github.com/Balama2520/abmvsc-portfolio-engine/issues/new/choose) &nbsp;|&nbsp;
+[Discussions](https://github.com/Balama2520/abmvsc-portfolio-engine/discussions)
 
-[![Validate](https://github.com/Balama2520/abmvsc-portfolio-template/actions/workflows/validate.yml/badge.svg)](https://github.com/Balama2520/abmvsc-portfolio-template/actions/workflows/validate.yml)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-FF7900.svg?style=flat-square)](CONTRIBUTING.md)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=flat-square)](CODE_OF_CONDUCT.md)
+<img src="assets/screenshot-generator.png" alt="The generator with a live preview" width="900">
+
+**Released for Diwali 2026. Free to use, no account, nothing uploaded.**
 
 </div>
 
 ---
 
-## Screenshots
+## What is it?
 
-The generator, filling in six chapters of questions:
+A portfolio website generator that runs entirely in your browser. You answer plain questions, upload a photo and a resume, and download a complete website as a ZIP file that you own. Put the folder on any free static host and you are live.
 
-<img src="assets/screenshot-generator.png" alt="The generator, filling in the first chapter" width="100%" />
+It makes a personal portfolio and, if you want one, a company or studio page.
 
-The finished personal portfolio:
+## Why?
 
-<img src="assets/screenshot-portfolio.png" alt="A finished portfolio page" width="100%" />
+Students and freshers are told to have a portfolio, then offered three routes: a paid site builder that keeps your details on its servers, a template that needs a framework and a build toolchain, or a blank page.
 
-The finished studio or company page:
+This is a fourth route. It is free, it needs no account, and your details never leave your device. It also pushes you towards what reviewers look for: projects written as short case studies with live links, a clear bio, and an easy way to contact you.
 
-<img src="assets/screenshot-studio.png" alt="A finished studio page" width="100%" />
+It cannot make weak projects strong. If you need a visual editor, many designs, a blog, forms or hosting handled for you, a hosted builder is a better fit.
 
----
+## How does it work?
 
-## Try it
+1. **Fill in your details** in the generator. Six short steps, with a live preview.
+2. **Download your website** as a ZIP. It is built in your browser.
+3. **Put it online** on a free host. The ZIP includes the steps.
 
-**[Open the generator](/setup.html)** — or run this copy yourself:
+## How to use it
 
-```bash
-git clone https://github.com/Balama2520/abmvsc-portfolio-template.git
-cd abmvsc-portfolio-template
-npx serve .
-```
+**1. Gather what you have.** You can skip anything and add it later.
 
-Then open <http://localhost:3000/setup.html>. Answer what you can, skip the rest, and click **Download website (ZIP)**. Unzip the folder and put it online.
+| Item | Notes |
+|---|---|
+| Photo | JPG, PNG or WebP. Large phone photos are resized for you. |
+| Resume | PDF, up to 5 MB |
+| Two to five projects | For each: the problem, what you built, tools, the result, and a link |
+| Contact details | Email matters most. Add LinkedIn or GitHub if you have them. |
+| Short bio | Two or three sentences: what you do and what you are looking for |
 
-The live preview inside the generator reads `index.html` and `studio.html`, so it needs a local server. The form, the download, the import and the copy button all work from a plain `file://` open too.
+**2. Open the [generator](https://abmvsc-portfolio-engine.netlify.app/setup.html)** and answer the steps: You, Your work, Extras, Your company, Look and feel, Launch. The preview updates as you type, and your draft is saved on your device.
 
----
+**3. Check the recruiter checklist** and fix anything it flags.
 
-## What you get
+**4. Click Download website (ZIP).** Unzip it and open `index.html` to check your site.
 
-- **Two pages from one file** — a personal portfolio (`index.html`) and an optional studio or company page (`studio.html`). Text, lists, images, links, colours, fonts and SEO tags all come from `config.js`.
-- **A generator that writes that file for you** (`setup.html`) — six chapters of questions, a live preview of both pages, a readiness checklist and a local draft that never leaves your browser.
-- **A ZIP of the finished site** — pages, styles, script, your photo, your resume and the generated config. Every link inside it resolves within the folder, so an unzipped copy works offline.
-- **SEO written into the page** — title, meta description, canonical URL, Open Graph, Twitter Card and JSON-LD structured data are baked into the HTML at download time, then refreshed from your details.
-- **Three themes and one accent colour** — light, dark and minimal, applied as CSS custom properties. Pick a colour in the generator and the readable shades are derived for you.
-
----
-
-## How it works in 3 steps
-
-**1. Answer the generator.** Open `setup.html` and work through the chapters — You, Your work, Extras, Your company, Look & feel, Launch. Every field is optional; leave a field blank and its element disappears from the site, leave a list empty and its whole section disappears.
-
-**2. Download the ZIP.** The generator writes a `config.js` and packs it with the pages, styles, script, your uploaded photo and your uploaded resume.
-
-**3. Put the folder online.** Unzip it and upload the folder to any static host. Nothing to install, nothing to compile.
-
-```
-unzip your-site.zip
-# drag the unzipped folder onto app.netlify.com/drop
-```
-
----
-
-## Privacy and network requests
-
-Nothing is uploaded. There is no server, no account, no analytics and no third-party JavaScript. The generator runs entirely in your browser and saves your draft to your own `localStorage`; the ZIP is built in the page with a small ZIP writer that ships in the repository. Your photo and resume are read into the tab with `FileReader` and written straight into the ZIP.
-
-When you load a page from this project, the only requests are for files in the same folder: the page, the stylesheet, the scripts and the fonts. Fonts are served from this repository, not a font service. The test suite fails if any request leaves the origin. See [docs/PRIVACY.md](docs/PRIVACY.md) for the full note.
-
----
-
-## Deploy
-
-Any static host works. In every case you upload the unzipped folder as-is.
+**5. Put the folder online.** Any static host works:
 
 | Host | Steps |
 |---|---|
-| **Netlify Drop** | Open [app.netlify.com/drop](https://app.netlify.com/drop), drag the folder in. An account is optional. |
-| **GitHub Pages** | Push the folder to a repository, then **Settings → Pages → Deploy from branch → main → / (root)**. |
-| **Cloudflare Pages** | Create a project, choose **Direct Upload**, drop the folder in. `_headers` is already set up for the caching and security headers. |
-| **Vercel** | Import the repository. It detects a static site and needs no build command. |
-| **Amazon S3 / any web host** | Upload the folder to the bucket or directory that serves your domain. |
+| **Netlify** | Open [app.netlify.com/drop](https://app.netlify.com/drop) and drag the folder in. An account is optional. |
+| **Vercel** | Deploy the folder. `vercel.json` is included. No build command. |
+| **Cloudflare Pages** | Create a project, choose Direct Upload, and drop the folder in. |
+| **GitHub Pages** | Push the folder to a repository, then Settings, Pages, deploy from the `main` branch root. |
 
-Netlify reads `netlify.toml`, Cloudflare Pages reads `_headers`; both are included and both stop `config.js` from being cached, so an edit to your config shows up on the next load.
+**6. Share it.** Add the link to your resume, LinkedIn, GitHub profile and email signature. Paste it into a chat and check the preview card.
 
----
+**To update it later,** open the generator, choose **Advanced**, then **Import**, pick the `config.js` from your ZIP, change what you need, download again and replace the files on your host.
+
+Filling in the form works on a phone. Putting the site online is easier on a computer.
+
+For a custom domain, enter it in **Your website address** before downloading, so canonical links, the sitemap and social images use it.
+
+## Features
+
+| | |
+|---|---|
+| **Portfolio and company page** | A personal site and an optional studio page, linked together |
+| **Case-study project cards** | Problem, what you built, tools, result and link |
+| **Recruiter checklist** | Shows what is missing while you type |
+| **Photo and resume handling** | Photos are cropped, resized and compressed in the browser. Your PDF goes into the ZIP. |
+| **Three themes** | Light, dark and minimal, with your own accent colour |
+| **Share-ready pages** | Title, description, social card, structured data, favicons and a generated preview image are written into the pages, so link previews work without JavaScript |
+| **Print and contact** | A clean one-page CV with Ctrl+P, and a **Save contact** button |
+| **Deploy anywhere static** | Host files for Netlify, Vercel, Cloudflare Pages and GitHub Pages are in the ZIP |
+
+A finished site carries no ABMVSC text, links or images unless you tick the optional footer credit.
+
+## Screenshots
+
+| Generator | Portfolio | Company page |
+|---|---|---|
+| <img src="assets/screenshot-generator.png" alt="The generator" width="300"> | <img src="assets/screenshot-portfolio.png" alt="A finished portfolio page" width="300"> | <img src="assets/screenshot-studio.png" alt="A finished company page" width="300"> |
+
+The sample pages use placeholder content. Replace it with your own details.
+
+## Privacy and security
+
+- **Nothing is uploaded.** There is no server, no account, no analytics and no cookies set by this project. Your draft stays in your browser's local storage.
+- **No third-party requests.** Fonts are served from the site itself, and the tests fail if any request leaves the origin.
+- **Importing never runs code.** `config.js` is strict JSON read with `JSON.parse`.
+- **Links are filtered.** Only `http`, `https`, `mailto` and `tel` are accepted for links, and `javascript:` and similar schemes are blocked in the generator, the ZIP builder and at runtime.
+- **Hostile input is tested.** A permanent test puts malicious strings into every text and link field, builds a site, opens it in a browser and checks that nothing executes.
+- **The chat assistant** on a finished site is a keyword matcher that answers from your own details. It is not an AI service and makes no network requests.
+
+Full note: [docs/PRIVACY.md](docs/PRIVACY.md). To report a vulnerability, use GitHub's private vulnerability reporting. See [SECURITY.md](SECURITY.md).
 
 ## FAQ
 
-### Where does my data go?
+**Is my data uploaded?** No. The generator is a static page and does all its work in your browser.
 
-Nowhere. There is no server, no account, no analytics and no third-party JavaScript. Your draft stays in your browser's `localStorage` and the ZIP is built in the page. Nothing is uploaded. The full note is in [docs/PRIVACY.md](docs/PRIVACY.md).
+**Is the chat assistant AI?** No. It matches keywords against the details you entered.
 
-### Can I use my own domain?
+**Can I add a contact form?** The site is static, so there is no server to receive one. It offers an email link and a downloadable contact card.
 
-Yes. Point the domain at your host, then set `seo.siteUrl` in `config.js` to that address and update the two `your-domain.com` placeholders in `sitemap.xml` and the one in `robots.txt`. Canonical URLs and social preview cards are built from `seo.siteUrl`, so the tags follow automatically.
+**Why does GitHub Pages show my old version?** GitHub Pages ignores header files. The config file is requested with a content hash to help, but if you still see old content, clear the browser cache once.
 
-### How do I change something after the site is live?
+**Can I show or hide the ABMVSC credit?** It is off by default. The generator has a checkbox.
 
-Edit `config.js` and re-upload that one file. If you deployed with Netlify Drop you can drag the whole folder in again, or connect the site to a Git repository and let a push update it. `config.js` is deliberately never cached, so the change appears on the next page load.
+**Which browsers and devices work?** Automated tests run the full flow in Chromium, Firefox and WebKit. Please open an issue if something breaks on your device.
 
-### Why does GitHub Pages show an old version?
+## Known limits
 
-GitHub Pages ignores `_headers`, so the cache rule for `config.js` does not apply there. GitHub's own cache can hold a file for a few minutes after you push. Force a refresh, or open the page in a private window, and the new version appears. If it matters, deploy on Netlify or Cloudflare Pages, where the no-cache rule is honoured.
+- Mobile performance scores are lower than they should be for a static site. This is the next engineering task.
+- No server, so no forms, accounts, analytics or hosting.
+- Three themes and one accent colour. English only.
+- Real-device testing is incomplete, including iPhone Safari.
+- PDF preview depends on the visitor's browser. A download link is always available.
+- A young project. Expect rough edges, and please report them.
 
-### Is the chat bubble a real AI?
+## For developers
 
-No, and it does not pretend to be. It is a keyword matcher that answers from the content already on your page — no language model, no API key, no network call. It is labelled that way in the interface. If a question matches nothing, it says so.
-
----
-
-## Contributing
-
-Bug reports, fixes and new ideas are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the HTML data-attribute contract, the house style and the review process.
-
-Running the tests:
+<details>
+<summary>Run it locally, data format and tests</summary>
 
 ```bash
-npm install                        # dev tooling only — the template itself ships nothing
-npx playwright install chromium    # needed by the browser tests
+git clone https://github.com/Balama2520/abmvsc-portfolio-engine.git
+cd abmvsc-portfolio-engine
+npx serve .
+# open http://localhost:3000/setup.html
+```
+
+The live preview needs a local server rather than a `file://` address.
+
+**One data file.** `config.js` assigns strict JSON to `window.PORTFOLIO_CONFIG`: quoted keys, no comments, no trailing commas. Every section is optional. A blank field hides its element and an empty array hides its block. The 15 sections are `personal`, `seo`, `hero`, `about`, `skills`, `projects`, `experience`, `education`, `research`, `achievements`, `certifications`, `company`, `contact`, `chatbot` and `theme`.
+
+```js
+window.PORTFOLIO_CONFIG = {
+  "personal": { "name": "Your Name", "role": "Your role" },
+  "projects": []
+};
+```
+
+**How pages render.** `script.js` fills elements marked with `data-bind`, `data-list`, `data-list-host`, `data-section` and `data-page`. At download time the generator also writes the title, description, social tags, structured data and hero text into the static HTML. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full attribute contract.
+
+**Tests.** Requires Node 22 or later.
+
+```bash
+npm ci
+npx playwright install --with-deps chromium firefox webkit
 npm test
 ```
 
-63 tests, no network access required. They cover the generator round-trip, the hydration engine, SEO injection, the ZIP writer, the URL allowlist, a malicious-input pass, a real Chromium run of the whole download-and-open path, and responsive layout at 375px, 768px and 1280px.
+The suite covers the import parser, link allow-list, hostile input, ZIP contents and links, rendering with and without JavaScript, layout at phone and desktop widths, keyboard use, axe accessibility checks and Lighthouse category checks. The guardrail tests fail the build if anyone adds a runtime dependency, a build step, third-party JavaScript or a third-party request.
 
-The guardrails are the point. They fail the build if anyone adds a runtime dependency, adds a build step, pulls in third-party JavaScript or points a tag at a file that does not exist — so the promises in the badges above are enforced, not just advertised.
+</details>
 
-`npm install` is for the test runner only. Deploying the site never requires it.
+## Roadmap
 
----
+- [x] Generator with live preview, themes and recruiter checklist
+- [x] Complete site as a ZIP, with host files for four platforms
+- [x] Strict, non-executing import and a link allow-list
+- [x] Automated accessibility, keyboard and layout checks
+- [ ] Real-device test results published in the repository
+- [ ] Faster mobile performance
+- [ ] Named profiles for different roles
+- [ ] Optional GitHub repository import (opt-in, off by default)
+- [ ] JSON Resume import and export
+- [ ] More layouts and more interface languages
+
+Ideas and votes are welcome in [Discussions](https://github.com/Balama2520/abmvsc-portfolio-engine/discussions). See also [ROADMAP.md](ROADMAP.md) and [CHANGELOG.md](CHANGELOG.md).
+
+## Contributing
+
+The most useful contribution is a bug report that names your browser and device. Fixes and ideas are welcome too. Read [CONTRIBUTING.md](CONTRIBUTING.md) and follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Licence
 
-Released under the **MIT Licence**. Free to use, modify and distribute for personal and commercial projects. Attribution is appreciated but not required.
-
-See [LICENSE](LICENSE) for the full terms.
+MIT. Free to use, modify and distribute for personal and commercial projects. See [LICENSE](LICENSE).
 
 ---
 
-## Limits
+<div align="center">
 
-- It is a static site. There is no contact form backend, no comments and no server-side code; the contact buttons open the visitor's mail client.
-- The resume preview embeds your PDF in the browser's built-in viewer. If a visitor's browser cannot display PDFs, the download link still works.
-- One accent colour, not a full palette editor. The readable hover, text and tint shades are derived from the colour you pick.
-- The generator's live preview needs a local server; the rest of the generator does not.
-- English only. The layout is left-to-right and is not translated.
-- The demo content in the shipped `config.js` is placeholder text, not a real person's details. Replace it before deploying.
+ABMVSC Portfolio Engine is a product of ABMVSC Technology & Innovation Studio.<br>
+Maintained by [Balama2520](https://github.com/Balama2520). If it helped you, consider starring the repository.
+
+</div>
