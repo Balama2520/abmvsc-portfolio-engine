@@ -177,10 +177,10 @@ The suite covers the import parser, link allow-list, hostile input, ZIP contents
 
 ## Roadmap
 
-- [x] Generator with live preview, themes and recruiter checklist
-- [x] Complete site as a ZIP, with host files for four platforms
-- [x] Strict, non-executing import and a link allow-list
-- [x] Automated accessibility, keyboard and layout checks
+- [ ] Generator with live preview, themes and recruiter checklist
+- [ ] Complete site as a ZIP, with host files for four platforms
+- [ ] Strict, non-executing import and a link allow-list
+- [ ] Automated accessibility, keyboard and layout checks
 - [ ] Real-device test results published in the repository
 - [ ] Faster mobile performance
 - [ ] Named profiles for different roles
