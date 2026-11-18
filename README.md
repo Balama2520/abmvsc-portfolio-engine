@@ -122,7 +122,7 @@ GitHub Pages ignores `_headers`, so the cache rule for `config.js` does not appl
 
 ### Is the chat bubble a real AI?
 
-No, and it does not pretend to be. It is a keyword matcher that answers from the content already on your page — no language model, no API key, no network call. It is labelled that way in the interface. If a question matches nothing, it says so.
+No, and it does not pretend to be. It is an **Interactive Setup Assistant / Template Guide** and keyword matcher that answers directly from the structured content on your page — no language model, no external API key, and zero network requests. It is explicitly labelled that way in the interface ("Answers from the content on this site"). If a question matches nothing, it says so directly.
 
 ---
 
