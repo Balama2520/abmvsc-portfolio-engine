@@ -111,7 +111,7 @@ The sample pages use placeholder content. Replace it with your own details.
 - **Importing never runs code.** `config.js` is strict JSON read with `JSON.parse`.
 - **Links are filtered.** Only `http`, `https`, `mailto` and `tel` are accepted for links, and `javascript:` and similar schemes are blocked in the generator, the ZIP builder and at runtime.
 - **Hostile input is tested.** A permanent test puts malicious strings into every text and link field, builds a site, opens it in a browser and checks that nothing executes.
-- **The chat assistant** on a finished site is a keyword matcher that answers from your own details. It is not an AI service and makes no network requests.
+- **The chat assistant** on a finished site is an **Interactive Setup Assistant / Template Guide** and keyword matcher that answers directly from your own structured details. It is not an LLM or AI service and makes zero network requests.
 
 Full note: [docs/PRIVACY.md](docs/PRIVACY.md). To report a vulnerability, use GitHub's private vulnerability reporting. See [SECURITY.md](SECURITY.md).
 
@@ -119,7 +119,7 @@ Full note: [docs/PRIVACY.md](docs/PRIVACY.md). To report a vulnerability, use Gi
 
 **Is my data uploaded?** No. The generator is a static page and does all its work in your browser.
 
-**Is the chat assistant AI?** No. It matches keywords against the details you entered.
+**Is the chat assistant AI?** No. It is an **Interactive Setup Assistant / Template Guide** that matches keywords directly against the details you entered — no language model, no API keys, and zero network calls.
 
 **Can I add a contact form?** The site is static, so there is no server to receive one. It offers an email link and a downloadable contact card.
 
